@@ -4,6 +4,7 @@
   "description": "A discord bot",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -13,11 +14,14 @@
   "author": "Avery Wagar, Nathan Laha",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.4.1",
     "get-json": "^1.0.0",
     "node-rest-client": "^3.1.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "weather-js": "^2.0.0"
+    "weather-js": "^2.0.0",
+    "axios": "^0.18.0",
+    "discord.js": "^11.4.1",
+    "icanhazdadjoke-client": "0.0.2",
+    "ytdl-core": "^0.24.0"
   }
 }
