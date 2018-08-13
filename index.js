@@ -1,6 +1,6 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
-
+const getJSON = require('get-json');
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -133,6 +133,20 @@ client.on("message", async message => {
     });
     message.channel.bulkDelete(fetched)
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+  }
+  if (command === "weather") {
+
+    const city = args[0];
+
+    if (!city) {
+      return message.reply("Please provide a valid city");
+    } else {
+      getJSON('http://api.apixu.com/v1/current.json?key=5d0a7d3aa80e4d5b843181446181308&q=' + city, function (error, response) {
+
+        message.channel.send("**Current Weather:**\n  Conditions: " + response.current.condition.text + "\n  Temperature: " + response.current.temp_f + "\n  Humidity: " + response.current.humidity);
+      })
+
+    }
   }
 });
 

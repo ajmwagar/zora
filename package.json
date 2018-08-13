@@ -10,9 +10,14 @@
     "Discord",
     "bot"
   ],
-  "author": "Avery Wagar",
+  "author": "Avery Wagar, Nathan Laha",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.4.1"
+    "discord.js": "^11.4.1",
+    "get-json": "^1.0.0",
+    "node-rest-client": "^3.1.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "weather-js": "^2.0.0"
   }
 }
