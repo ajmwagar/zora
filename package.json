@@ -13,6 +13,8 @@
   "author": "Avery Wagar",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.4.1"
+    "discord.js": "^11.4.1",
+    "icanhazdadjoke-client": "0.0.2",
+    "ytdl-core": "^0.24.0"
   }
 }
