@@ -5,7 +5,9 @@
   "reddit": {
     "subreddits": [],
     "channel": "",
-    "interval": 0
+    "interval": 0,
+    "username": "",
+    "password":""
   }
 
 }

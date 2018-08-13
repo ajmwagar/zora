@@ -1,6 +1,5 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
-const getJSON = require('get-json');
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -12,8 +11,7 @@ const config = require("./config.json");
 // config.prefix contains the message prefix.
 
 const axios = require('axios');
-
-const yt = require('ytdl-core')
+const yt = require('ytdl-core');
 
 let queue = {};
 var radio;
@@ -210,6 +208,16 @@ client.on("message", async message => {
   else if (command === "setMemeInterval"){
 
   }
+
+
+
+  function getMemes(){
+    config.subreddits.forEach((sub) => {
+
+    })
+  }
+
+
 
   // Music
 
