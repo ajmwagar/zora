@@ -155,21 +155,27 @@ client.on("message", async message => {
 
   // Weather
 
+  // Weather
+
   if (command === "weather") {
 
-    const city = args[0];
+    var city = args[0];
 
     if (!city) {
       return message.reply("Please provide a valid city");
     } else {
-      getJSON('http://api.apixu.com/v1/current.json?key=5d0a7d3aa80e4d5b843181446181308&q=' + city, function (error, response) {
-
-        message.channel.send("**Current Weather:**\n  Conditions: " + response.current.condition.text + "\n  Temperature: " + response.current.temp_f + "\n  Humidity: " + response.current.humidity);
+      const m = await message.channel.send("Getting Weather Data...");
+      const weather = axios.create({
+        baseURL: "http://api.apixu.com/v1/current.json?key=5d0a7d3aa80e4d5b843181446181308&q=" + city.trim(),
+        headers: {
+          Accept: "application/json"
+        }
+      });
+      weather.get("/").then(res => {
+        m.edit("Current Weather:\n  Conditions: " + res.data.current.condition.text + "\n  Temperature: " + res.data.current.temp_f + "\n  Humidity: " + res.data.current.humidity);
       })
-
     }
   }
-
   // Memes
 
   // TODO Add reddit implementation
