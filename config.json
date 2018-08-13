@@ -1,10 +1,4 @@
-{
-<<<<<<< HEAD
-    "token": "MTg-this-IzNzU3OTA5NjA-is.not-DCeFB-a.real-r4DQlO-t0ken-qerT0",
-    "prefix": "+"
+{ 
+  "token"  : "MTg-this-IzNzU3OTA5NjA-is.not-DCeFB-a.real-r4DQlO-t0ken-qerT0",
+  "prefix" : "+"
 }
-=======
-  "token": "",
-  "prefix": "!"
-}
->>>>>>> 642ded84c7a175b145f85f7e7cbabf08eb6f8ae4
