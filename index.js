@@ -21,7 +21,7 @@ client.on("ready", () => {
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity(`Serving ${client.users.size} players`);
+  client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 
 client.on("guildCreate", guild => {
@@ -59,9 +59,11 @@ client.on("message", async message => {
   // Admin
 
   if (command === "help"){
+      // Help message
+      // Lists of current commands
      let help = "\n\nHi there, I'm " + config.name + ".\n\nMy commands are:\n- `" + config.prefix + "help`: show this help menu\n- `" + config.prefix + "ban`: ban a user (admins only)\n- `" + config.prefix + "kick`: kick a user (admins and mods only)\n- `" + config.prefix + "purge`: purge a channel\n- `" + config.prefix + "ping`: Pong?\n- `" + config.prefix + "say`: say a message\n- `" + config.prefix + "joke`: Tell a joke\n\nHope I could help!\n\nKeep on fragging!"
 
-
+      // Reply to message
      message.reply(help);
 
   }
@@ -206,6 +208,8 @@ client.on("message", async message => {
 
   // Jokes
 
+  // Tell a joke using icanhazdadjoke.com (random dad jokes)
+  // Use axios to create an api
   else if (command === "joke"){
     // Tee it up
     const m = await message.channel.send("Let me think...");
