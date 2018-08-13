@@ -211,22 +211,31 @@ client.on("message", async message => {
   else if (command === "play"){
     let songUrl = args.slice(1).join(' ');
 
-
     // Get info of song
     yt.getInfo(url, (err, info) => {
-      queue[message.guild.id].songs.push(url, title: info.title, requester: message.author.username)
-    })
+      if(err) return message.channel.sendMessage('Invalid YouTube Link: ' + err);
 
-    // Check if already playing
-    if (queue[message.guild.id].playing == false){
-      queue[message.guild.id].playing = true;
-      play(queue[message.guild.id].songs.shift())
-      message.channel.send("Playing: **" queue[message.guild.id].songs.title + "**. requested by: **" + queue[message.guild.id].songs.requester + "**.")
-    }
-    // If playing add to queue
-    else {
-      message.channel.send("Added **" queue[message.guild.id].songs.title + "** to queue. requested by: **" + queue[message.guild.id].songs.requester + "**")
-    }
+      if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+      queue[message.guild.id].songs.push({url: url, title: info.title, requester: message.author.username});
+
+
+
+      // Check if already playing
+      if (queue[message.guild.id].playing == false){
+
+        queue[message.guild.id].playing = true;
+
+
+        play(queue[message.guild.id].songs.shift())
+
+        // Alert user
+        message.channel.send("Playing: **" + queue[message.guild.id].songs.title + "**. requested by: **" + queue[message.guild.id].songs.requester + "**.")
+      }
+      // If playing add to queue
+      else {
+        message.channel.send("Added **" + queue[message.guild.id].songs.title + "** to queue. requested by: **" + queue[message.guild.id].songs.requester + "**")
+      }
+    });
   }
 
   else if (command === "stop"){
@@ -245,6 +254,20 @@ client.on("message", async message => {
     message.channel.send("Skipped song.");
   }
 
+  else if (command === "join"){
+    return new Promise((resolve, reject) => {
+      const voiceChannel = message.member.voiceChannel;
+      if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t connect to your voice channel...');
+      voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
+    });
+  }
+
+  else if (command === "queue"){
+    if (queue[message.guild.id] === undefined) return message.channel.sendMessage(`Add some songs to the queue first with ${tokens.prefix}add`);
+    let tosend = [];
+    queue[message.guild.id].songs.forEach((song, i) => { tosend.push(`${i+1}. ${song.title} - Requested by: ${song.requester}`);});
+    message.channel.sendMessage(`__**${message.guild.name}'s Music Queue:**__ Currently **${tosend.length}** songs queued ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
+  }
 
   // Jokes
 
@@ -278,16 +301,16 @@ client.login(config.token);
 
 // Play next song in queue
 function play(song){
-  radio = msg.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : tokens.passes });
+  radio = message.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : tokens.passes });
 
   radio.on('end', () => {
-    collector.stop();
-    play(queue[msg.guild.id].songs.shift());
+    // collector.stop();
+    play(queue[message.guild.id].songs.shift());
   });
   radio.on('error', (err) => {
-    return msg.channel.sendMessage('error: ' + err).then(() => {
-      collector.stop();
-      play(queue[msg.guild.id].songs.shift());
+    return message.channel.sendMessage('error: ' + err).then(() => {
+      // collector.stop();
+      play(queue[message.guild.id].songs.shift());
     });
   });
 }
