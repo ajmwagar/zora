@@ -13,8 +13,10 @@ const config = require("./config.json");
 
 const axios = require('axios');
 
+const yt = require('ytdl-core')
 
-let queue = {}
+let queue = {};
+var radio;
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
@@ -58,12 +60,12 @@ client.on("message", async message => {
   // Admin
 
   if (command === "help"){
-      // Help message
-      // Lists of current commands
+    // Help message
+    // Lists of current commands
     let help = "\n\nHi there, I'm " + config.name + ".\n\nMy commands are:\n- `" + config.prefix + "help`: show this help menu\n- `" + config.prefix + "ban <user>`: ban a user (admins only)\n- `" + config.prefix + "kick <user>`: kick a user (admins and mods only)\n- `" + config.prefix + "purge <number of messages>`: purge a channel\n- `" + config.prefix + "ping`: Pong?\n- `" + config.prefix + "say <message>`: say a message\n- `" + config.prefix + "joke`: Tell a joke\n- `"+ config.prefix + "weather <city>`: Get the weather for a city\n\nHope I could help!\n\nKeep on fragging!"
 
-      // Reply to message
-     message.reply(help);
+    // Reply to message
+    message.reply(help);
   }
 
   else if(command === "ping") {
@@ -207,18 +209,40 @@ client.on("message", async message => {
   // TODO https://stackoverflow.com/questions/35347054/how-to-create-youtube-search-through-api
 
   else if (command === "play"){
-    // let song = args.slice(1).join(' ');
+    let songUrl = args.slice(1).join(' ');
 
-    // radio = msg.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : tokens.passes });
 
+    // Get info of song
+    yt.getInfo(url, (err, info) => {
+      queue[message.guild.id].songs.push(url, title: info.title, requester: message.author.username)
+    })
+
+    // Check if already playing
+    if (queue[message.guild.id].playing == false){
+      queue[message.guild.id].playing = true;
+      play(queue[message.guild.id].songs.shift())
+      message.channel.send("Playing: **" queue[message.guild.id].songs.title + "**. requested by: **" + queue[message.guild.id].songs.requester + "**.")
+    }
+    // If playing add to queue
+    else {
+      message.channel.send("Added **" queue[message.guild.id].songs.title + "** to queue. requested by: **" + queue[message.guild.id].songs.requester + "**")
+    }
   }
 
   else if (command === "stop"){
+    // Stop playing
+    radio.pause()
+    queue[message.guild.id].playing = false;
+    queue[message.guild.id].songs = [];
 
+    // Alert user of action
+    message.channel.send("Music stopped and queue cleared.");
   }
 
   else if (command === "skip"){
-
+    // Skip song
+    radio.end()
+    message.channel.send("Skipped song.");
   }
 
 
@@ -232,10 +256,10 @@ client.on("message", async message => {
 
     // Get the joke
     const jokeApi = axios.create( {
-        baseURL: "https://icanhazdadjoke.com",
-        headers: {
-            Accept: "application/json"
-        }
+      baseURL: "https://icanhazdadjoke.com",
+      headers: {
+        Accept: "application/json"
+      }
     } );
 
     // respond
@@ -248,3 +272,33 @@ client.on("message", async message => {
 });
 
 client.login(config.token);
+
+
+// Music
+
+// Play next song in queue
+function play(song){
+  radio = msg.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : tokens.passes });
+
+  radio.on('end', () => {
+    collector.stop();
+    play(queue[msg.guild.id].songs.shift());
+  });
+  radio.on('error', (err) => {
+    return msg.channel.sendMessage('error: ' + err).then(() => {
+      collector.stop();
+      play(queue[msg.guild.id].songs.shift());
+    });
+  });
+}
+
+// Add song to queue
+function add(){
+
+}
+
+// Stop playing
+function stop(){
+
+}
+
