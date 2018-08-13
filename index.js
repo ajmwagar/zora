@@ -60,11 +60,10 @@ client.on("message", async message => {
   if (command === "help"){
       // Help message
       // Lists of current commands
-     let help = "\n\nHi there, I'm " + config.name + ".\n\nMy commands are:\n- `" + config.prefix + "help`: show this help menu\n- `" + config.prefix + "ban`: ban a user (admins only)\n- `" + config.prefix + "kick`: kick a user (admins and mods only)\n- `" + config.prefix + "purge`: purge a channel\n- `" + config.prefix + "ping`: Pong?\n- `" + config.prefix + "say`: say a message\n- `" + config.prefix + "joke`: Tell a joke\n- `"+ config.prefix + "weather`: Get the weather for a city\n\nHope I could help!\n\nKeep on fragging!"
+    let help = "\n\nHi there, I'm " + config.name + ".\n\nMy commands are:\n- `" + config.prefix + "help`: show this help menu\n- `" + config.prefix + "ban <user>`: ban a user (admins only)\n- `" + config.prefix + "kick <user>`: kick a user (admins and mods only)\n- `" + config.prefix + "purge <number of messages>`: purge a channel\n- `" + config.prefix + "ping`: Pong?\n- `" + config.prefix + "say <message>`: say a message\n- `" + config.prefix + "joke`: Tell a joke\n- `"+ config.prefix + "weather <city>`: Get the weather for a city\n\nHope I could help!\n\nKeep on fragging!"
 
       // Reply to message
      message.reply(help);
-
   }
 
   else if(command === "ping") {
