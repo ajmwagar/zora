@@ -1,7 +1,7 @@
 {
   "name": "SeaBot",
   "token": "NDc4NDU5NTQxNDYyMTg4MDMz.DlLAjw.NKxhcf7qKj4-aiZGGK-ZfhauCrk",
-  "prefix": "!",
+  "prefix": ".",
   "reddit": {
     "subreddits": [],
     "channel": "",

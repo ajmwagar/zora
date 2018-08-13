@@ -173,8 +173,9 @@ client.on("message", async message => {
   // Memes
 
   // TODO Add reddit implementation
-  else if (command === "addSub"){
-    let sub = args.slice(1).join(' ');
+  else if (command === "addsub"){
+    let sub = args[0];
+
     if (sub){
       return message.reply("Added " + sub);
     }
@@ -185,8 +186,8 @@ client.on("message", async message => {
 
   }
 
-  else if (command === "removeSub"){
-    let sub = args.slice(1).join(' ');
+  else if (command === "removesub"){
+    let sub = args[0];
     if (sub){
       return message.reply("Removed " + sub);
     }
@@ -209,11 +210,12 @@ client.on("message", async message => {
   // TODO https://stackoverflow.com/questions/35347054/how-to-create-youtube-search-through-api
 
   else if (command === "play"){
-    let songUrl = args.slice(1).join(' ');
+    let url = args[0];
 
     // Get info of song
     yt.getInfo(url, (err, info) => {
-      if(err) return message.channel.sendMessage('Invalid YouTube Link: ' + err);
+      message.channel.send(url)
+      if(err) return message.channel.send('Invalid YouTube Link: ' + err);
 
       if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
       queue[message.guild.id].songs.push({url: url, title: info.title, requester: message.author.username});
@@ -263,10 +265,10 @@ client.on("message", async message => {
   }
 
   else if (command === "queue"){
-    if (queue[message.guild.id] === undefined) return message.channel.sendMessage(`Add some songs to the queue first with ${tokens.prefix}add`);
+    if (queue[message.guild.id] === undefined) return message.channel.send(`Add some songs to the queue first with ${config.prefix}add`);
     let tosend = [];
     queue[message.guild.id].songs.forEach((song, i) => { tosend.push(`${i+1}. ${song.title} - Requested by: ${song.requester}`);});
-    message.channel.sendMessage(`__**${message.guild.name}'s Music Queue:**__ Currently **${tosend.length}** songs queued ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
+    message.channel.send(`__**${message.guild.name}'s Music Queue:**__ Currently **${tosend.length}** songs queued ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
   }
 
   // Jokes
@@ -290,38 +292,39 @@ client.on("message", async message => {
   }
 
 
+  // Music
+
+  // Play next song in queue
+  function play(song){
+    radio = message.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : config.passes });
+
+    radio.on('end', () => {
+      // collector.stop();
+      play(queue[message.guild.id].songs.shift());
+    });
+
+    radio.on('error', (err) => {
+      return message.channel.send('error: ' + err).then(() => {
+        // collector.stop();
+        play(queue[message.guild.id].songs.shift());
+      });
+    });
+  }
+
+  // Add song to queue
+  function add(){
+
+  }
+
+  // Stop playing
+  function stop(){
+
+  }
+
 
 
 });
 
 client.login(config.token);
 
-
-// Music
-
-// Play next song in queue
-function play(song){
-  radio = message.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : tokens.passes });
-
-  radio.on('end', () => {
-    // collector.stop();
-    play(queue[message.guild.id].songs.shift());
-  });
-  radio.on('error', (err) => {
-    return message.channel.sendMessage('error: ' + err).then(() => {
-      // collector.stop();
-      play(queue[message.guild.id].songs.shift());
-    });
-  });
-}
-
-// Add song to queue
-function add(){
-
-}
-
-// Stop playing
-function stop(){
-
-}
 
