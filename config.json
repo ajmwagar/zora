@@ -1,13 +1,1 @@
-{
-  "name": "SeaBot",
-  "token": "NDc4NDU5NTQxNDYyMTg4MDMz.DlLAjw.NKxhcf7qKj4-aiZGGK-ZfhauCrk",
-  "prefix": ".",
-  "reddit": {
-    "subreddits": [],
-    "channel": "",
-    "interval": 0,
-    "username": "",
-    "password":""
-  }
-
-}
+{"name":"SeaBot","token":"NDc4NDU5NTQxNDYyMTg4MDMz.DlLAjw.NKxhcf7qKj4-aiZGGK-ZfhauCrk","prefix":".","reddit":{"subreddits":["/r/dankmems","jokes"],"posts":"","channel":"","interval":1,"username":"","password":""}}
