@@ -4,34 +4,75 @@ async function bot(client, message, command, args){
   if (command === "help"){
     // Help message
     // Lists of current commands
-    let help = [
-      "",
-      "",
-      "Hi there, I'm " + config.name + ".",
-      "",
-      "My commands are:",
-      "- `" + config.prefix + "help`: show this help menu",
-      "- `" + config.prefix + "ban <user>`: ban a user (admins only)",
-      "- `" + config.prefix + "kick <user>`: kick a user (admins and mods only)",
-      "- `" + config.prefix + "purge <number of messages>`: purge a channel",
-      "- `" + config.prefix + "ping`: Pong?",
-      "- `" + config.prefix + "say <message>`: say a message",
-      "- `" + config.prefix + "joke`: Tell a joke",
-      "- `" + config.prefix + "weather <city>`: Get the weather for a city",
-      "- `" + config.prefix + "setmemechannel <channel>`: Set channel for dumbing memes",
-      "- `" + config.prefix + "setmemeinterval <interval>`: Set interval for dumbing memes (in hours)",
-      "- `" + config.prefix + "addsub <subreddit name>`: add a subreddit for getting memes (/r/ format)",
-      "- `" + config.prefix + "removesub <subreddit name>`: remove a subreddit for getting memes (/r/ format)",
-      "- `" + config.prefix + "memes`: get memes now",
-      "",
-      "Hope I could help!",
-      "",
-      "Keep on fragging!"
-    ].join("\n")
-
-    // Reply to message
-    message.reply(help);
-  }
+    message.channel.send({embed: {
+      color: 3447003,
+      author: {
+        name: client.user.username,
+        icon_url: client.user.avatarURL
+      },
+      title: "Commands for " + client.user.username,
+      url: "https://github.com/ajmwagar/discordbot",
+      description: "My prefix is " + config.prefix,
+      fields: [{
+          name: config.prefix + "help",
+          value: "show this help menu"
+        },
+        {
+          name: config.prefix + "ban <user>",
+          value: "ban a user (admins only)"
+        },
+        {
+          name: config.prefix + "kick <user>",
+          value: "kick a user (admins and mods only)"
+        },
+        {
+          name: config.prefix + "purge <number of messages>",
+          value: "purge a channel"
+        },
+        {
+          name: config.prefix + "ping",
+          value: "Pong?"
+        },
+        {
+          name: config.prefix + "say <message>",
+          value: "say a message"
+        },
+        {
+          name: config.prefix + "joke",
+          value: "Tell a joke"
+        },
+        {
+          name: config.prefix + "weather <city>",
+          value: "Get the weather for a city"
+        },
+        {
+          name: config.prefix + "setmemechannel <channel>",
+          value: "Set channel for dumbing memes"
+        },
+        {
+          name: config.prefix + "setmemeinterval <interval>",
+          value: "Set interval for dumbing memes (in hours)"
+        },
+        {
+          name: config.prefix + "addsub <subreddit name>",
+          value: "add a subreddit for getting memes (/r/ format)"
+        },
+        {
+          name: config.prefix + "removesub <subreddit name>",
+          value: "remove a subreddit for getting memes (/r/ format)"
+        },
+        {
+          name: config.prefix + "memes",
+          value: "gets all the memes from Reddit"
+        }
+      ],
+      timestamp: new Date(),
+      footer: {
+        icon_url: client.user.avatarURL,
+        text: "© Seattle Discord Alliance"
+      }
+    }
+  });
 
   else if(command === "ping") {
     // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
