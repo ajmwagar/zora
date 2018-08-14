@@ -17,7 +17,7 @@ const yt = require('ytdl-core');
 let queue = {};
 var radio;
 
-function getMemes(){
+function getMemes(message){
   config.reddit.subreddits.forEach((sub) => {
     // Get the top posts based on config variable
     const reddit = axios.create( {
@@ -43,7 +43,7 @@ function getMemes(){
   })
 }
 
-var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
+// var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
@@ -328,7 +328,7 @@ client.on("message", async message => {
   }
   else if (command === "getmemes"){
     message.reply("Enjoy ;)");
-    getMemes();
+    getMemes(message);
   }
 
 
