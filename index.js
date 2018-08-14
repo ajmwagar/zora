@@ -18,12 +18,28 @@ let queue = {};
 var radio;
 
 function getMemes(){
-  if (config.subreddits){
-
-    config.subreddits.forEach((sub) => {
-
+  config.reddit.subreddits.forEach((sub) => {
+    // Get the top posts based on config variable
+    const reddit = axios.create( {
+      baseURL: 'https://www.reddit.com/r/' + sub + '/top/.json?t=hour',
+      headers: {
+        Accept: "application/json"
+      }
+    } );
+    // respond
+    reddit.get("/").then(res => {
+      res.data.children.forEach((post) => {
+        const embed = new Discord.RichEmbed()
+          .setTitle("Post Title" + post.data.title)
+          .setAuthor("Reddit", "https://i.imgur.com/XXMF5Ee.png%22")
+          .setColor(#ff5323)
+          .setImage(post.data.url)
+          .setThumbnail("https://i.imgur.com/XXMF5Ee.png%22")
+          .setURL(post.data.permalink)
+        message.channel.send({embed});
+      });
     })
-  }
+  })
 }
 
 var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
