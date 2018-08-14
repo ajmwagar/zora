@@ -66,6 +66,10 @@ client.on("message", async message => {
 
   admin.bot(client, message, command, args);
 
+  // Weather 
+  
+  weather.bot(client, message, command, args);
+
   // Memes
 
   memes.bot(message, command, args);
@@ -74,9 +78,6 @@ client.on("message", async message => {
 
   radio.bot(client, message, command, args);
 
-  // Weather 
-  
-  weather.bot(client, message, command, args);
 
   // Jokes
 

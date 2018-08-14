@@ -31,11 +31,11 @@ async function bot(client, message, command, args){
             message.channel.sendMessage('resumed').then(() => {dispatcher.resume();});
           } else if (m.content.startsWith(config.prefix + 'skip')){
             message.channel.sendMessage('skipped').then(() => {dispatcher.end();});
-          } else if (m.content.startsWith('volume+')){
+          } else if (m.content.startsWith(config.prefix + 'volume+')){
             if (Math.round(dispatcher.volume*50) >= 100) return message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
             dispatcher.setVolume(Math.min((dispatcher.volume*50 + (2*(m.content.split('+').length-1)))/50,2));
             message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
-          } else if (m.content.startsWith('volume-')){
+          } else if (m.content.startsWith(config.prefix + 'volume-')){
             if (Math.round(dispatcher.volume*50) <= 0) return message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
             dispatcher.setVolume(Math.max((dispatcher.volume*50 - (2*(m.content.split('-').length-1)))/50,0));
             message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
