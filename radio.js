@@ -1,102 +1,94 @@
 const config = require("./config.json");
 const yt = require('ytdl-core');
+const opus = require('opusscript');
 
 let queue = {};
 var radio;
 
-async function bot(message, command, args){
+async function bot(client, message, command, args){
+  const commands = {
+    'play': (message) => {
+      if (queue[message.guild.id] === undefined) return message.channel.sendMessage(`Add some songs to the queue first with ${config.prefix}add`);
+      if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
+      if (queue[message.guild.id].playing) return message.channel.sendMessage('Already Playing');
+      let dispatcher;
+      queue[message.guild.id].playing = true;
 
-  if (command === "play"){
-    let url = args[0];
-
-    // Get info of song
-    yt.getInfo(url, (err, info) => {
-      message.channel.send(url)
-      if(err) return message.channel.send('Invalid YouTube Link: ' + err);
-
-      if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-      queue[message.guild.id].songs.push({url: url, title: info.title, requester: message.author.username});
-
-
-
-      // Check if already playing
-      if (queue[message.guild.id].playing == false){
-
-        queue[message.guild.id].playing = true;
-
-
-        play(queue[message.guild.id].songs.shift())
-
-        // Alert user
-        message.channel.send("Playing: **" + queue[message.guild.id].songs.title + "**. requested by: **" + queue[message.guild.id].songs.requester + "**.")
-      }
-      // If playing add to queue
-      else {
-        message.channel.send("Added **" + queue[message.guild.id].songs.title + "** to queue. requested by: **" + queue[message.guild.id].songs.requester + "**")
-      }
-    });
-  }
-
-  else if (command === "stop"){
-    // Stop playing
-    radio.pause()
-    queue[message.guild.id].playing = false;
-    queue[message.guild.id].songs = [];
-
-    // Alert user of action
-    message.channel.send("Music stopped and queue cleared.");
-  }
-
-  else if (command === "skip"){
-    // Skip song
-    radio.end()
-    message.channel.send("Skipped song.");
-  }
-
-  else if (command === "join"){
-    return new Promise((resolve, reject) => {
-      const voiceChannel = message.member.voiceChannel;
-      if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t connect to your voice channel...');
-      voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
-    });
-  }
-
-  else if (command === "queue"){
-    if (queue[message.guild.id] === undefined) return message.channel.send(`Add some songs to the queue first with ${config.prefix}add`);
-    let tosend = [];
-    queue[message.guild.id].songs.forEach((song, i) => { tosend.push(`${i+1}. ${song.title} - Requested by: ${song.requester}`);});
-    message.channel.send(`__**${message.guild.name}'s Music Queue:**__ Currently **${tosend.length}** songs queued ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
-  }
-}
-
-  // Music
-
-  // Play next song in queue
-  function play(song){
-    radio = message.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : config.passes });
-
-    radio.on('end', () => {
-      // collector.stop();
-      play(queue[message.guild.id].songs.shift());
-    });
-
-    radio.on('error', (err) => {
-      return message.channel.send('error: ' + err).then(() => {
-        // collector.stop();
-        play(queue[message.guild.id].songs.shift());
+      console.log(queue);
+      (function play(song) {
+        console.log(song);
+        if (song === undefined) return message.channel.sendMessage('Queue is empty').then(() => {
+          queue[message.guild.id].playing = false;
+          message.member.voiceChannel.leave();
+        });
+        message.channel.sendMessage(`Playing: **${song.title}** as requested by: **${song.requester}**`);
+        dispatcher = message.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : config.passes });
+        let collector = message.channel.createCollector(m => m);
+        collector.on('message', m => {
+          if (m.content.startsWith(config.prefix + 'pause')) {
+            message.channel.sendMessage('paused').then(() => {dispatcher.pause();});
+          } else if (m.content.startsWith(config.prefix + 'resume')){
+            message.channel.sendMessage('resumed').then(() => {dispatcher.resume();});
+          } else if (m.content.startsWith(config.prefix + 'skip')){
+            message.channel.sendMessage('skipped').then(() => {dispatcher.end();});
+          } else if (m.content.startsWith('volume+')){
+            if (Math.round(dispatcher.volume*50) >= 100) return message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
+            dispatcher.setVolume(Math.min((dispatcher.volume*50 + (2*(m.content.split('+').length-1)))/50,2));
+            message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
+          } else if (m.content.startsWith('volume-')){
+            if (Math.round(dispatcher.volume*50) <= 0) return message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
+            dispatcher.setVolume(Math.max((dispatcher.volume*50 - (2*(m.content.split('-').length-1)))/50,0));
+            message.channel.sendMessage(`Volume: ${Math.round(dispatcher.volume*50)}%`);
+          } else if (m.content.startsWith(config.prefix + 'time')){
+            message.channel.sendMessage(`time: ${Math.floor(dispatcher.time / 60000)}:${Math.floor((dispatcher.time % 60000)/1000) <10 ? '0'+Math.floor((dispatcher.time % 60000)/1000) : Math.floor((dispatcher.time % 60000)/1000)}`);
+          }
+        });
+        dispatcher.on('end', () => {
+          collector.stop();
+          play(queue[message.guild.id].songs.shift());
+        });
+        dispatcher.on('error', (err) => {
+          return message.channel.sendMessage('error: ' + err).then(() => {
+            collector.stop();
+            play(queue[message.guild.id].songs.shift());
+          });
+        });
+      })(queue[message.guild.id].songs.shift());
+    },
+    'join': (message) => {
+      return new Promise((resolve, reject) => {
+        const voiceChannel = message.member.voiceChannel;
+        if (!voiceChannel || voiceChannel.type !== 'voice') return message.reply('I couldn\'t connect to your voice channel...');
+        voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
       });
-    });
-  }
+    },
+    'add': (message) => {
+      let url = message.content.split(' ')[1];
+      if (url == '' || url === undefined) return message.channel.sendMessage(`You must add a YouTube video url, or id after ${config.prefix}add`);
+      yt.getInfo(url, (err, info) => {
+        if(err) return message.channel.sendMessage('Invalid YouTube Link: ' + err);
+        if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+        queue[message.guild.id].songs.push({url: url, title: info.title, requester: message.author.username});
+        message.channel.sendMessage(`added **${info.title}** to the queue`);
+      });
+    },
+    'queue': (message) => {
+      if (queue[message.guild.id] === undefined) return message.channel.sendMessage(`Add some songs to the queue first with ${config.prefix}add`);
+      let tosend = [];
+      queue[message.guild.id].songs.forEach((song, i) => { tosend.push(`${i+1}. ${song.title} - Requested by: ${song.requester}`);});
+      message.channel.sendMessage(`__**${message.guild.name}'s Music Queue:**__ Currently **${tosend.length}** songs queued ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
+    },
+    'help': (message) => {
+      let tosend = ['```xl', config.prefix + 'join : "Join Voice channel of message sender"',	config.prefix + 'add : "Add a valid youtube link to the queue"', config.prefix + 'queue : "Shows the current queue, up to 15 songs shown."', config.prefix + 'play : "Play the music queue if already joined to a voice channel"', '', 'the following commands only function while the play command is running:'.toUpperCase(), config.prefix + 'pause : "pauses the music"',	config.prefix + 'resume : "resumes the music"', config.prefix + 'skip : "skips the playing song"', config.prefix + 'time : "Shows the playtime of the song."',	'volume+(+++) : "increases volume by 2%/+"',	'volume-(---) : "decreases volume by 2%/-"',	'```'];
+      message.channel.sendMessage(tosend.join('\n'));
+    },
+    'reboot': (message) => {
+      if (message.author.id == config.adminID) process.exit(); //Requires a node module like Forever to work.
+    }
+  };
 
-  // Add song to queue
-  function add(){
-
-  }
-
-  // Stop playing
-  function stop(){
-
-  }
+  if (commands.hasOwnProperty(message.content.toLowerCase().slice(config.prefix.length).split(' ')[0])) commands[message.content.toLowerCase().slice(config.prefix.length).split(' ')[0]](message);
+}
 
 
 module.exports = {bot};
