@@ -45,6 +45,29 @@ async function bot(client, message, command, args) {
           {
             name: config.prefix + "weather <city>",
             value: "Get the weather for a city"
+          }
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.channel.send({
+      embed: {
+        color: 0xff5323,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Meme Commands for " + client.user.username,
+        url: "https://github.com/ajmwagar/discordbot",
+        description: "My prefix is " + config.prefix,
+        fields: [
+          {
+            name: config.prefix + "subs",
+            value: "Lists subscribed subreddits."
           },
           {
             name: config.prefix + "setmemechannel <channel>",

@@ -19,7 +19,7 @@ function getMemes(client, message){
         if (post.data.post_hint == "image"){
           const embed = new Discord.RichEmbed()
             .setTitle(post.data.title)
-            .setAuthor("Phoenix - Source: Reddit", client.user.avatarURL)
+            .setAuthor(config.name + " - Source: Reddit", client.user.avatarURL)
             .setColor(0xff5323)
             .setDescription("From: " + post.data.subreddit_name_prefixed)
             .setImage(post.data.url)
@@ -34,8 +34,28 @@ function getMemes(client, message){
 }
 
 async function bot(client, message, command, args){
+  if (command === "subs"){
+    var embed = new Discord.RichEmbed()
+      .setTitle("Subrcribed Subreddits")
+      .setAuthor(config.name, client.user.avatarURL)
+      .setColor(0xff5323)
+      .setDescription("Currently Subrcribed to " + config.reddit.subreddits.length + " subreddits.")
+      .setThumbnail("https://i.imgur.com/XXMF5Ee.png")
+    message.channel.send({embed})
 
-  if (command === "addsub"){
+    config.reddit.subreddits.forEach((sub) => {
+      var embed = new Discord.RichEmbed()
+        .setTitle(sub)
+        .setAuthor(config.name, client.user.avatarURL)
+        .setColor(0xff5323)
+        .setDescription(sub)
+        .setThumbnail("https://i.imgur.com/XXMF5Ee.png")
+      message.channel.send({embed})
+
+    })
+
+  }
+  else if (command === "addsub"){
     var sub = args[0].trim()
     if (sub.includes('r/')){
       sub = sub.split('r/')[1].trim();
