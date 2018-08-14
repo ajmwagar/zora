@@ -7,7 +7,7 @@ function getMemes(message){
   config.reddit.subreddits.forEach((sub) => {
     // Get the top posts based on config variable
     const reddit = axios.create( {
-      baseURL: 'https://www.reddit.com/r/' + sub + '/top/.json?t=hour',
+      baseURL: 'https://www.reddit.com/r/' + sub + '/hot/.json?t=hour',
       headers: {
         Accept: "application/json"
       }
