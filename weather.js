@@ -23,16 +23,16 @@ async function bot(client, message, command, args){
           color: 3447003,
           author: {
             name: "Weather",
-            icon_url: res.data.current.condition.icon
+            icon_url: "https:" + res.data.current.condition.icon
           },
           title: "Current Conditions:",
           fields: [{
             name: "Temperature:",
-            value: res.data.current.temp_f
+            value: res.data.current.temp_f.toString()
           },
             {
               name: "Humidity",
-              value: res.data.current.humidity
+              value: res.data.current.humidity.toString()
             }
           ],
           timestamp: new Date(),
