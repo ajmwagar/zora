@@ -1,9 +1,9 @@
-const Discord = require("discord.js");
+sconst Discord = require("discord.js");
 const axios = require('axios');
 
 const config = require("./config.json");
 
-async function bot(message, command, args){
+async function bot(client, message, command, args){
   if (command === "weather") {
 
     var city = args[0];
@@ -20,27 +20,27 @@ async function bot(message, command, args){
       });
       weather.get("/").then(res => {
         message.channel.send({embed: {
-            color: 3447003,
-            author: {
-              name: "Weather",
-              icon_url: res.data.current.condition.icon
-            },
-            title: "Current Conditions:",
-            fields: [{
-                name: "Temperature:",
-                value: res.data.current.temp_f
-              },
-              {
-                name: "Humidity",
-                value: res.data.current.humidity
-              }
-            ],
-            timestamp: new Date(),
-            footer: {
-              icon_url: client.user.avatarURL,
-              text: "© " + message.guild
+          color: 3447003,
+          author: {
+            name: "Weather",
+            icon_url: res.data.current.condition.icon
+          },
+          title: "Current Conditions:",
+          fields: [{
+            name: "Temperature:",
+            value: res.data.current.temp_f
+          },
+            {
+              name: "Humidity",
+              value: res.data.current.humidity
             }
+          ],
+          timestamp: new Date(),
+          footer: {
+            icon_url: client.user.avatarURL,
+            text: "© " + message.guild
           }
+        }
         });
       })
     }

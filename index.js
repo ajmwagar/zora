@@ -17,6 +17,7 @@ const axios = require('axios');
 const admin = require('./admin');
 const memes = require('./reddit');
 const radio = require('./radio');
+const weather = require('./weather');
 
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
@@ -72,6 +73,10 @@ client.on("message", async message => {
   // Music
 
   radio.bot(client, message, command, args);
+
+  // Weather 
+  
+  weather.bot(client, message, command, args);
 
   // Jokes
 
