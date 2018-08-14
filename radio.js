@@ -190,14 +190,6 @@ async function bot(client, message, command, args) {
         });
       }
       let tosend = [];
-      queue[message.guild.id].songs.forEach((song, i) => {
-        message.channel.send({
-          embed: {
-            color: 3447003,
-            description: `${i+1}. ${song.title} - Requested by: ${song.requester}`
-          }
-        });
-      });
       message.channel.send({
         embed: {
           color: 3447003,
@@ -209,7 +201,7 @@ async function bot(client, message, command, args) {
           url: "https://github.com/ajmwagar/discordbot",
           fields: [{
             name: "Songs Queued [Only next 15 shown]",
-            value: `${tosend.length}`
+            value: queue[message.guild.id].songs.length
           }],
           timestamp: new Date(),
           footer: {
@@ -217,6 +209,14 @@ async function bot(client, message, command, args) {
             text: "© Example"
           }
         }
+      });
+      queue[message.guild.id].songs.forEach((song, i) => {
+        message.channel.send({
+          embed: {
+            color: 3447003,
+            description: `${i+1}. ${song.title} - Requested by: **${song.requester}**`
+          }
+        });
       });
     },
     'reboot': (message) => {
