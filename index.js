@@ -28,11 +28,12 @@ function getMemes(){
     } );
     // respond
     reddit.get("/").then(res => {
-      res.data.children.forEach((post) => {
+      console.log(res.data.data.children);
+      res.data.data.children.forEach((post) => {
         const embed = new Discord.RichEmbed()
-          .setTitle("Post Title" + post.data.title)
+          .setTitle("Post Title: " + post.data.title)
           .setAuthor("Reddit", "https://i.imgur.com/XXMF5Ee.png%22")
-          .setColor(#ff5323)
+          .setColor('#ff5323')
           .setImage(post.data.url)
           .setThumbnail("https://i.imgur.com/XXMF5Ee.png%22")
           .setURL(post.data.permalink)
