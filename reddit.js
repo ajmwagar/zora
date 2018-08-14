@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("./config.json");
 const axios = require('axios');
@@ -13,16 +14,23 @@ function getMemes(message){
     } );
     // respond
     reddit.get("/").then(res => {
-      console.log(res.data.data.children);
+      // console.log(res.data.data.children);
       res.data.data.children.forEach((post) => {
-        const embed = new Discord.RichEmbed()
-          .setTitle("Post Title: " + post.data.title)
-          .setAuthor("Reddit", "https://i.imgur.com/XXMF5Ee.png%22")
-          .setColor('#ff5323')
-          .setImage(post.data.url)
-          .setThumbnail("https://i.imgur.com/XXMF5Ee.png%22")
-          .setURL(post.data.permalink)
-        message.channel.send({embed});
+        if (post.data.post_hint == "image"){
+          const embed = new Discord.RichEmbed()
+            .setTitle(post.data.title)
+            .setAuthor("Reddit", "https://i.imgur.com/XXMF5Ee.png")
+            .setColor(0xff5323)
+            .setDescription("From: " + post.data.subreddit_name_prefixed)
+            .setImage(post.data.url)
+            .setThumbnail("https://i.imgur.com/XXMF5Ee.png")
+          /*
+           * Takes a Date object, defaults to current date.
+           */
+            .setTimestamp()
+            .setURL("https://reddit.com" + post.data.permalink)
+          message.channel.send({embed});
+        }
       });
     })
   })
