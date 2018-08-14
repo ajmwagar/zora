@@ -199,10 +199,7 @@ async function bot(client, message, command, args) {
           },
           title: `Music queue for **${message.guild.name}**`,
           url: "https://github.com/ajmwagar/discordbot",
-          fields: [{
-            name: "Songs Queued [Only next 15 shown]",
-            value: queue[message.guild.id].songs.length
-          }],
+          description: 'Songs Queued **' + queue[message.guild.id].songs.length + '** [Only next 15 shown]',
           timestamp: new Date(),
           footer: {
             icon_url: client.user.avatarURL,
