@@ -39,14 +39,18 @@ function getMemes(message){
 async function bot(message, command, args){
 
   if (command === "addsub"){
-    let sub = args[0].trim();
+    var sub = args[0].trim()
+    if (sub.includes('r/')){
+      sub = sub.split('r/')[1].trim();
+    }
 
     if (sub){
+
       config.reddit.subreddits.push(sub);
 
       fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
 
-      return message.reply("Added " + sub);
+      return message.reply("Added /r/" + sub);
     }
     else {
 
@@ -56,19 +60,23 @@ async function bot(message, command, args){
   }
 
   else if (command === "removesub"){
-    let sub = args[0].trim();
+    var sub = args[0].trim()
+    if (sub.includes('r/')){
+      sub = sub.split('r/')[1].trim();
+    }
+
     if (sub){
       // Get index of sub
-      var index = config.subreddits.indexOf(sub)
+      var index = config.reddit.subreddits.indexOf(sub)
 
       // Check if sub is in list
       if (index > -1){
         // Remove sub 
-        config.subreddits.splice(index, 1);
+        config.reddit.subreddits.splice(index, 1);
 
         fs.writeFile("config.json", JSON.stringify(config), (err) => {})
 
-        return message.reply("Removed " + sub);
+        return message.reply("Removed r/" + sub);
       }
       else {
         return message.reply(sub + " not found.");
@@ -135,7 +143,7 @@ async function bot(message, command, args){
 
     }
   }
-  else if (command === "getmemes"){
+  else if (command === "memes"){
     message.reply("Enjoy ;)");
     getMemes(message);
   }

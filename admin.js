@@ -22,7 +22,7 @@ async function bot(client, message, command, args){
       "- `" + config.prefix + "setmemeinterval <interval>`: Set interval for dumbing memes (in hours)",
       "- `" + config.prefix + "addsub <subreddit name>`: add a subreddit for getting memes (/r/ format)",
       "- `" + config.prefix + "removesub <subreddit name>`: remove a subreddit for getting memes (/r/ format)",
-      "- `" + config.prefix + "getmemes`: getmemes now",
+      "- `" + config.prefix + "memes`: get memes now",
       "",
       "Hope I could help!",
       "",
