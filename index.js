@@ -73,29 +73,6 @@ client.on("message", async message => {
 
   radio.bot(message, command, args);
 
-
-  // Weather
-
-  if (command === "weather") {
-
-    var city = args[0];
-
-    if (!city) {
-      return message.reply("Please provide a valid city");
-    } else {
-      const m = await message.channel.send("Getting Weather Data...");
-      const weather = axios.create({
-        baseURL: "http://api.apixu.com/v1/current.json?key=5d0a7d3aa80e4d5b843181446181308&q=" + city.trim(),
-        headers: {
-          Accept: "application/json"
-        }
-      });
-      weather.get("/").then(res => {
-        m.edit("Current Weather:\n  Conditions: " + res.data.current.condition.text + "\n  Temperature: " + res.data.current.temp_f + "\n  Humidity: " + res.data.current.humidity);
-      })
-    }
-  }
-
   // Jokes
 
   // Tell a joke using icanhazdadjoke.com (random dad jokes)

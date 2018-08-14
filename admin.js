@@ -69,7 +69,7 @@ async function bot(client, message, command, args){
       timestamp: new Date(),
       footer: {
         icon_url: client.user.avatarURL,
-        text: "© Seattle Discord Alliance"
+        text: "© " + message.guild
       }
     }
     });

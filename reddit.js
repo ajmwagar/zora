@@ -24,9 +24,6 @@ function getMemes(message){
             .setDescription("From: " + post.data.subreddit_name_prefixed)
             .setImage(post.data.url)
             .setThumbnail("https://i.imgur.com/XXMF5Ee.png")
-          /*
-           * Takes a Date object, defaults to current date.
-           */
             .setTimestamp()
             .setURL("https://reddit.com" + post.data.permalink)
           message.channel.send({embed});
