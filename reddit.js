@@ -1,0 +1,136 @@
+const fs = require('fs');
+const config = require("./config.json");
+const axios = require('axios');
+
+function getMemes(message){
+  config.reddit.subreddits.forEach((sub) => {
+    // Get the top posts based on config variable
+    const reddit = axios.create( {
+      baseURL: 'https://www.reddit.com/r/' + sub + '/top/.json?t=hour',
+      headers: {
+        Accept: "application/json"
+      }
+    } );
+    // respond
+    reddit.get("/").then(res => {
+      console.log(res.data.data.children);
+      res.data.data.children.forEach((post) => {
+        const embed = new Discord.RichEmbed()
+          .setTitle("Post Title: " + post.data.title)
+          .setAuthor("Reddit", "https://i.imgur.com/XXMF5Ee.png%22")
+          .setColor('#ff5323')
+          .setImage(post.data.url)
+          .setThumbnail("https://i.imgur.com/XXMF5Ee.png%22")
+          .setURL(post.data.permalink)
+        message.channel.send({embed});
+      });
+    })
+  })
+}
+
+async function bot(message, command, args){
+
+  if (command === "addsub"){
+    let sub = args[0].trim();
+
+    if (sub){
+      config.reddit.subreddits.push(sub);
+
+      fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
+
+      return message.reply("Added " + sub);
+    }
+    else {
+
+      return message.reply("No Subreddit provided.");
+    }
+
+  }
+
+  else if (command === "removesub"){
+    let sub = args[0].trim();
+    if (sub){
+      // Get index of sub
+      var index = config.subreddits.indexOf(sub)
+
+      // Check if sub is in list
+      if (index > -1){
+        // Remove sub 
+        config.subreddits.splice(index, 1);
+
+        fs.writeFile("config.json", JSON.stringify(config), (err) => {})
+
+        return message.reply("Removed " + sub);
+      }
+      else {
+        return message.reply(sub + " not found.");
+      }
+
+    }
+    else {
+      return message.reply("No Subreddit provided.");
+
+    }
+  }
+
+  else if (command === "setmemechannel"){
+    if(!message.member.roles.some(r=>["Owner", "Administrator"].includes(r.name)) )
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+    let channel = args[0].trim();
+
+    if (channel){
+
+      config.reddit.channel = channel;
+
+      fs.writeFile("config.json", JSON.stringify(config), (err) => {})
+
+      return message.reply("Set " + channel + " as meme channel");
+    }
+    else {
+      return message.reply("No Subreddit provided.");
+
+    }
+
+  }
+
+  else if (command === "setmemeinterval"){
+    if(!message.member.roles.some(r=>["Owner", "Administrator"].includes(r.name)) )
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+    var interval;
+    try {
+      interval = parseInt(args[0].trim())
+    }
+    catch(e){
+      if (e)
+        return message.reply("Please provid a valid interval (a number)");
+    }
+    finally{
+
+      if (interval){
+
+
+        config.reddit.interval = interval;
+
+        fs.writeFile("config.json", JSON.stringify(config), (err) => { /*message.channel.send("Error: " + err)*/})
+
+        clearInterval(memeInterval);
+
+        memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
+
+        return message.reply("Updated interval to: " + interval + " hour(s)");
+      }
+      else {
+        return message.reply("No interval provided.");
+      }
+
+    }
+  }
+  else if (command === "getmemes"){
+    message.reply("Enjoy ;)");
+    getMemes(message);
+  }
+}
+
+module.exports = {bot};
