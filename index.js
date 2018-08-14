@@ -71,7 +71,7 @@ client.on("message", async message => {
 
   // Music
 
-  radio.bot(message, command, args);
+  radio.bot(client, message, command, args);
 
 
   // Weather
