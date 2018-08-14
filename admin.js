@@ -14,9 +14,9 @@ async function bot(client, message, command, args){
       url: "https://github.com/ajmwagar/discordbot",
       description: "My prefix is " + config.prefix,
       fields: [{
-          name: config.prefix + "help",
-          value: "show this help menu"
-        },
+        name: config.prefix + "help",
+        value: "show this help menu"
+      },
         {
           name: config.prefix + "ban <user>",
           value: "ban a user (admins only)"
@@ -72,7 +72,8 @@ async function bot(client, message, command, args){
         text: "© Seattle Discord Alliance"
       }
     }
-  });
+    });
+  }
 
   else if(command === "ping") {
     // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
