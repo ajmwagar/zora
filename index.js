@@ -1,5 +1,6 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
+const fs = require('fs');
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -15,6 +16,17 @@ const yt = require('ytdl-core');
 
 let queue = {};
 var radio;
+
+function getMemes(){
+  if (config.subreddits){
+
+    config.subreddits.forEach((sub) => {
+
+    })
+  }
+}
+
+var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
@@ -60,7 +72,30 @@ client.on("message", async message => {
   if (command === "help"){
     // Help message
     // Lists of current commands
-    let help = "\n\nHi there, I'm " + config.name + ".\n\nMy commands are:\n- `" + config.prefix + "help`: show this help menu\n- `" + config.prefix + "ban <user>`: ban a user (admins only)\n- `" + config.prefix + "kick <user>`: kick a user (admins and mods only)\n- `" + config.prefix + "purge <number of messages>`: purge a channel\n- `" + config.prefix + "ping`: Pong?\n- `" + config.prefix + "say <message>`: say a message\n- `" + config.prefix + "joke`: Tell a joke\n- `"+ config.prefix + "weather <city>`: Get the weather for a city\n\nHope I could help!\n\nKeep on fragging!"
+    let help = [
+      "",
+      "",
+      "Hi there, I'm " + config.name + ".",
+      "",
+      "My commands are:",
+      "- `" + config.prefix + "help`: show this help menu",
+      "- `" + config.prefix + "ban <user>`: ban a user (admins only)",
+      "- `" + config.prefix + "kick <user>`: kick a user (admins and mods only)",
+      "- `" + config.prefix + "purge <number of messages>`: purge a channel",
+      "- `" + config.prefix + "ping`: Pong?",
+      "- `" + config.prefix + "say <message>`: say a message",
+      "- `" + config.prefix + "joke`: Tell a joke",
+      "- `" + config.prefix + "weather <city>`: Get the weather for a city",
+      "- `" + config.prefix + "setmemechannel <channel>`: Set channel for dumbing memes",
+      "- `" + config.prefix + "setmemeinterval <interval>`: Set interval for dumbing memes (in hours)",
+      "- `" + config.prefix + "addsub <subreddit name>`: add a subreddit for getting memes (/r/ format)",
+      "- `" + config.prefix + "removesub <subreddit name>`: remove a subreddit for getting memes (/r/ format)",
+      "- `" + config.prefix + "getmemes`: getmemes now",
+      "",
+      "Hope I could help!",
+      "",
+      "Keep on fragging!"
+    ].join("\n")
 
     // Reply to message
     message.reply(help);
@@ -177,10 +212,14 @@ client.on("message", async message => {
   // Memes
 
   // TODO Add reddit implementation
-  else if (command === "addsub"){
-    let sub = args[0];
+  if (command === "addsub"){
+    let sub = args[0].trim();
 
     if (sub){
+      config.reddit.subreddits.push(sub);
+
+      fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
+
       return message.reply("Added " + sub);
     }
     else {
@@ -191,9 +230,24 @@ client.on("message", async message => {
   }
 
   else if (command === "removesub"){
-    let sub = args[0];
+    let sub = args[0].trim();
     if (sub){
-      return message.reply("Removed " + sub);
+      // Get index of sub
+      var index = config.subreddits.indexOf(sub)
+
+      // Check if sub is in list
+      if (index > -1){
+        // Remove sub 
+        config.subreddits.splice(index, 1);
+
+        fs.writeFile("config.json", JSON.stringify(config), (err) => {})
+
+        return message.reply("Removed " + sub);
+      }
+      else {
+        return message.reply(sub + " not found.");
+      }
+
     }
     else {
       return message.reply("No Subreddit provided.");
@@ -201,21 +255,65 @@ client.on("message", async message => {
     }
   }
 
-  else if (command === "setMemeChannel"){
+  else if (command === "setmemechannel"){
+    if(!message.member.roles.some(r=>["Owner", "Administrator"].includes(r.name)) )
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+    let channel = args[0].trim();
+
+    if (channel){
+
+      config.reddit.channel = channel;
+
+      fs.writeFile("config.json", JSON.stringify(config), (err) => {})
+
+      return message.reply("Set " + channel + " as meme channel");
+    }
+    else {
+      return message.reply("No Subreddit provided.");
+
+    }
 
   }
 
-  else if (command === "setMemeInterval"){
+  else if (command === "setmemeinterval"){
+    if(!message.member.roles.some(r=>["Owner", "Administrator"].includes(r.name)) )
+      return message.reply("Sorry, you don't have permissions to use this!");
 
+    var interval;
+    try {
+      interval = parseInt(args[0].trim())
+    }
+    catch(e){
+      if (e)
+        return message.reply("Please provid a valid interval (a number)");
+    }
+    finally{
+
+      if (interval){
+
+
+        config.reddit.interval = interval;
+
+        fs.writeFile("config.json", JSON.stringify(config), (err) => { /*message.channel.send("Error: " + err)*/})
+
+        clearInterval(memeInterval);
+
+        memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
+
+        return message.reply("Updated interval to: " + interval + " hour(s)");
+      }
+      else {
+        return message.reply("No interval provided.");
+      }
+
+    }
+  }
+  else if (command === "getmemes"){
+    message.reply("Enjoy ;)");
+    getMemes();
   }
 
-
-
-  function getMemes(){
-    config.subreddits.forEach((sub) => {
-
-    })
-  }
 
 
 
@@ -223,7 +321,7 @@ client.on("message", async message => {
 
   // TODO https://stackoverflow.com/questions/35347054/how-to-create-youtube-search-through-api
 
-  else if (command === "play"){
+  if (command === "play"){
     let url = args[0];
 
     // Get info of song
