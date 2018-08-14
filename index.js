@@ -72,7 +72,7 @@ client.on("message", async message => {
 
   // Memes
 
-  memes.bot(message, command, args);
+  memes.bot(client, message, command, args);
 
   // Music
 

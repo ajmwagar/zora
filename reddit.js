@@ -3,7 +3,7 @@ const fs = require('fs');
 const config = require("./config.json");
 const axios = require('axios');
 
-function getMemes(message){
+function getMemes(client, message){
   config.reddit.subreddits.forEach((sub) => {
     // Get the top posts based on config variable
     const reddit = axios.create( {
@@ -19,7 +19,7 @@ function getMemes(message){
         if (post.data.post_hint == "image"){
           const embed = new Discord.RichEmbed()
             .setTitle(post.data.title)
-            .setAuthor("Reddit", "https://i.imgur.com/XXMF5Ee.png")
+            .setAuthor("Phoenix - Source: Reddit", client.user.avatarURL)
             .setColor(0xff5323)
             .setDescription("From: " + post.data.subreddit_name_prefixed)
             .setImage(post.data.url)
@@ -33,7 +33,7 @@ function getMemes(message){
   })
 }
 
-async function bot(message, command, args){
+async function bot(client, message, command, args){
 
   if (command === "addsub"){
     var sub = args[0].trim()
@@ -142,7 +142,7 @@ async function bot(message, command, args){
   }
   else if (command === "memes"){
     message.reply("Enjoy ;)");
-    getMemes(message);
+    getMemes(client, message);
   }
 }
 

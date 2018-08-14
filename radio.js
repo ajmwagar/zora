@@ -93,6 +93,15 @@ async function bot(client, message, command, args) {
             }).then(() => {
               dispatcher.end();
             });
+          } else if (m.content.startsWith(config.prefix + 'stop')) {
+            message.channel.send({
+              embed: {
+                color: 10181046,
+                description: "⏹️ Song stopped and Queue cleared (this command doesn't work yet)"
+              }
+            }).then(() => {
+              // TODO Add stop command, we need to rework how the queue functions
+            });
           } else if (m.content.startsWith(config.prefix + 'volume+')) {
             if (Math.round(dispatcher.volume * 50) >= 100) return message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
             dispatcher.setVolume(Math.min((dispatcher.volume * 50 + (2 * (m.content.split('+').length - 1))) / 50, 2));
