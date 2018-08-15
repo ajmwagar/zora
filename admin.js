@@ -273,7 +273,7 @@ async function bot(client, message, command, args) {
       // Alert user
       message.channel.send({
         embed: {
-          color: 3447003,
+          color: 15844367,
           description: `Added ${word} to banned words.`
         }
       })
@@ -312,7 +312,7 @@ async function bot(client, message, command, args) {
 
     let embed = new Discord.RichEmbed()
       .setTitle("Banned Words")
-      .setAuthor(config.serverconfigs[message.guild.id].username + "- AUTOMOD", client.user.avatarURL)
+      .setAuthor(client.user.username + "- AUTOMOD", client.user.avatarURL)
       .setColor(15844367)
       .setDescription("Currently moderating " + config.serverconfigs[message.guild.id].automod.bannedwords.length + " words.")
 
