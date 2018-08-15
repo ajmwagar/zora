@@ -2,6 +2,7 @@ const config = require("./config.json");
 
 async function bot(client, message, command, args) {
   if (command === "help") {
+    var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
     // Lists of current commands
     message.channel.send({
@@ -13,37 +14,41 @@ async function bot(client, message, command, args) {
         },
         title: "Commands for " + client.user.username,
         url: "https://github.com/ajmwagar/discordbot",
-        description: "My prefix is " + config.prefix,
+        description: "My prefix is " + helpprefix,
         fields: [{
-            name: config.prefix + "help",
+            name: helpprefix + "help",
             value: "show this help menu"
           },
           {
-            name: config.prefix + "ban <user>",
+            name: helpprefix + "ban <user>",
             value: "ban a user (admins only)"
           },
           {
-            name: config.prefix + "kick <user>",
+            name: helpprefix + "kick <user>",
             value: "kick a user (admins and mods only)"
           },
           {
-            name: config.prefix + "purge <number of messages>",
+            name: helpprefix + "purge <number of messages>",
             value: "purge a channel"
           },
           {
-            name: config.prefix + "ping",
+            name: helpprefix + "ping",
             value: "Pong?"
           },
           {
-            name: config.prefix + "say <message>",
+            name: helpprefix + "say <message>",
             value: "say a message"
           },
           {
-            name: config.prefix + "joke",
+            name: helpprefix + "prefix",
+            value: "Sets the bot prefix"
+          },
+          {
+            name: helpprefix + "joke",
             value: "Tell a joke"
           },
           {
-            name: config.prefix + "weather <city>",
+            name: helpprefix + "weather <city>",
             value: "Get the weather for a city"
           }
         ],
@@ -63,30 +68,29 @@ async function bot(client, message, command, args) {
         },
         title: "Meme Commands for " + client.user.username,
         url: "https://github.com/ajmwagar/discordbot",
-        description: "My prefix is " + config.prefix,
-        fields: [
-          {
-            name: config.prefix + "subs",
+        description: "My prefix is " + helpprefix,
+        fields: [{
+            name: helpprefix + "subs",
             value: "Lists subscribed subreddits."
           },
           {
-            name: config.prefix + "setmemechannel <channel>",
+            name: helpprefix + "setmemechannel <channel>",
             value: "Set channel for dumbing memes"
           },
           {
-            name: config.prefix + "setmemeinterval <interval>",
+            name: helpprefix + "setmemeinterval <interval>",
             value: "Set interval for dumbing memes (in hours)"
           },
           {
-            name: config.prefix + "addsub <subreddit name>",
+            name: helpprefix + "addsub <subreddit name>",
             value: "add a subreddit for getting memes (/r/ format)"
           },
           {
-            name: config.prefix + "removesub <subreddit name>",
+            name: helpprefix + "removesub <subreddit name>",
             value: "remove a subreddit for getting memes (/r/ format)"
           },
           {
-            name: config.prefix + "memes",
+            name: helpprefix + "memes",
             value: "gets all the memes from Reddit"
           }
         ],
@@ -106,37 +110,37 @@ async function bot(client, message, command, args) {
         },
         title: "Music Commands for " + client.user.username,
         url: "https://github.com/ajmwagar/discordbot",
-        description: "My prefix is " + config.prefix,
+        description: "My prefix is " + helpprefix,
         fields: [{
-            name: config.prefix + "join",
+            name: helpprefix + "join",
             value: "Join Voice channel of message sender"
           },
           {
-            name: config.prefix + "add",
+            name: helpprefix + "add",
             value: "Add a valid youtube link to the queue"
           },
           {
-            name: config.prefix + "queue",
+            name: helpprefix + "queue",
             value: "Shows the current queue, up to 15 songs shown."
           },
           {
-            name: config.prefix + "play",
+            name: helpprefix + "play",
             value: "Play the music queue if already joined to a voice channel"
           },
           {
-            name: config.prefix + "pause",
+            name: helpprefix + "pause",
             value: "pauses the music"
           },
           {
-            name: config.prefix + "resume",
+            name: helpprefix + "resume",
             value: "resumes the music"
           },
           {
-            name: config.prefix + "skip",
+            name: helpprefix + "skip",
             value: "skips the playing song"
           },
           {
-            name: config.prefix + "time",
+            name: helpprefix + "time",
             value: "Shows the playtime of the song."
           }
         ],
@@ -222,6 +226,23 @@ async function bot(client, message, command, args) {
     });
     message.channel.bulkDelete(fetched)
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+  } else if (command === "prefix") {
+    // This command removes all messages from all users in the channel, up to 100.
+    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+    // get the delete count, as an actual number.
+    var setPrefix = args[0];
+
+    config.serverconfigs[message.guild.id].prefix = setPrefix;
+
+    message.channel.send({
+      embed: {
+        color: 3447003,
+        description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}`
+      }
+    });
+
   }
 }
 

@@ -1,6 +1,8 @@
 const config = require("./config.json");
 const yt = require('ytdl-core');
-const {YTSearcher} = require('ytsearcher');
+const {
+  YTSearcher
+} = require('ytsearcher');
 // const ypi = require('youtube-playlist-info');
 const opus = require('opusscript');
 
@@ -184,8 +186,7 @@ async function bot(client, message, command, args) {
             description: `You must add a YouTube video url, or id after ${config.prefix}add`
           }
         });
-      }
-      else if (url.includes('youtube.com')){
+      } else if (url.includes('youtube.com')) {
 
         yt.getInfo(url, async (err, info) => {
           if (err) {
@@ -220,11 +221,10 @@ async function bot(client, message, command, args) {
             }
           });
         });
-      }
-      else {
+      } else {
         searcher.search(url, {
-          type: 'video'
-        })
+            type: 'video'
+          })
           .then(searchResult => {
             if (!searchResult.totalResults || searchResult.totalResults === 0) return message.reply("No music found.");
             var info = searchResult.first;
@@ -294,7 +294,7 @@ async function bot(client, message, command, args) {
     }
   };
 
-  if (commands.hasOwnProperty(message.content.toLowerCase().slice(config.prefix.length).split(' ')[0])) commands[message.content.toLowerCase().slice(config.prefix.length).split(' ')[0]](message);
+  if (commands.hasOwnProperty(message.content.toLowerCase().slice(config.serverconfigs[message.guild.id].prefix.length).split(' ')[0])) commands[message.content.toLowerCase().slice(config.serverconfigs[message.guild.id].prefix.length).split(' ')[0]](message);
 }
 
 
