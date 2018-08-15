@@ -21,7 +21,7 @@ async function bot(client, message, command, args) {
         return message.channel.send({
           embed: {
             color: 15844367,
-            description: `Add some songs to the queue first with ${config.prefix}add`
+            description: `Add some songs to the queue first with ${config.serverconfigs[message.guild.id].prefix}add`
           }
         });
       }
@@ -258,7 +258,7 @@ async function bot(client, message, command, args) {
         return message.channel.send({
           embed: {
             color: 3447003,
-            description: `Add some songs to the queue first with ${config.prefix}add`
+            description: `Add some songs to the queue first with ${config.serverconfigs[message.guild.id].prefix}add`
           }
         });
       }
