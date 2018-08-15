@@ -34,6 +34,18 @@ async function bot(client, message, command, args) {
             value: "purge a channel"
           },
           {
+            name: helpprefix + "bws",
+            value: "List banned words for automod"
+          },
+          {
+            name: helpprefix + "addbw <words>",
+            value: "Add words to ban list"
+          },
+          {
+            name: helpprefix + "removebw <words>",
+            value: "Remove words from ban list"
+          },
+          {
             name: helpprefix + "ping",
             value: "Pong?"
           },
