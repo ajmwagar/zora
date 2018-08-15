@@ -77,7 +77,7 @@ async function bot(client, message, command, args) {
         let collector = message.channel.createCollector(m => m);
         // TODO Replace message with collect
         collector.on('collect', m => {
-          if (m.content.startsWith(config.prefix + 'pause')) {
+          if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'pause')) {
             message.channel.send({
               embed: {
                 color: 3447003,
@@ -86,7 +86,7 @@ async function bot(client, message, command, args) {
             }).then(() => {
               dispatcher.pause();
             });
-          } else if (m.content.startsWith(config.prefix + 'resume')) {
+          } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'resume')) {
             message.channel.send({
               embed: {
                 color: 3447003,
@@ -95,7 +95,7 @@ async function bot(client, message, command, args) {
             }).then(() => {
               dispatcher.resume();
             });
-          } else if (m.content.startsWith(config.prefix + 'skip')) {
+          } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'skip')) {
             message.channel.send({
               embed: {
                 color: 3447003,
@@ -104,7 +104,7 @@ async function bot(client, message, command, args) {
             }).then(() => {
               dispatcher.end();
             });
-          } else if (m.content.startsWith(config.prefix + 'stop')) {
+          } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'stop')) {
             message.channel.send({
               embed: {
                 color: 10181046,
@@ -124,15 +124,15 @@ async function bot(client, message, command, args) {
 
 
             });
-          } else if (m.content.startsWith(config.prefix + 'volume+')) {
+          } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'volume+')) {
             if (Math.round(dispatcher.volume * 50) >= 100) return message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
             dispatcher.setVolume(Math.min((dispatcher.volume * 50 + (2 * (m.content.split('+').length - 1))) / 50, 2));
             message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
-          } else if (m.content.startsWith(config.prefix + 'volume-')) {
+          } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'volume-')) {
             if (Math.round(dispatcher.volume * 50) <= 0) return message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
             dispatcher.setVolume(Math.max((dispatcher.volume * 50 - (2 * (m.content.split('-').length - 1))) / 50, 0));
             message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
-          } else if (m.content.startsWith(config.prefix + 'time')) {
+          } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'time')) {
             message.channel.send({
               embed: {
                 color: 3447003,
@@ -183,7 +183,7 @@ async function bot(client, message, command, args) {
         return await message.channel.send({
           embed: {
             color: 10181046,
-            description: `You must add a YouTube video url, or id after ${config.prefix}add`
+            description: `You must add a YouTube video url, or id after ${config.serverconfigs[message.guild.id].prefix}add`
           }
         });
       } else if (url.includes('youtube.com')) {
