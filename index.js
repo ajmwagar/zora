@@ -35,24 +35,23 @@ client.on("guildCreate", guild => {
   // This event triggers when the bot joins a guild.
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
   client.user.setActivity(`${client.guilds.size} servers | ${config.prefix}help`);
-  tempConfig = config.serverconfigs;
+
   var defaultConfig = {
-    'name': '',
-    'prefix': '',
+    'name': config.name,
+    'prefix': '.',
     'reddit': {
-      'subreddits': '',
-      'posts': '',
+      'subreddits': [],
+      'posts': 5,
       'channel': '',
-      'interval': ''
+      'interval': 1
     },
     'automod': {
       'bannedwords': []
     }
   }
-  if (!tempConfig.hasOwnProperty(guild.id)) tempConfig[guild.id] = {}, tempConfig[guild.id] = [];
-  config[guild.id].push(defaultConfig);
-  console.log(tempConfig);
-  fs.writeFileSync("./config.json", tempconfig);
+  if (!config.serverconfigs.hasOwnProperty(guild.id)) config.serverconfigs[guild.id] = defaultConfig;
+
+  fs.writeFileSync("./config.json", JSON.stringify(config));
 });
 
 client.on("guildDelete", guild => {
