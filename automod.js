@@ -1,6 +1,5 @@
 const config = require('./config.json');
 function censor(message){
-  console.log("Automod");
   config.automod.bannedwords.forEach((word) => {
     if (message.content.includes(word)){
       message.reply("Watch your mouth.\nYour message has been removed for profanity.")

@@ -1,6 +1,15 @@
 const config = require("./config.json");
 const yt = require('ytdl-core');
+const {YTSearcher} = require('ytsearcher');
+// const ypi = require('youtube-playlist-info');
 const opus = require('opusscript');
+
+//Set the YouTube API key.
+var searcher = new YTSearcher({
+  key: config.youtubeKey,
+  revealkey: true
+});
+
 
 let queue = {};
 var radio;
@@ -29,9 +38,7 @@ async function bot(client, message, command, args) {
       queue[message.guild.id].playing = true;
 
 
-      console.log(queue);
       (function play(song) {
-        console.log(song);
         if (song === undefined) {
           return message.channel.send({
             embed: {
@@ -66,7 +73,8 @@ async function bot(client, message, command, args) {
           passes: config.passes
         });
         let collector = message.channel.createCollector(m => m);
-        collector.on('message', m => {
+        // TODO Replace message with collect
+        collector.on('collect', m => {
           if (m.content.startsWith(config.prefix + 'pause')) {
             message.channel.send({
               embed: {
@@ -143,77 +151,107 @@ async function bot(client, message, command, args) {
         });
       })(queue[message.guild.id].songs.shift());
     },
-    'join': (message) => {
-      return new Promise((resolve, reject) => {
-        const voiceChannel = message.member.voiceChannel;
-        if (!voiceChannel || voiceChannel.type !== 'voice') {
-          return message.channel.send({
-            embed: {
-              color: 10181046,
-              description: "I couldn't connect to your voice channel!"
-            }
-          });
-        }
-        voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
-      });
+    'join': async (message) => {
+      const voiceChannel = message.member.voiceChannel;
+      if (!voiceChannel || voiceChannel.type !== 'voice') {
+        return await message.channel.send({
+          embed: {
+            color: 10181046,
+            description: "I couldn't connect to your voice channel!"
+          }
+        });
+      }
+      await voiceChannel.join().then(connection => resolve(connection)).catch(err => {});
     },
-    'leave': (message) => {
-      return new Promise((resolve, reject) => {
-        const voiceChannel = message.member.voiceChannel;
-        if (!voiceChannel || voiceChannel.type !== 'voice') {
-          return message.channel.send({
-            embed: {
-              color: 10181046,
-              description: "Not in a voice channel"
-            }
-          });
-        }
-        voiceChannel.leave();
-      });
+    'leave': async (message) => {
+      const voiceChannel = message.member.voiceChannel;
+      if (!voiceChannel || voiceChannel.type !== 'voice') {
+        return await message.channel.send({
+          embed: {
+            color: 10181046,
+            description: "Not in a voice channel"
+          }
+        });
+      }
+      await voiceChannel.leave();
     },
-    'add': (message) => {
-      let url = message.content.split(' ')[1];
+    'add': async (message) => {
+      let url = args.join(" ");
       if (url == '' || url === undefined) {
-        return message.channel.send({
+        return await message.channel.send({
           embed: {
             color: 10181046,
             description: `You must add a YouTube video url, or id after ${config.prefix}add`
           }
         });
       }
-      yt.getInfo(url, (err, info) => {
-        if (err) {
-          return message.channel.send({
+      else if (url.includes('youtube.com')){
+
+        yt.getInfo(url, async (err, info) => {
+          if (err) {
+            return await message.channel.send({
+              embed: {
+                color: 10181046,
+                description: 'Invalid youtube link ' + err
+              }
+            });
+          }
+          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+          queue[message.guild.id].songs.push({
+            url: url,
+            title: info.title,
+            requester: message.author.username
+          });
+          message.channel.send({
             embed: {
-              color: 10181046,
-              description: 'Invalid youtube link ' + err
+              color: 3447003,
+              author: {
+                name: client.user.username,
+                icon_url: client.user.avatarURL
+              },
+              title: `added **${info.title}** to the queue`,
+              url: info.url,
+              description: info.length,
+              timestamp: new Date(),
+              footer: {
+                icon_url: client.user.avatarURL,
+                text: "© " + message.guild
+              }
             }
           });
-        }
-        if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-        queue[message.guild.id].songs.push({
-          url: url,
-          title: info.title,
-          requester: message.author.username
         });
-        message.channel.send({
-          embed: {
-            color: 3447003,
-            author: {
-              name: client.user.username,
-              icon_url: client.user.avatarURL
-            },
-            title: `added **${info.title}** to the queue`,
-            url: info.url,
-            description: info.length,
-            timestamp: new Date(),
-            footer: {
-              icon_url: client.user.avatarURL,
-              text: "© " + message.guild
-            }
-          }
-        });
-      });
+      }
+      else {
+        searcher.search(url, {
+          type: 'video'
+        })
+          .then(searchResult => {
+            if (!searchResult.totalResults || searchResult.totalResults === 0) return message.reply("No music found.");
+            var info = searchResult.first;
+            info.requester = message.author.username;
+            if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+            queue[message.guild.id].songs.push(info);
+
+            message.channel.send({
+              embed: {
+                color: 3447003,
+                author: {
+                  name: client.user.username,
+                  icon_url: client.user.avatarURL
+                },
+                title: `added **${info.title}** to the queue`,
+                url: info.url,
+                description: info.length,
+                timestamp: new Date(),
+                footer: {
+                  icon_url: client.user.avatarURL,
+                  text: "© " + message.guild
+                }
+              }
+            });
+          })
+          .catch();
+      }
     },
     'queue': (message) => {
       if (queue[message.guild.id] === undefined) {
