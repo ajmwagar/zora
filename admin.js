@@ -323,7 +323,7 @@ async function bot(client, message, command, args) {
     })
 
     config.serverconfigs[message.guild.id].automod.bannedwords.forEach((word) => {
-      var embed = new Discord.RichEmbed().setTitle(word).setAuthor(config.user.username, client.user.avatarURL).setColor(3447003)
+      var embed = new Discord.RichEmbed().setTitle(word).setAuthor(client.user.username, client.user.avatarURL).setColor(3447003)
       message.channel.send({
         embed
       })
