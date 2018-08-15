@@ -4,7 +4,7 @@ const config = require("./config.json");
 const axios = require('axios');
 
 function getMemes(client, message){
-  config.reddit.subreddits.forEach((sub) => {
+  config.serverconfigs[message.guild.id].reddit.subreddits.forEach((sub) => {
     // Get the top posts based on config variable
     const reddit = axios.create( {
       baseURL: 'https://www.reddit.com/r/' + sub + '/hot/.json?t=hour',
@@ -39,10 +39,10 @@ async function bot(client, message, command, args){
       .setTitle("Subrcribed Subreddits")
       .setAuthor(config.name, client.user.avatarURL)
       .setColor(0xff5323)
-      .setDescription("Currently Subrcribed to " + config.reddit.subreddits.length + " subreddits.")
+      .setDescription("Currently Subrcribed to " + config.serverconfigs[message.guild.id].reddit.subreddits.length + " subreddits.")
     message.channel.send({embed})
 
-    config.reddit.subreddits.forEach((sub) => {
+    config.serverconfigs[message.guild.id].reddit.subreddits.forEach((sub) => {
       var embed = new Discord.RichEmbed()
         .setTitle('r/' + sub)
         .setAuthor(config.name, client.user.avatarURL)
@@ -60,7 +60,7 @@ async function bot(client, message, command, args){
 
     if (sub){
 
-      config.reddit.subreddits.push(sub);
+      config.serverconfigs[message.guild.id].reddit.subreddits.push(sub);
 
       fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
 
@@ -81,12 +81,12 @@ async function bot(client, message, command, args){
 
     if (sub){
       // Get index of sub
-      var index = config.reddit.subreddits.indexOf(sub)
+      var index = config.serverconfigs[message.guild.id].reddit.subreddits.indexOf(sub)
 
       // Check if sub is in list
       if (index > -1){
         // Remove sub 
-        config.reddit.subreddits.splice(index, 1);
+        config.serverconfigs[message.guild.id].reddit.subreddits.splice(index, 1);
 
         fs.writeFile("config.json", JSON.stringify(config), (err) => {})
 
@@ -111,7 +111,7 @@ async function bot(client, message, command, args){
 
     if (channel){
 
-      config.reddit.channel = channel;
+      config.serverconfigs[message.guild.id].reddit.channel = channel;
 
       fs.writeFile("config.json", JSON.stringify(config), (err) => {})
 
@@ -141,13 +141,13 @@ async function bot(client, message, command, args){
       if (interval){
 
 
-        config.reddit.interval = interval;
+        config.serverconfigs[message.guild.id].reddit.interval = interval;
 
         fs.writeFile("config.json", JSON.stringify(config), (err) => { /*message.channel.send("Error: " + err)*/})
 
         clearInterval(memeInterval);
 
-        memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
+        memeInterval = setInterval(getMemes, config.serverconfigs[message.guild.id].reddit.interval * 1000 * 60 * 60);
 
         return message.reply("Updated interval to: " + interval + " hour(s)");
       }

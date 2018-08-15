@@ -9,7 +9,7 @@ const client = new Discord.Client();
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
 // config.token contains the bot's token
-// config.prefix contains the message prefix.
+// config.serverconfigs[message.guild.id].prefix contains the message prefix.
 
 const axios = require('axios');
 
@@ -28,13 +28,13 @@ client.on("ready", () => {
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity(`${client.guilds.size} servers | ${config.prefix}help`);
+  client.user.setActivity(`${client.guilds.size} servers`);
 });
 
 client.on("guildCreate", guild => {
   // This event triggers when the bot joins a guild.
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-  client.user.setActivity(`${client.guilds.size} servers | ${config.prefix}help`);
+  client.user.setActivity(`${client.guilds.size} servers`);
 
   var defaultConfig = {
     'name': config.name,
@@ -57,7 +57,7 @@ client.on("guildCreate", guild => {
 client.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-  client.user.setActivity(`${client.guilds.size} | ${config.prefix}help`);
+  client.user.setActivity(`${client.guilds.size} | ${config.serverconfigs[guild.id].prefix}help`);
 });
 
 
@@ -75,13 +75,13 @@ client.on("message", async message => {
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
   // TODO Automod filter
-  if (message.content.indexOf(config.prefix) !== 0) return;
+  if (message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) return;
 
   // Here we separate our "command" name, and our "arguments" for the command. 
   // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
   // command = say
   // args = ["Is", "this", "the", "real", "life?"]
-  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+  const args = message.content.slice(config.serverconfigs[message.guild.id].prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
 
