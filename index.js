@@ -35,6 +35,24 @@ client.on("guildCreate", guild => {
   // This event triggers when the bot joins a guild.
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
   client.user.setActivity(`${client.guilds.size} servers | ${config.prefix}help`);
+  tempConfig = config.serverconfigs;
+  var defaultConfig = {
+    'name': '',
+    'prefix': '',
+    'reddit': {
+      'subreddits': '',
+      'posts': '',
+      'channel': '',
+      'interval': ''
+    },
+    'automod': {
+      'bannedwords': []
+    }
+  }
+  if (!tempConfig.hasOwnProperty(guild.id)) tempConfig[guild.id] = {}, tempConfig[guild.id] = [];
+  config[guild.id].push(defaultConfig);
+  console.log(tempConfig);
+  fs.writeFileSync("./config.json", tempconfig);
 });
 
 client.on("guildDelete", guild => {
@@ -50,7 +68,7 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
-  
+
   // Automod
 
   automod.censor(message);
@@ -73,7 +91,7 @@ client.on("message", async message => {
   admin.bot(client, message, command, args);
 
   // Weather 
-  
+
   weather.bot(client, message, command, args);
 
   // Memes
@@ -89,20 +107,22 @@ client.on("message", async message => {
 
   // Tell a joke using icanhazdadjoke.com (random dad jokes)
   // Use axios to create an api
-  if (command === "joke"){
+  if (command === "joke") {
     // Tee it up
     const m = await message.channel.send("Let me think...");
 
     // Get the joke
-    const jokeApi = axios.create( {
+    const jokeApi = axios.create({
       baseURL: "https://icanhazdadjoke.com",
       headers: {
         Accept: "application/json"
       }
-    } );
+    });
 
     // respond
-    jokeApi.get("/").then(res => {m.edit(res.data.joke)})
+    jokeApi.get("/").then(res => {
+      m.edit(res.data.joke)
+    })
   }
 
 
@@ -110,5 +130,3 @@ client.on("message", async message => {
 });
 
 client.login(config.token);
-
-
