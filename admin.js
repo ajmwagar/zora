@@ -18,9 +18,9 @@ async function bot(client, message, command, args) {
         url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
-          name: helpprefix + "help",
-          value: "show this help menu"
-        },
+            name: helpprefix + "help",
+            value: "show this help menu"
+          },
           {
             name: helpprefix + "ban <user>",
             value: "ban a user (admins only)"
@@ -88,9 +88,9 @@ async function bot(client, message, command, args) {
         url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
-          name: helpprefix + "subs",
-          value: "Lists subscribed subreddits."
-        },
+            name: helpprefix + "subs",
+            value: "Lists subscribed subreddits."
+          },
           {
             name: helpprefix + "setmemechannel <channel>",
             value: "Set channel for dumping memes"
@@ -130,9 +130,9 @@ async function bot(client, message, command, args) {
         url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
-          name: helpprefix + "join",
-          value: "Join Voice channel of message sender"
-        },
+            name: helpprefix + "join",
+            value: "Join Voice channel of message sender"
+          },
           {
             name: helpprefix + "add",
             value: "Add a valid youtube link to the queue"
@@ -261,8 +261,7 @@ async function bot(client, message, command, args) {
       }
     });
 
-  } 
-  else if (command === "addbw") {
+  } else if (command === "addbw") {
     // This command removes all messages from all users in the channel, up to 100.
     if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
       return message.reply("Sorry, you don't have permissions to use this!");
@@ -272,16 +271,17 @@ async function bot(client, message, command, args) {
       config.serverconfigs[message.guild.id].automod.bannedwords.push(word);
 
       // Alert user
-      message.channel.send({embed:{
-        color: 3447003,
-        description: `Added ${word} to banned words.`
-      }})
+      message.channel.send({
+        embed: {
+          color: 3447003,
+          description: `Added ${word} to banned words.`
+        }
+      })
       fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
     })
 
 
-  }
-  else if (command === "removebw") {
+  } else if (command === "removebw") {
     // This command removes all messages from all users in the channel, up to 100.
     if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
       return message.reply("Sorry, you don't have permissions to use this!");
@@ -290,36 +290,41 @@ async function bot(client, message, command, args) {
       let index = config.serverconfigs[message.guild.id].automod.bannedwords.indexOf(word)
 
 
-      if (index > -1){
+      if (index > -1) {
 
         // Add word
         config.serverconfigs[message.guild.id].automod.bannedwords.splice(index, 1);
 
         // Alert user
-        message.channel.send({embed:{
-          color: 3447003,
-          description: `Removed ${word} from banned words.`
-        }})
+        message.channel.send({
+          embed: {
+            color: 15844367,
+            description: `Removed ${word} from banned words.`
+          }
+        })
         fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
       }
     })
-  }
-  else if (command === "bws") {
+  } else if (command === "bws") {
     // This command removes all messages from all users in the channel, up to 100.
     if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     let embed = new Discord.RichEmbed()
       .setTitle("Banned Words")
-      .setAuthor(config.name, client.user.avatarURL)
-      .setColor(3447003)
+      .setAuthor(config.serverconfigs[message.guild.id].username + "- AUTOMOD", client.user.avatarURL)
+      .setColor(15844367)
       .setDescription("Currently moderating " + config.serverconfigs[message.guild.id].automod.bannedwords.length + " words.")
 
-    message.channel.send({embed})
+    message.channel.send({
+      embed
+    })
 
     config.serverconfigs[message.guild.id].automod.bannedwords.forEach((word) => {
       var embed = new Discord.RichEmbed().setTitle(word).setAuthor(config.name, client.user.avatarURL).setColor(3447003)
-      message.channel.send({embed})
+      message.channel.send({
+        embed
+      })
     })
 
   }
