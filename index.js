@@ -19,6 +19,7 @@ const admin = require('./admin');
 const memes = require('./reddit');
 const radio = require('./radio');
 const weather = require('./weather');
+const yoda = require('./yoda');
 
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
@@ -100,6 +101,10 @@ client.on("message", async message => {
   // Music
 
   radio.bot(client, message, command, args);
+
+  // Yodaspeak
+
+  yoda.bot(client, message, command, args);
 
 
   // Jokes
