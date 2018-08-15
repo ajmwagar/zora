@@ -28,6 +28,7 @@ async function bot(client, message, command, args) {
       let dispatcher;
       queue[message.guild.id].playing = true;
 
+
       console.log(queue);
       (function play(song) {
         console.log(song);
@@ -100,7 +101,18 @@ async function bot(client, message, command, args) {
                 description: "⏹️ Song stopped and Queue cleared (this command doesn't work yet)"
               }
             }).then(() => {
-              // TODO Add stop command, we need to rework how the queue functions
+              // Clear queue
+              queue[m.guild.id].songs = [];
+              queue[m.guild.id].playing = false;
+
+              // Stop pause
+              dispatcher.pause();
+              collector.stop();
+
+              // Leave
+              commands.leave(m);
+
+
             });
           } else if (m.content.startsWith(config.prefix + 'volume+')) {
             if (Math.round(dispatcher.volume * 50) >= 100) return message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
@@ -143,6 +155,20 @@ async function bot(client, message, command, args) {
           });
         }
         voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
+      });
+    },
+    'leave': (message) => {
+      return new Promise((resolve, reject) => {
+        const voiceChannel = message.member.voiceChannel;
+        if (!voiceChannel || voiceChannel.type !== 'voice') {
+          return message.channel.send({
+            embed: {
+              color: 10181046,
+              description: "Not in a voice channel"
+            }
+          });
+        }
+        voiceChannel.leave();
       });
     },
     'add': (message) => {

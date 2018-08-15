@@ -14,6 +14,7 @@ const config = require("./config.json");
 const axios = require('axios');
 
 // Internal modules
+const automod = require("./automod");
 const admin = require('./admin');
 const memes = require('./reddit');
 const radio = require('./radio');
@@ -49,6 +50,10 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
+  
+  // Automod
+
+  automod.censor(message);
 
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
@@ -61,6 +66,7 @@ client.on("message", async message => {
   // args = ["Is", "this", "the", "real", "life?"]
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
+
 
   // Admin
 

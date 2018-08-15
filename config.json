@@ -1,6 +1,9 @@
-{"name":"SeaBot","token":"NDc4NDU5NTQxNDYyMTg4MDMz.DlLAjw.NKxhcf7qKj4-aiZGGK-ZfhauCrk","prefix":".",
-  "reddit":{"subreddits":["dankmemes","jokes","programmerhumor","unixporn","shittyrainbowsix"],"posts":"","channel":"","interval":1,"username":"","password":""},
-  "automod": {"bannedwords": [] }
-
-
+{
+  "name":"SeaBot","token":"NDc4NDU5NTQxNDYyMTg4MDMz.DlLAjw.NKxhcf7qKj4-aiZGGK-ZfhauCrk","prefix":".",
+  "reddit":{
+    "subreddits":["dankmemes","jokes","programmerhumor","unixporn","shittyrainbowsix"],"posts":"","channel":"","interval":1,"username":"","password":""
+  },
+  "automod": {
+    "bannedwords": ["nigger", "faggot", "deport"]
+  }
 }
