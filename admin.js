@@ -50,6 +50,10 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "weather <city>",
             value: "Get the weather for a city"
+          },
+          {
+            name: helpprefix + "yoda <message>",
+            value: "Translates your message to yodaspeak!"
           }
         ],
         timestamp: new Date(),
