@@ -40,16 +40,13 @@ async function bot(client, message, command, args){
       .setAuthor(config.name, client.user.avatarURL)
       .setColor(0xff5323)
       .setDescription("Currently Subrcribed to " + config.reddit.subreddits.length + " subreddits.")
-      .setThumbnail("https://i.imgur.com/XXMF5Ee.png")
     message.channel.send({embed})
 
     config.reddit.subreddits.forEach((sub) => {
       var embed = new Discord.RichEmbed()
-        .setTitle(sub)
+        .setTitle('r/' + sub)
         .setAuthor(config.name, client.user.avatarURL)
         .setColor(0xff5323)
-        .setDescription(sub)
-        .setThumbnail("https://i.imgur.com/XXMF5Ee.png")
       message.channel.send({embed})
 
     })
