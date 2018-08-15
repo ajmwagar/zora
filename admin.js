@@ -273,7 +273,7 @@ async function bot(client, message, command, args) {
       // Alert user
       message.channel.send({
         embed: {
-          color: 15844367,
+          color: 3447003,
           description: `Added ${word} to banned words.`
         }
       })
@@ -296,11 +296,13 @@ async function bot(client, message, command, args) {
         config.serverconfigs[message.guild.id].automod.bannedwords.splice(index, 1);
 
         // Alert user
+        let embed = new Discord.RichEmbed()
+          .setTitle(`Removed ${word} from banned words`)
+          .setAuthor(client.user.username + "- AUTOMOD", client.user.avatarURL)
+          .setColor(15844367)
+
         message.channel.send({
-          embed: {
-            color: 15844367,
-            description: `Removed ${word} from banned words.`
-          }
+          embed
         })
         fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
       }
