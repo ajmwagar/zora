@@ -7,7 +7,7 @@ async function bot(client, message, command, args) {
     var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
     // Lists of current commands
-    message.channel.send({
+    message.author.send({
       embed: {
         color: 3447003,
         author: {
@@ -52,6 +52,10 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "weather <city>",
             value: "Get the weather for a city"
+          },
+          {
+            name: helpprefix + "yoda <message>",
+            value: "Translates your message to yodaspeak!"
           }
         ],
         timestamp: new Date(),
@@ -61,7 +65,7 @@ async function bot(client, message, command, args) {
         }
       }
     });
-    message.channel.send({
+    message.author.send({
       embed: {
         color: 0xff5323,
         author: {
@@ -103,7 +107,7 @@ async function bot(client, message, command, args) {
         }
       }
     });
-    message.channel.send({
+    message.author.send({
       embed: {
         color: 3066993,
         author: {
