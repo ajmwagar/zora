@@ -75,11 +75,11 @@ async function bot(client, message, command, args) {
           },
           {
             name: helpprefix + "setmemechannel <channel>",
-            value: "Set channel for dumbing memes"
+            value: "Set channel for dumping memes"
           },
           {
             name: helpprefix + "setmemeinterval <interval>",
-            value: "Set interval for dumbing memes (in hours)"
+            value: "Set interval for dumping memes (in hours)"
           },
           {
             name: helpprefix + "addsub <subreddit name>",
