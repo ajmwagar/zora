@@ -25,6 +25,8 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "weather-js": "^2.0.0",
-    "ytdl-core": "^0.24.0"
+    "ytdl-core": "^0.24.0",
+    "ytsearch": "^1.0.4",
+    "ytsearcher": "^1.1.3"
   }
 }
