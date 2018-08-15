@@ -15,6 +15,7 @@ Now, you can!
   - Server specific subreddits
 - Weather command
 - Joke command
+- Yodaspeak translator
 - Custom server settings
   - Custom prefix
   - Custom automod
