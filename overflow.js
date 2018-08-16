@@ -74,9 +74,6 @@ async function bot(client, message, command, args) {
             }).then(async (res) => {
               // TODO Pretty print it all
               answer = res.data.items[0];
-              if (decodeString(question.body_markdown).length >= (1023 - question.link.length)) {
-                message.channel.send(`Question too long for discord. ${question.link}`);
-              }
               if (decodeString(answer.body_markdown).length >= (1023 - question.link.length)) {
                 message.channel.send(`Answer too long for discord. ${question.link}`);
               }
@@ -86,7 +83,7 @@ async function bot(client, message, command, args) {
                 .setColor(0xff5323)
                 .setDescription(await decodeString(question.body_markdown).substring(0, 1023 - question.link.length))
                 .setFooter("©" + message.guild, client.user.avatarURL)
-                .setThumbnail('https://media.wired.com/photos/5926db217034dc5f91becd6b/master/w_1904,c_limit/so-logo-s.jpg')
+                .setThumbnail('https://i.imgur.com/Qn14Fvr.png')
                 .setTimestamp()
                 .setURL(question.link)
                 .addBlankField(true)
