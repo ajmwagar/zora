@@ -9,13 +9,27 @@ async function bot(client, message, command, args) {
     // Lists of current commands
     message.author.send({
       embed: {
-        color: 3447003,
+        color: 12370112,
         author: {
           name: client.user.username,
           icon_url: client.user.avatarURL
         },
-        title: "Commands for " + client.user.username,
-        url: "https://github.com/ajmwagar/discordbot",
+        title: client.user.username + " - About",
+        description: "This bot was created by Avery & Nathan",
+        fields: [{
+          name: "Check out the Github, host your own, or invite one of ours!",
+          value: "https://github.com/ajmwagar/discordbot"
+        }]
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 12370112,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Admin Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "help",
@@ -56,18 +70,47 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "prefix",
             value: "Sets the bot prefix"
+          }
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 3447003,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Misc/Utility Commands for " + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [{
+            name: helpprefix + "weather <city>",
+            value: "Get the weather for a city"
           },
           {
             name: helpprefix + "joke",
             value: "Tell a joke"
           },
           {
-            name: helpprefix + "weather <city>",
-            value: "Get the weather for a city"
-          },
-          {
             name: helpprefix + "yoda <message>",
             value: "Translates your message to yodaspeak!"
+          },
+          {
+            name: helpprefix + "stack <search query>",
+            value: "Searches stack overflow"
+          },
+          {
+            name: helpprefix + "dice <number of sides>",
+            value: "Roles a dice with a number of sides"
+          },
+          {
+            name: helpprefix + "coinflip",
+            value: "Flips a coin"
           }
         ],
         timestamp: new Date(),
@@ -85,7 +128,6 @@ async function bot(client, message, command, args) {
           icon_url: client.user.avatarURL
         },
         title: "Meme Commands for " + client.user.username,
-        url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "subs",
@@ -127,7 +169,6 @@ async function bot(client, message, command, args) {
           icon_url: client.user.avatarURL
         },
         title: "Music Commands for " + client.user.username,
-        url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "join",
@@ -271,11 +312,13 @@ async function bot(client, message, command, args) {
       config.serverconfigs[message.guild.id].automod.bannedwords.push(word);
 
       // Alert user
+      let embed = new Discord.RichEmbed()
+        .setTitle(`Added ${word} to banned words`)
+        .setAuthor(client.user.username + " - AUTOMOD", client.user.avatarURL)
+        .setColor(15844367)
+
       message.channel.send({
-        embed: {
-          color: 3447003,
-          description: `Added ${word} to banned words.`
-        }
+        embed
       })
       fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
     })
@@ -298,7 +341,7 @@ async function bot(client, message, command, args) {
         // Alert user
         let embed = new Discord.RichEmbed()
           .setTitle(`Removed ${word} from banned words`)
-          .setAuthor(client.user.username + "- AUTOMOD", client.user.avatarURL)
+          .setAuthor(client.user.username + " - AUTOMOD", client.user.avatarURL)
           .setColor(15844367)
 
         message.channel.send({

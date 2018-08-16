@@ -21,6 +21,8 @@ const radio = require('./radio');
 const weather = require('./weather');
 const yoda = require('./yoda');
 const overflow = require('./overflow');
+const utility = require('./utility');
+
 
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
@@ -30,13 +32,13 @@ client.on("ready", () => {
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity(`${client.guilds.size} servers`);
+  client.user.setActivity(`on ${client.guilds.size} servers`);
 });
 
 client.on("guildCreate", guild => {
   // This event triggers when the bot joins a guild.
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-  client.user.setActivity(`${client.guilds.size} servers`);
+  client.user.setActivity(`on ${client.guilds.size} servers`);
 
   var defaultConfig = {
     'name': config.name,
@@ -59,84 +61,87 @@ client.on("guildCreate", guild => {
 client.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-  client.user.setActivity(`${client.guilds.size}`);
+  client.user.setActivity(`on ${client.guilds.size}`);
 });
 
 
 client.on("message", async message => {
-  if (message.guild.id){
+  if (message.guild.id) {
 
-  // This event will run on every single message received, from any channel or DM.
+    // This event will run on every single message received, from any channel or DM.
 
-  // It's good practice to ignore other bots. This also makes your bot ignore itself
-  // and not get into a spam loop (we call that "botception").
-  if (message.author.bot) return;
-
-
-  // Also good practice to ignore any message that does not start with our prefix, 
-  // which is set in the configuration file.
-  // TODO Automod filter
-  if (message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) return automod.censor(message);
-
-  // Here we separate our "command" name, and our "arguments" for the command. 
-  // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
-  // command = say
-  // args = ["Is", "this", "the", "real", "life?"]
-  const args = message.content.slice(config.serverconfigs[message.guild.id].prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
+    // It's good practice to ignore other bots. This also makes your bot ignore itself
+    // and not get into a spam loop (we call that "botception").
+    if (message.author.bot) return;
 
 
-  // Admin
+    // Also good practice to ignore any message that does not start with our prefix, 
+    // which is set in the configuration file.
+    // TODO Automod filter
+    if (message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) return automod.censor(message);
 
-  admin.bot(client, message, command, args);
-
-  // Weather 
-
-  weather.bot(client, message, command, args);
-
-  // Memes
-
-  memes.bot(client, message, command, args);
-
-  // Music
-
-  radio.bot(client, message, command, args);
-
-  // Yodaspeak
-
-  yoda.bot(client, message, command, args);
-
-  // Stack Overflow
-
-  overflow.bot(client, message, command, args);
+    // Here we separate our "command" name, and our "arguments" for the command. 
+    // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
+    // command = say
+    // args = ["Is", "this", "the", "real", "life?"]
+    const args = message.content.slice(config.serverconfigs[message.guild.id].prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
 
 
-  // Jokes
+    // Admin
 
-  // Tell a joke using icanhazdadjoke.com (random dad jokes)
-  // Use axios to create an api
-  if (command === "joke") {
-    // Tee it up
-    const m = await message.channel.send("Let me think...");
+    admin.bot(client, message, command, args);
 
-    // Get the joke
-    const jokeApi = axios.create({
-      baseURL: "https://icanhazdadjoke.com",
-      headers: {
-        Accept: "application/json"
-      }
-    });
+    // Weather 
 
-    // respond
-    jokeApi.get("/").then(res => {
-      m.edit(res.data.joke)
-    })
-  }
+    weather.bot(client, message, command, args);
+
+    // Memes
+
+    memes.bot(client, message, command, args);
+
+    // Music
+
+    radio.bot(client, message, command, args);
+
+    // Yodaspeak
+
+    yoda.bot(client, message, command, args);
+
+    // Stack Overflow
+
+    overflow.bot(client, message, command, args);
+
+    // Utility
+
+    utility.bot(client, message, command, args);
+
+
+    // Jokes
+
+    // Tell a joke using icanhazdadjoke.com (random dad jokes)
+    // Use axios to create an api
+    if (command === "joke") {
+      // Tee it up
+      const m = await message.channel.send("Let me think...");
+
+      // Get the joke
+      const jokeApi = axios.create({
+        baseURL: "https://icanhazdadjoke.com",
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      // respond
+      jokeApi.get("/").then(res => {
+        m.edit(res.data.joke)
+      })
+    }
 
 
 
-  }
-  else {
+  } else {
     message.reply("Please use in a discord server. DM's are coming soon.");
   }
 });
