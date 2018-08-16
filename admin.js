@@ -111,6 +111,10 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "coinflip",
             value: "Flips a coin"
+          },
+          {
+            name: helpprefix + "dab",
+            value: "Dabs on them haters"
           }
         ],
         timestamp: new Date(),
