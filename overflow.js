@@ -3,122 +3,138 @@ const config = require('./config.json');
 const Discord = require("discord.js");
 const decodeString = require("unescape");
 
-async function bot(client, message, command, args){
-  if (command === "stack"){
+async function bot(client, message, command, args) {
+  if (command === "stack") {
     var stackapi = axios.create({
       baseURL: 'https://api.stackexchange.com/'
     })
 
-    if (args.length > 0){
+    if (args.length > 0) {
 
       var m = await message.channel.send("Taking the AP Exam...");
 
-      stackapi.get(`/2.2/similar`, {params: {
-        key: config.stackkey,
-        title: args.join(" "),
-        order: "desc",
-        sort:"relevance",
-        site:"stackoverflow",
-        filter:"!9Z(-wtr.v"
-      }}).then((res) => {
+      stackapi.get(`/2.2/similar`, {
+        params: {
+          key: config.stackkey,
+          title: args.join(" "),
+          order: "desc",
+          sort: "relevance",
+          site: "stackoverflow",
+          filter: "!9Z(-wtr.v"
+        }
+      }).then((res) => {
         var qs = res.data.items;
 
         var first = findFirstAnwser(qs);
 
         var question, answer;
 
-        if (first && first.question_id){
+        if (first && first.question_id) {
 
-          stackapi.get(`/2.2/posts/${first.question_id}`, {params: {
-            key: config.stackkey,
-            order: "desc",
-            sort:"votes",
-            site:"stackoverflow",
-            filter:"!-*jbN*x3a8Sb"
-          }}).then((res) => {
-            if (res.data.items[0].body_markdown.length < 2000){
+          stackapi.get(`/2.2/posts/${first.question_id}`, {
+            params: {
+              key: config.stackkey,
+              order: "desc",
+              sort: "votes",
+              site: "stackoverflow",
+              filter: "!-*jbN*x3a8Sb"
+            }
+          }).then((res) => {
+            if (res.data.items[0].body_markdown.length < 2000) {
 
 
               question = res.data.items[0];
 
-            }
-            else {
+            } else {
               m.edit("Question too long for discord. " + res.data.items[0].link)
             }
-          }).catch((err) => {console.error("Qeuestion: "+err.data)})
+          }).catch((err) => {
+            console.error("Qeuestion: " + err.data)
+          })
 
-          stackapi.get(`/2.2/questions/${first.question_id}/answers`, {params: {
-            key: config.stackkey,
-            order: "desc",
-            sort:"votes",
-            site:"stackoverflow",
-            filter:"!9Z(-wtr.v"
-          }}).then(async (res) => {
-            let tempanswer = await getAcceptedOrHighest(res.data.items);
-
-            stackapi.get(`/2.2/answers/${tempanswer.answer_id}`, {params: {
+          stackapi.get(`/2.2/questions/${first.question_id}/answers`, {
+            params: {
               key: config.stackkey,
               order: "desc",
-              sort:"votes",
-              site:"stackoverflow",
-              filter:"!9Z(-wzftf"
-            }}).then(async (res) => {
+              sort: "votes",
+              site: "stackoverflow",
+              filter: "!9Z(-wtr.v"
+            }
+          }).then(async (res) => {
+            let tempanswer = await getAcceptedOrHighest(res.data.items);
+
+            stackapi.get(`/2.2/answers/${tempanswer.answer_id}`, {
+              params: {
+                key: config.stackkey,
+                order: "desc",
+                sort: "votes",
+                site: "stackoverflow",
+                filter: "!9Z(-wzftf"
+              }
+            }).then(async (res) => {
               // TODO Pretty print it all
-              answer =  res.data.items[0];
-
-
-              console.log(question);
+              answer = res.data.items[0];
+              if (decodeString(question.body_markdown).length >= (1023 - question.link.length)) {
+                message.channel.send(`Question too long for discord. ${question.link}`);
+              }
+              if (decodeString(answer.body_markdown).length >= (1023 - question.link.length)) {
+                message.channel.send(`Answer too long for discord. ${question.link}`);
+              }
               let embed = new Discord.RichEmbed()
                 .setTitle(question.title)
-                .setAuthor(config.name + " - Source: StackOverflow", client.user.avatarURL)
+                .setAuthor(client.user.username + " - Source: StackOverflow", client.user.avatarURL)
                 .setColor(0xff5323)
-                .setDescription(await decodeString(question.body_markdown))
+                .setDescription(await decodeString(question.body_markdown).substring(0, 1023 - question.link.length))
                 .setFooter("©" + message.guild, client.user.avatarURL)
                 .setThumbnail('https://media.wired.com/photos/5926db217034dc5f91becd6b/master/w_1904,c_limit/so-logo-s.jpg')
                 .setTimestamp()
                 .setURL(question.link)
                 .addBlankField(true)
-                .addField("Best Answer", await decodeString(answer.body_markdown));
-
-              m.edit({embed});
-            }).catch((err) => {console.error(err)})
-          }).catch((err) => {console.error(err)})
-        }
-        else {
+                .addField("Best Answer", await decodeString(answer.body_markdown).substring(0, 1023 - question.link.length))
+              m.edit({
+                embed
+              });
+            }).catch((err) => {
+              console.error(err)
+            })
+          }).catch((err) => {
+            console.error(err)
+          })
+        } else {
           m.edit("Search terms not specific enough");
         }
 
 
       }).catch(console.error);
 
-    }
-    else {
+    } else {
       message.channel.send("Please enter search terms.");
     }
 
   }
 }
 
-module.exports = {bot};
+module.exports = {
+  bot
+};
 
-function findFirstAnwser(q){
-  for(var i=0; i < q.length; i++){
+function findFirstAnwser(q) {
+  for (var i = 0; i < q.length; i++) {
     if (q[i].is_answered == true)
       return q[i];
   }
 }
 
-async function getAcceptedOrHighest(answers){
+async function getAcceptedOrHighest(answers) {
 
   // Merge sort
   var answ = mergeSort(answers);
 
   var find = findWithAttr(answ, "is_accepted", true);
 
-  if (find == -1){
+  if (find == -1) {
     return answ[0];
-  }
-  else {
+  } else {
     return answ[find];
   }
 
@@ -126,7 +142,7 @@ async function getAcceptedOrHighest(answers){
 
 
 // Split the array into halves and merge them recursively 
-function mergeSort (arr) {
+function mergeSort(arr) {
   if (arr.length === 1) {
     // return once we hit an array with a single item
     return arr
@@ -143,7 +159,7 @@ function mergeSort (arr) {
 }
 
 // compare the arrays item by item and return the concatenated result
-function merge (left, right) {
+function merge(left, right) {
   let result = []
   let indexLeft = 0
   let indexRight = 0
@@ -163,12 +179,10 @@ function merge (left, right) {
 
 
 function findWithAttr(array, attr, value) {
-  for(var i = 0; i < array.length; i += 1) {
-    if(array[i][attr] === value) {
+  for (var i = 0; i < array.length; i += 1) {
+    if (array[i][attr] === value) {
       return i;
     }
   }
   return -1;
 }
-
-
