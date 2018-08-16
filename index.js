@@ -66,7 +66,7 @@ client.on("guildDelete", guild => {
 
 
 client.on("message", async message => {
-  if (message.guild.id) {
+  if (message.guild) {
 
     // This event will run on every single message received, from any channel or DM.
 
@@ -141,9 +141,7 @@ client.on("message", async message => {
 
 
 
-  } else {
-    message.reply("Please use in a discord server. DM's are coming soon.");
-  }
+  } else {}
 });
 
 client.login(config.token);
