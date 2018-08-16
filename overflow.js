@@ -74,9 +74,11 @@ async function bot(client, message, command, args) {
             }).then(async (res) => {
               // TODO Pretty print it all
               answer = res.data.items[0];
+              // check if answer is too long
               if (decodeString(answer.body_markdown).length >= (1023 - question.link.length)) {
                 message.channel.send(`Answer too long for discord. ${question.link}`);
               }
+              //generate rich embed
               let embed = new Discord.RichEmbed()
                 .setTitle(question.title)
                 .setAuthor(client.user.username + " - Source: StackOverflow", client.user.avatarURL)
@@ -88,6 +90,7 @@ async function bot(client, message, command, args) {
                 .setURL(question.link)
                 .addBlankField(true)
                 .addField("Best Answer", await decodeString(answer.body_markdown).substring(0, 1023 - question.link.length))
+              // send the embed
               m.edit({
                 embed
               });
