@@ -63,5 +63,5 @@ pm2 start index.js -n <botname>
 
 ## Acknowledgements: 
 This bot would not be possible without:
-- Nathan Laha (@TheDekuTree) http://www.averywagar.com/
-- Avery Wagar (@ajmwagar) https://nlaha.com/
+- Nathan Laha (@TheDekuTree) https://nlaha.com/
+- Avery Wagar (@ajmwagar) http://www.averywagar.com/
