@@ -26,7 +26,7 @@ function getMemes(client, message) {
         if (post.data.post_hint == "image") {
           const embed = new Discord.RichEmbed()
             .setTitle(post.data.title)
-            .setAuthor(config.name + " - Source: Reddit", client.user.avatarURL)
+            .setAuthor(client.user.username + " - Source: Reddit", client.user.avatarURL)
             .setColor(0xff5323)
             .setDescription("From: " + post.data.subreddit_name_prefixed)
             .setImage(post.data.url)
@@ -46,7 +46,7 @@ async function bot(client, message, command, args) {
   if (command === "subs") {
     var embed = new Discord.RichEmbed()
       .setTitle("Subrcribed Subreddits")
-      .setAuthor(config.name, client.user.avatarURL)
+      .setAuthor(client.user.username, client.user.avatarURL)
       .setColor(0xff5323)
       .setDescription("Currently Subrcribed to " + config.serverconfigs[message.guild.id].reddit.subreddits.length + " subreddits.")
     message.channel.send({
@@ -56,7 +56,7 @@ async function bot(client, message, command, args) {
     config.serverconfigs[message.guild.id].reddit.subreddits.forEach((sub) => {
       var embed = new Discord.RichEmbed()
         .setTitle('r/' + sub)
-        .setAuthor(config.name, client.user.avatarURL)
+        .setAuthor(client.user.username, client.user.avatarURL)
         .setColor(0xff5323)
       message.channel.send({
         embed
@@ -156,7 +156,7 @@ async function bot(client, message, command, args) {
 
     }
   } else if (command === "memes") {
-    message.reply("Enjoy ;)");
+    message.reply("Showing the hot " + config.serverconfigs[message.guild.id].reddit.posts + " posts, enjoy! ;)");
     getMemes(client, message);
   } else if (command === "setposts") {
     if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
