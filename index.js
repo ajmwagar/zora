@@ -20,6 +20,7 @@ const memes = require('./reddit');
 const radio = require('./radio');
 const weather = require('./weather');
 const yoda = require('./yoda');
+const overflow = require('./overflow');
 
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
@@ -63,6 +64,8 @@ client.on("guildDelete", guild => {
 
 
 client.on("message", async message => {
+  if (message.guild.id){
+
   // This event will run on every single message received, from any channel or DM.
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
@@ -103,6 +106,10 @@ client.on("message", async message => {
 
   yoda.bot(client, message, command, args);
 
+  // Stack Overflow
+
+  overflow.bot(client, message, command, args);
+
 
   // Jokes
 
@@ -128,6 +135,10 @@ client.on("message", async message => {
 
 
 
+  }
+  else {
+    message.reply("Please use in a discord server. DM's are coming soon.");
+  }
 });
 
 client.login(config.token);
