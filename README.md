@@ -1,8 +1,5 @@
 # ModBOT
-## A modular bot that you can customize for your server!
-
-Now, you can! 
-
+## A modular discord bot that is fully customizable!
 
 ## Features:
 
