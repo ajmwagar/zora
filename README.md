@@ -1,5 +1,5 @@
-# discordbot
-## Have you ever wanted your server's own discord bot?
+# ModBOT
+## A modular bot that you can customize for your server!
 
 Now, you can! 
 
