@@ -15,7 +15,14 @@ function getMemes(client, message) {
     // respond
     reddit.get("/").then(res => {
       // console.log(res.data.data.children);
-      for (i = 0; i < config.serverconfigs[message.guild.id].reddit.posts; i++) {
+      var t
+      for (i = 0; i <= (config.serverconfigs[message.guild.id].reddit.posts + 1); i++) {
+        if (i > res.data.data.children) {
+          t = 0
+        } else {
+          t = i;
+        }
+        post = res.data.data.children[i]
         if (post.data.post_hint == "image") {
           const embed = new Discord.RichEmbed()
             .setTitle(post.data.title)
@@ -151,6 +158,32 @@ async function bot(client, message, command, args) {
   } else if (command === "memes") {
     message.reply("Enjoy ;)");
     getMemes(client, message);
+  } else if (command === "setposts") {
+    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+    var posts;
+    try {
+      posts = parseInt(args[0].trim())
+    } catch (e) {
+      if (e)
+        return message.reply("Please provid a valid number of posts");
+    } finally {
+
+      if (posts) {
+
+
+        config.serverconfigs[message.guild.id].reddit.posts = posts;
+
+        fs.writeFile("config.json", JSON.stringify(config), (err) => {
+          // message.channel.send("Error: " + err)
+        })
+        return message.reply("Updated posts to: " + posts + " per subreddit");
+      } else {
+        return message.reply("No number provided.");
+      }
+
+    }
   }
 }
 
