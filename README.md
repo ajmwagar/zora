@@ -23,7 +23,7 @@
   - Purge
   - Say
 
-## Installation (invite Phoenix)
+## Installation (Invite Phoenix)
 
 Phoenix is the official bot hosted by the creators of this repo, 
 you can invite it to your discord server by clicking the link below:
