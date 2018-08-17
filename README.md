@@ -23,8 +23,13 @@
   - Purge
   - Say
 
+## Installation (invite Phoenix)
 
-## Installation: 
+Phoenix is the official bot hosted by the creators of this repo, 
+you can invite it to your discord server by clicking the link below:
+[INVITE PHOENIX](https://discordapp.com/api/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot)
+
+## Installation (Host your own bot): 
 
 1. Clone the repository 
 
