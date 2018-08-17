@@ -290,11 +290,10 @@ async function bot(client, message, command, args) {
     message.channel.bulkDelete(fetched)
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
   } else if (command === "prefix") {
-    // This command removes all messages from all users in the channel, up to 100.
+    // This command changes the bot prefix
     if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
       return message.reply("Sorry, you don't have permissions to use this!");
 
-    // get the delete count, as an actual number.
     var setPrefix = args[0];
 
     config.serverconfigs[message.guild.id].prefix = setPrefix;
@@ -306,6 +305,20 @@ async function bot(client, message, command, args) {
       }
     });
 
+  } else if (command === "alexamode") {
+    // This command changes the bot prefix to "Alexa"
+    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+
+    config.serverconfigs[message.guild.id].prefix = "Alexa ";
+
+    message.channel.send({
+      embed: {
+        color: 3447003,
+        description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}, type Alexa <command>`
+      }
+    });
   } else if (command === "addbw") {
     // This command removes all messages from all users in the channel, up to 100.
     if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
