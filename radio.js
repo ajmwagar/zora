@@ -108,7 +108,7 @@ async function bot(client, message, command, args) {
             message.channel.send({
               embed: {
                 color: 10181046,
-                description: "⏹️ Song stopped and Queue cleared (this command doesn't work yet)"
+                description: "⏹️ Song stopped and Queue cleared"
               }
             }).then(() => {
               // Clear queue
