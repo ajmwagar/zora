@@ -22,8 +22,7 @@ const weather = require('./weather');
 const yoda = require('./yoda');
 const overflow = require('./overflow');
 const utility = require('./utility');
-
-
+const translate = require('./translate');
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
@@ -115,6 +114,10 @@ client.on("message", async message => {
     // Utility
 
     utility.bot(client, message, command, args);
+
+    // Translate
+
+    translate.bot(client, message, command, args)
 
 
     // Jokes

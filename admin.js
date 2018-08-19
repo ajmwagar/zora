@@ -17,7 +17,7 @@ async function bot(client, message, command, args) {
         title: client.user.username + " - About",
         description: "This bot was created by Avery & Nathan",
         fields: [{
-          name: "Check out the Github, host your own, or invite one of ours!",
+          name: "Check out the Github, host your own, or invite one of ours! (try +invite)",
           value: "https://github.com/ajmwagar/discordbot"
         }]
       }
@@ -70,6 +70,14 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "prefix",
             value: "Sets the bot prefix"
+          },
+          {
+            name: helpprefix + "credits",
+            value: "Visit the github repo!"
+          },
+          {
+            name: helpprefix + "invite",
+            value: "Invite our official bot to your server!"
           }
         ],
         timestamp: new Date(),
@@ -123,6 +131,10 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "dab",
             value: "Dabs on them haters"
+          },
+          {
+            name: helpprefix + "translate <language code> <input text>",
+            value: "Translate's input to specified language, for a list of ISO 639-1 codes go to: [wikipedia](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)"
           }
         ],
         timestamp: new Date(),
@@ -234,7 +246,7 @@ async function bot(client, message, command, args) {
     // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
     message.delete().catch(O_o => {});
     // And we get the bot to say the thing: 
-    message.channel.send(sayMessage);
+    message.channel.send(`**${message.author} Said:\n** ` + sayMessage);
   } else if (command === "kick") {
     // This command must be limited to mods and admins. In this example we just hardcode the role names.
     // Please read on Array.some() to understand this bit: 
@@ -397,6 +409,24 @@ async function bot(client, message, command, args) {
       })
     })
 
+  } else if (command === "credits") {
+    message.author.send({
+      embed: {
+        color: 12370112,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: client.user.username + " - BOT",
+        description: "This bot was created by Avery & Nathan",
+        fields: [{
+          name: "Check out the Github, host your own, or invite one of ours! (try +invite)",
+          value: "https://github.com/ajmwagar/discordbot"
+        }]
+      }
+    });
+  } else if (command === "invite") {
+    message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
   }
 }
 
