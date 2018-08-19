@@ -113,6 +113,14 @@ async function bot(client, message, command, args) {
             value: "Flips a coin"
           },
           {
+            name: helpprefix + "math <number1> <operator> <number2>",
+            value: "Does basic math operations. Gets pissed off if you divide by 0"
+          },
+          {
+            name: helpprefix + "alexamode",
+            value: "Changes the prefix to Alexa <command>"
+          },
+          {
             name: helpprefix + "dab",
             value: "Dabs on them haters"
           }
