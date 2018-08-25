@@ -25,19 +25,22 @@ async function bot(client, message, command, args) {
         }
         if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
       }
-      if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
-      if (queue[message.guild.id].playing) {
-        if (args){
-          commands.add(message);
+      else {
+        if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
+        if (queue[message.guild.id].playing) {
+          if (args){
+            commands.add(message);
+          }
+          else {
+            return message.channel.send({
+              embed: {
+                color: 15844367,
+                description: "Already Playing!"
+              }
+            });
+          }
         }
-        else {
-          return message.channel.send({
-            embed: {
-              color: 15844367,
-              description: "Already Playing!"
-            }
-          });
-        }
+
       }
       let dispatcher;
       queue[message.guild.id].playing = true;
