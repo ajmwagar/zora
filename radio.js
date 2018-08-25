@@ -18,17 +18,17 @@ var radio;
 
 async function bot(client, message, command, args) {
   const commands = {
-    'play': (message) => {
+    'play': async (message) => {
       if (queue[message.guild.id] === undefined) {
         console.log("Play: Empty Queue - Adding > Play");
 
         // Add and play
         if (args.length > 0){
-          commands.add(message);
+          await commands.add(message);
         }
 
 
-        if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
+        if (!message.guild.voiceConnection) return await commands.join(message).then(() => commands.play(message));
       }
       else {
         if (queue[message.guild.id].playing) {
@@ -36,7 +36,7 @@ async function bot(client, message, command, args) {
 
           // Add to queue
           if (args.length > 0){
-            commands.add(message);
+            await commands.add(message);
           }
           else {
             return message.channel.send({
@@ -50,7 +50,7 @@ async function bot(client, message, command, args) {
         else {
           console.log("Play: Playing next");
           // Play next song
-          if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
+          if (!message.guild.voiceConnection) return await commands.join(message).then(() => commands.play(message));
         }
 
       }
