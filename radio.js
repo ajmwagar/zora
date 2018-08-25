@@ -20,21 +20,24 @@ async function bot(client, message, command, args) {
   const commands = {
     'play': (message) => {
       if (queue[message.guild.id] === undefined) {
-        return message.channel.send({
-          embed: {
-            color: 15844367,
-            description: `Add some songs to the queue first with ${config.serverconfigs[message.guild.id].prefix}add`
-          }
-        });
+        if (args){
+          commands.add(message);
+        }
+        if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
       }
       if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
       if (queue[message.guild.id].playing) {
-        return message.channel.send({
-          embed: {
-            color: 15844367,
-            description: "Already Playing!"
-          }
-        });
+        if (args){
+          commands.add(message);
+        }
+        else {
+          return message.channel.send({
+            embed: {
+              color: 15844367,
+              description: "Already Playing!"
+            }
+          });
+        }
       }
       let dispatcher;
       queue[message.guild.id].playing = true;
@@ -223,8 +226,8 @@ async function bot(client, message, command, args) {
         });
       } else {
         searcher.search(url, {
-            type: 'video'
-          })
+          type: 'video'
+        })
           .then(searchResult => {
             if (!searchResult.totalResults || searchResult.totalResults === 0) return message.reply("No music found.");
             var info = searchResult.first;
