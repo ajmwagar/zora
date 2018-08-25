@@ -20,15 +20,16 @@ async function bot(client, message, command, args) {
   const commands = {
     'play': (message) => {
       if (queue[message.guild.id] === undefined) {
-        if (args){
+        console.log("Play: Empty Queue - Adding > Play");
+        if (args.length > 0){
           commands.add(message);
         }
         if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
       }
       else {
-        if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
         if (queue[message.guild.id].playing) {
-          if (args){
+          console.log("Play: Already Playing -  Adding");
+          if (args.length > 0){
             commands.add(message);
           }
           else {
@@ -39,6 +40,10 @@ async function bot(client, message, command, args) {
               }
             });
           }
+        }
+        else {
+          console.log("Play: Playing");
+          if (!message.guild.voiceConnection) return commands.join(message).then(() => commands.play(message));
         }
 
       }
