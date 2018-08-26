@@ -1,4 +1,4 @@
-# ModBOT
+# Phoenix
 ## A modular discord bot that is fully customizable!
 
 ## Features:
