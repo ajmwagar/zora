@@ -27,8 +27,9 @@ async function bot(client, message, command, args) {
           await commands.add(message);
         }
 
+        play(queue[message.guild.id].songs.shift());
 
-        if (!message.guild.voiceConnection) return await commands.join(message).then(() => commands.play(message));
+        if (!message.guild.voiceConnection) return await commands.join(message).then(() => play(queue[message.guild.id].songs.shift()))
       }
       else {
         if (queue[message.guild.id].playing) {
@@ -50,15 +51,13 @@ async function bot(client, message, command, args) {
         else {
           console.log("Play: Playing next");
           // Play next song
-          if (!message.guild.voiceConnection) return await commands.join(message).then(() => commands.play(message));
+          if (!message.guild.voiceConnection) return await commands.join(message).then(() => play(queue[message.guild.id].songs.shift()))
         }
 
       }
       let dispatcher;
       queue[message.guild.id].playing = true;
-
-
-      (function play(song) {
+      function play(song) {
         if (song === undefined) {
           return message.channel.send({
             embed: {
@@ -169,7 +168,8 @@ async function bot(client, message, command, args) {
             play(queue[message.guild.id].songs.shift());
           });
         });
-      })(queue[message.guild.id].songs.shift());
+      }
+
     },
     'join': async (message) => {
       const voiceChannel = message.member.voiceChannel;
