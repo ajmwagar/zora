@@ -19,7 +19,7 @@ var radio;
 async function bot(client, message, command, args) {
   const commands = {
     'play': async (message) => {
-      if (queue[message.guild.id] === undefined) {
+      if (queue[message.guild.id] === undefined || queue[message.guild.id].length === 0) {
         console.log("Play: Empty Queue - Adding > Play");
 
         // Add and play
