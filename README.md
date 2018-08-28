@@ -1,4 +1,4 @@
-![zora](https://cdn.discordapp.com/attachments/409929301765390336/483817646169522186/Zora.png)
+![zora](/Zora.png)
 # Zora
 ## A modular discord bot that is fully customizable!
 
