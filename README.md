@@ -1,4 +1,4 @@
-# Phoenix
+# Zora
 ## A modular discord bot that is fully customizable!
 
 ## Features:
@@ -10,9 +10,11 @@
   - Skip, Pause, Resume, and Stop commands
 - Meme dumper from Reddit
   - Server specific subreddits
+- Stack Overflow Search
 - Weather command
 - Joke command
 - Yodaspeak translator
+- Google Translate
 - Custom server settings
   - Custom prefix
   - Custom automod
@@ -23,7 +25,7 @@
   - Purge
   - Say
 
-## Installation (Invite Phoenix)
+## Installation (Invite Zora)
 
 Phoenix is the official bot hosted by the creators of this repo, 
 you can invite it to your discord server by clicking the link below:
@@ -34,7 +36,7 @@ you can invite it to your discord server by clicking the link below:
 1. Clone the repository 
 
 ```bash
-git clone https://github.com/ajmwagar/discordbot
+git clone https://github.com/ajmwagar/zora
 ```
 2. Enter the repository
 
