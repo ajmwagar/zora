@@ -33,6 +33,22 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
+  path.exists('config.json', function (exists) {
+    if (!exists) {
+      var fileContent = {
+        "token": "",
+        "youtubeKey": "",
+        "serverconfigs": {}
+      };
+      var filepath = "config.json";
+
+      fs.writeFile(filepath, fileContent, (err) => {
+        if (err) throw err;
+
+        console.log("Configuration file generated at Config.json");
+      });
+    }
+  });
 });
 
 client.on("guildCreate", guild => {
@@ -45,7 +61,7 @@ client.on("guildCreate", guild => {
     'prefix': '.',
     'reddit': {
       'subreddits': [],
-      'posts': 5,
+      'posts': 3,
       'channel': '',
       'interval': 1
     },
