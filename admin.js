@@ -137,7 +137,7 @@ async function bot(client, message, command, args) {
             value: "Translate's input to specified language, for a list of ISO 639-1 codes go to: [wikipedia](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)"
           },
           {
-            name: helpprefix + "crypto <to> <from> (Example: BTC USD)",
+            name: helpprefix + "currency <to> <from> (Example: BTC USD)",
             value: "Gets and compares currency prices"
           }
         ],
