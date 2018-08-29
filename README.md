@@ -16,6 +16,7 @@
 - Joke command
 - Yodaspeak translator
 - Google Translate
+- Currency Converter with Crypto Support
 - Custom server settings
   - Custom prefix
   - Custom automod
@@ -28,9 +29,9 @@
 
 ## Installation (Invite Zora)
 
-Phoenix is the official bot hosted by the creators of this repo, 
+Zora is the official bot hosted by the creators of this repo, 
 you can invite it to your discord server by clicking the link below:
-[INVITE PHOENIX](https://discordapp.com/api/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot)
+[INVITE Zora](https://discordapp.com/api/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot)
 
 ## Installation (Host your own bot): 
 
