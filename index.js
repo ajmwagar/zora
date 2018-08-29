@@ -23,6 +23,7 @@ const yoda = require('./yoda');
 const overflow = require('./overflow');
 const utility = require('./utility');
 const translate = require('./translate');
+const crypto = require('./crypto');
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
@@ -118,6 +119,10 @@ client.on("message", async message => {
     // Translate
 
     translate.bot(client, message, command, args)
+
+    // Crypto
+
+    crypto.bot(client, message, command, args)
 
 
     // Jokes
