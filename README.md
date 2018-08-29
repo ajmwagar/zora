@@ -1,4 +1,4 @@
-![Zora](https://i.imgur.com/diMI0KY.png)
+![Zora](https://i.imgur.com/u3xOYSz.png)
 # Zora
 ## A modular discord bot that is fully customizable!
 
