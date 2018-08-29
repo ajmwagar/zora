@@ -1,7 +1,6 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
 const fs = require("fs");
-const path = require("path");
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
@@ -38,7 +37,7 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  path.exists("config.json", function(exists) {
+  fs.exists("config.json", function (exists) {
     if (!exists) {
       var fileContent = {
         token: "",
@@ -174,8 +173,7 @@ client.on("message", async message => {
         m.edit(res.data.joke);
       });
     }
-  } else {
-  }
+  } else {}
 });
 
 client.login(config.token);
