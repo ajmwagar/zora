@@ -9,6 +9,7 @@
   - Searching youtube
   - Queuing songs
   - Skip, Pause, Resume, and Stop commands
+  - Soundcloud
 - Meme dumper from Reddit
   - Server specific subreddits
 - Stack Overflow Search
