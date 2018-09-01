@@ -80,7 +80,7 @@ $EDITOR bugs.json
 node index.js
 ```
 
-### OR 
+## OR 
 
 ```
 pm2 start index.js -n <botname>
