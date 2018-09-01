@@ -51,7 +51,7 @@ cd discordbot
 ```bash
 npm install
 ```
-### 3. Create and Edit config.json (add ytsearch key, discord bot key, and set default prefix)
+### 3. Create and Edit config.json (add ytsearch key, discord bot key)
 ```bash
 $EDITOR config.json
 ```
