@@ -36,47 +36,47 @@ you can invite it to your discord server by clicking the link below:
 
 ## Installation (Host your own bot): 
 
-1. Clone the repository 
+### 1. Clone the repository 
 
 ```bash
 git clone https://github.com/ajmwagar/zora
 ```
-2. Enter the repository
+### 2. Enter the repository
 
 ```bash
 cd discordbot
 ```
-2. Install dependences
+### 2. Install dependences
 
 ```bash
 npm install
 ```
-3. Create and Edit config.json (add ytsearch key, discord bot key, and set default prefix)
+### 3. Create and Edit config.json (add ytsearch key, discord bot key, and set default prefix)
 ```bash
 $EDITOR config.json
 ```
-Add the following to config.json 
+  Add the following to config.json 
 ```json
 {
-  "token": "mydiscordtoken"
-  "youtubekey": "myyoutubedataapikey"
+  "token": "mydiscordtoken",
+  "youtubekey": "myyoutubedataapikey",
   "serverconfigs": {}
 }
 ```
-4. Create and Edit bugs.json
+### 4. Create and Edit bugs.json
 ```json
 {
   "servers": {}
 }
 ```
 
-5. Profit!
+### 5. Profit!
 
 ```bash
 node index.js
 ```
 
-OR 
+### OR 
 
 ```
 pm2 start index.js -n <botname>
