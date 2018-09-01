@@ -8,6 +8,7 @@ const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("./config.json");
+const bugs = require("./bugs.json");
 // config.token contains the bot's token
 // config.serverconfigs[message.guild.id].prefix contains the message prefix.
 
@@ -45,6 +46,20 @@ client.on("ready", () => {
         serverconfigs: {}
       };
       var filepath = "config.json";
+
+      fs.writeFile(filepath, fileContent, err => {
+        if (err) throw err;
+
+        console.log("Configuration file generated at Config.json");
+      });
+    }
+  });
+  fs.exists("bugs.json", function (exists) {
+    if (!exists) {
+      var fileContent = {
+        servers: {},
+      };
+      var filepath = "bugs.json";
 
       fs.writeFile(filepath, fileContent, err => {
         if (err) throw err;

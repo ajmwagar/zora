@@ -139,6 +139,10 @@ async function bot(client, message, command, args) {
           {
             name: helpprefix + "currency <to> <from> (Example: BTC USD)",
             value: "Gets and compares currency prices"
+          },
+          {
+            name: helpprefix + "bug <description>",
+            value: "Report a bug"
           }
         ],
         timestamp: new Date(),
