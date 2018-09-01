@@ -64,6 +64,10 @@ $EDITOR config.json
 }
 ```
 ### 4. Create and Edit bugs.json
+```bash
+$EDITOR bugs.json
+```  
+  Add the following to config.json 
 ```json
 {
   "servers": {}
