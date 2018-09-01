@@ -51,12 +51,26 @@ cd discordbot
 ```bash
 npm install
 ```
-3. Edit config.json (add ytsearch key, discord bot key, and set default prefix)
-
+3. Create and Edit config.json (add ytsearch key, discord bot key, and set default prefix)
 ```bash
 $EDITOR config.json
 ```
-4. Profit!
+Add the following to config.json 
+```json
+{
+  "token": "mydiscordtoken"
+  "youtubekey": "myyoutubedataapikey"
+  "serverconfigs": {}
+}
+```
+4. Create and Edit bugs.json
+```json
+{
+  "servers": {}
+}
+```
+
+5. Profit!
 
 ```bash
 node index.js
