@@ -30,7 +30,7 @@ async function bot(client, message, command, args) {
     });
   } else if (command === "math") {
     var result = 0;
-    var input = args.join();
+    var input = args.join("");
     result = eval(input);
     if (result != "Infinity") {
       message.channel.send(`🖥️ Math - Result: **${result}** 🖥️`);
