@@ -15,6 +15,7 @@ var searcher = new YTSearcher({
 
 let queue = {};
 var radio;
+let dispatcher;
 
 async function bot(client, message, command, args) {
   const commands = {
@@ -30,9 +31,8 @@ async function bot(client, message, command, args) {
         }
 
       }
-      else {
+      else if (queue[message.guild.id].playing || args.length > 0 ) {
           if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-        if (queue[message.guild.id].playing) {
           console.log("Play: Already Playing -  Adding");
 
           // Add to queue
@@ -48,16 +48,12 @@ async function bot(client, message, command, args) {
             });
           }
         }
-        else {
-          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-          console.log("Play: Playing next");
-          // Play next song
-          if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
-        }
-
-      }
-      let dispatcher;
-      queue[message.guild.id].playing = true;
+        // else {
+        //   if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+        //   console.log("Play: Playing next");
+        //   // Play next song
+        //   if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
+        // }
 
       function playSong(song) {
         if (song === undefined) {
@@ -88,13 +84,11 @@ async function bot(client, message, command, args) {
             }
           }
         });
-        dispatcher = message.guild.voiceConnection.playStream(yt(song.url, {
-          audioonly: true
-        }), {
-          passes: config.passes
-        });
+
+        dispatcher = message.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes: config.passes });
+
         let collector = message.channel.createCollector(m => m);
-        // TODO Replace message with collect
+
         collector.on('collect', m => {
           if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'pause')) {
             message.channel.send({
@@ -162,12 +156,12 @@ async function bot(client, message, command, args) {
         });
         dispatcher.on('end', () => {
           collector.stop();
-          play(queue[message.guild.id].songs.shift());
+          playSong(queue[message.guild.id].songs.shift());
         });
         dispatcher.on('error', (err) => {
           return message.channel.send('error: ' + err).then(() => {
             collector.stop();
-            play(queue[message.guild.id].songs.shift());
+            playSong(queue[message.guild.id].songs.shift());
           });
         });
       }
