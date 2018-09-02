@@ -22,16 +22,16 @@ async function bot(client, message, command, args) {
       if (queue[message.guild.id] === undefined || queue[message.guild.id].length === 0) {
         console.log("Play: Empty Queue - Adding > Play");
 
+          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
         // Add and play
         if (args.length > 0){
           await commands.add(message);
+          if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
         }
 
-        play(queue[message.guild.id].songs.shift());
-
-        if (!message.guild.voiceConnection) return await commands.join(message).then(() => play(queue[message.guild.id].songs.shift()))
       }
       else {
+          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
         if (queue[message.guild.id].playing) {
           console.log("Play: Already Playing -  Adding");
 
@@ -49,15 +49,17 @@ async function bot(client, message, command, args) {
           }
         }
         else {
+          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
           console.log("Play: Playing next");
           // Play next song
-          if (!message.guild.voiceConnection) return await commands.join(message).then(() => play(queue[message.guild.id].songs.shift()))
+          if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
         }
 
       }
       let dispatcher;
       queue[message.guild.id].playing = true;
-      function play(song) {
+
+      function playSong(song) {
         if (song === undefined) {
           return message.channel.send({
             embed: {
