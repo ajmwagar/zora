@@ -7,6 +7,7 @@ async function bot(client, message, command, args) {
     var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
     // Lists of current commands
+    message.reply("please check your direct messages.");
     message.author.send({
       embed: {
         color: 12370112,
@@ -435,6 +436,9 @@ async function bot(client, message, command, args) {
     });
   } else if (command === "invite") {
     message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
+  }
+  } else if (command === "reboot") {
+	process.exit(0);
   }
 }
 
