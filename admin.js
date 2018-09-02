@@ -436,7 +436,6 @@ async function bot(client, message, command, args) {
     });
   } else if (command === "invite") {
     message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
-  }
   } else if (command === "reboot") {
 	process.exit(0);
   }
