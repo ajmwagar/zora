@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
 const axios = require("axios");
+const fs = require("fs");
 
 const config = require("./config.json");
+const bugs = require("./bugs.json");
 
 async function bot(client, message, command, args) {
   if (command === "dice") {
@@ -28,12 +30,32 @@ async function bot(client, message, command, args) {
     });
   } else if (command === "math") {
     var result = 0;
-    var input = args.join();
+    var input = args.join("");
     result = eval(input);
     if (result != "Infinity") {
       message.channel.send(`🖥️ Math - Result: **${result}** 🖥️`);
     } else {
       message.channel.send(`🖥️ WTF you tryin' to do M8! >:( 🖥️`);
+    }
+  } else if (command === "bug") {
+    var description = args.join(" ");
+    if (description) {
+
+      var defaultConfig = {
+        description: "",
+      };
+      if (!bugs.servers.hasOwnProperty(message.guild.id))
+        bugs.servers[message.guild.id] = {
+          users: {}
+        }
+      bugs.servers[message.guild.id].users[message.author.id] = description;
+
+      fs.writeFileSync("./bugs.json", JSON.stringify(bugs));
+
+      bugs.servers[message.guild.id] = description;
+      message.channel.send(`Thank you for your contribution! The issue will be fixed soon!`);
+    } else {
+      message.channel.send(`Please add a description of the problem!`);
     }
   }
 }
