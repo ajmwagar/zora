@@ -1,5 +1,5 @@
 const axios = require('axios');
-const config = require('./config.json');
+const config = require('../config.json');
 const Discord = require("discord.js");
 const decodeString = require("unescape");
 

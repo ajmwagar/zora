@@ -1,4 +1,4 @@
-const config = require("./config.json");
+const config = require("../config.json");
 const yt = require('ytdl-core');
 const {
   YTSearcher

@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const translate = require('translate');
 
-const config = require("./config.json");
+const config = require("../config.json");
 
 // Google translate API
 translate.engine = 'google';
