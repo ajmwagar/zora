@@ -17,7 +17,7 @@ async function bot(client, message, command, args) {
         title: client.user.username + " - About",
         description: "This bot was created by Avery & Nathan",
         fields: [{
-          name: "Check out the Github, host your own, or invite one of ours! (try +invite)",
+          name: `Check out the Github, host your own, or invite one of ours! (try ${helpprefix}invite)`,
           value: "https://github.com/ajmwagar/discordbot"
         }]
       }
