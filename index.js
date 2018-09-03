@@ -26,6 +26,21 @@ const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
 
+// Default server configuration (also used with .clearcfg)
+var defaultConfig = {
+  name: config.name,
+  prefix: ".",
+  reddit: {
+    subreddits: [],
+    posts: 3,
+    channel: "",
+    interval: 1
+  },
+  automod: {
+    bannedwords: []
+  }
+};
+
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
@@ -78,26 +93,12 @@ client.on("guildCreate", guild => {
     } members!`
   );
   client.user.setActivity(`on ${client.guilds.size} servers`);
-
-  var defaultConfig = {
-    name: config.name,
-    prefix: ".",
-    reddit: {
-      subreddits: [],
-      posts: 3,
-      channel: "",
-      interval: 1
-    },
-    automod: {
-      bannedwords: []
-    }
-  };
   if (!config.serverconfigs.hasOwnProperty(guild.id))
     config.serverconfigs[guild.id] = defaultConfig;
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
 
-  guild.defaultChannel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" +config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
+  guild.defaultChannel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
 });
 
 client.on("guildDelete", guild => {
@@ -135,7 +136,7 @@ client.on("message", async message => {
 
     // Admin
 
-    admin.bot(client, message, command, args);
+    admin.bot(client, message, command, args, defaultConfig);
 
     // Weather
 

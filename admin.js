@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("./config.json");
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, defaultConfig) {
   if (command === "help") {
     var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
@@ -248,6 +248,19 @@ async function bot(client, message, command, args) {
     // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
     const m = await message.channel.send("Ping?");
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+  } else if (command === "clearcfg") {
+    // Only allow admins to wipe server config
+    if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
+      return message.reply("Sorry, you don't have permissions to use this!");
+    // Reload and clear CFG
+    console.log(
+      `Config cleared for: ${message.guild.name} (id: ${message.guild.id}). This guild has ${
+      message.guild.memberCount
+    } members!`
+    );
+    config.serverconfigs[message.guild.id] = defaultConfig;
+    fs.writeFileSync("./config.json", JSON.stringify(config));
+    message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
   } else if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
@@ -440,7 +453,7 @@ async function bot(client, message, command, args) {
     message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
     message.reply("please check you direct messages.");
   } else if (command === "reboot") {
-	process.exit(0);
+    process.exit(0);
   }
 }
 
