@@ -22,6 +22,7 @@
   - Custom prefix
   - Custom automod
   - Custom name
+- Auto-sharding
 - Admin commands
   - Kick
   - Ban
