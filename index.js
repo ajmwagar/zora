@@ -96,6 +96,8 @@ client.on("guildCreate", guild => {
     config.serverconfigs[guild.id] = defaultConfig;
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
+
+  guild.defaultChannel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" +config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
 });
 
 client.on("guildDelete", guild => {

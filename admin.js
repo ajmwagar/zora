@@ -307,6 +307,7 @@ async function bot(client, message, command, args) {
     // get the delete count, as an actual number.
     const deleteCount = parseInt(args[0], 10);
 
+
     // Ooooh nice, combined conditions. <3
     if (!deleteCount || deleteCount < 2 || deleteCount > 100)
       return message.reply("Please provide a number between 2 and 100 for the number of messages to delete");
@@ -315,7 +316,7 @@ async function bot(client, message, command, args) {
     const fetched = await message.channel.fetchMessages({
       limit: deleteCount
     });
-    message.channel.bulkDelete(fetched)
+    message.channel.bulkDelete(fetched).then(() => message.channel.send(":white_check_mark:"))
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
   } else if (command === "prefix") {
     // This command changes the bot prefix
@@ -433,8 +434,10 @@ async function bot(client, message, command, args) {
         }]
       }
     });
+    message.reply("please check you direct messages.");
   } else if (command === "invite") {
     message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
+    message.reply("please check you direct messages.");
   }
 }
 

@@ -48,12 +48,12 @@ async function bot(client, message, command, args) {
             });
           }
         }
-        // else {
-        //   if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-        //   console.log("Play: Playing next");
-        //   // Play next song
-        //   if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
-        // }
+        else {
+          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+          console.log("Play: Playing next");
+          // Play next song
+          if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
+        }
 
       function playSong(song) {
         if (song === undefined) {
