@@ -1,21 +1,36 @@
 const Discord = require("discord.js");
 const fs = require('fs');
-const config = require("./config.json");
+const config = require("../config.json");
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, defaultConfig) {
   if (command === "help") {
     var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
     // Lists of current commands
+    message.reply("please check your direct messages.");
     message.author.send({
       embed: {
-        color: 3447003,
+        color: 12370112,
         author: {
           name: client.user.username,
           icon_url: client.user.avatarURL
         },
-        title: "Commands for " + client.user.username,
-        url: "https://github.com/ajmwagar/discordbot",
+        title: client.user.username + " - About",
+        description: "This bot was created by Avery & Nathan",
+        fields: [{
+          name: `Check out the Github, host your own, or invite one of ours! (try ${helpprefix}invite)`,
+          value: "https://github.com/ajmwagar/discordbot"
+        }]
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 12370112,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Admin Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "help",
@@ -58,16 +73,77 @@ async function bot(client, message, command, args) {
             value: "Sets the bot prefix"
           },
           {
-            name: helpprefix + "joke",
-            value: "Tell a joke"
+            name: helpprefix + "credits",
+            value: "Visit the github repo!"
           },
           {
+            name: helpprefix + "invite",
+            value: "Invite our official bot to your server!"
+          }
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 3447003,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Misc/Utility Commands for " + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [{
             name: helpprefix + "weather <city>",
             value: "Get the weather for a city"
           },
           {
+            name: helpprefix + "joke",
+            value: "Tell a joke"
+          },
+          {
             name: helpprefix + "yoda <message>",
             value: "Translates your message to yodaspeak!"
+          },
+          {
+            name: helpprefix + "stack <search query>",
+            value: "Searches stack overflow"
+          },
+          {
+            name: helpprefix + "dice <number of sides>",
+            value: "Roles a dice with a number of sides"
+          },
+          {
+            name: helpprefix + "coinflip",
+            value: "Flips a coin"
+          },
+          {
+            name: helpprefix + "math <number1> <operator> <number2>",
+            value: "Does basic math operations. Gets pissed off if you divide by 0"
+          },
+          {
+            name: helpprefix + "alexamode",
+            value: "Changes the prefix to Alexa <command>"
+          },
+          {
+            name: helpprefix + "dab",
+            value: "Dabs on them haters"
+          },
+          {
+            name: helpprefix + "translate <language code> <input text>",
+            value: "Translate's input to specified language, for a list of ISO 639-1 codes go to: [wikipedia](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)"
+          },
+          {
+            name: helpprefix + "currency <to> <from> (Example: BTC USD)",
+            value: "Gets and compares currency prices"
+          },
+          {
+            name: helpprefix + "bug <description>",
+            value: "Report a bug"
           }
         ],
         timestamp: new Date(),
@@ -85,7 +161,6 @@ async function bot(client, message, command, args) {
           icon_url: client.user.avatarURL
         },
         title: "Meme Commands for " + client.user.username,
-        url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "subs",
@@ -127,7 +202,6 @@ async function bot(client, message, command, args) {
           icon_url: client.user.avatarURL
         },
         title: "Music Commands for " + client.user.username,
-        url: "https://github.com/ajmwagar/discordbot",
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "join",
@@ -174,6 +248,19 @@ async function bot(client, message, command, args) {
     // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
     const m = await message.channel.send("Ping?");
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+  } else if (command === "clearcfg") {
+    // Only allow admins to wipe server config
+    if (!message.member.permissions.has('ADMINISTRATOR'))
+      return message.reply("Sorry, you don't have permissions to use this!");
+    // Reload and clear CFG
+    console.log(
+      `Config cleared for: ${message.guild.name} (id: ${message.guild.id}). This guild has ${
+      message.guild.memberCount
+    } members!`
+    );
+    config.serverconfigs[message.guild.id] = defaultConfig;
+    fs.writeFileSync("./config.json", JSON.stringify(config));
+    message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
   } else if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
@@ -181,12 +268,12 @@ async function bot(client, message, command, args) {
     // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
     message.delete().catch(O_o => {});
     // And we get the bot to say the thing: 
-    message.channel.send(sayMessage);
+    message.channel.send(`**${message.author} Said:\n** ` + sayMessage);
   } else if (command === "kick") {
     // This command must be limited to mods and admins. In this example we just hardcode the role names.
     // Please read on Array.some() to understand this bit: 
     // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/some?
-    if (!message.member.roles.some(r => ["Owner", "Administrator", "Moderator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     // Let's first check if we have a member and if we can kick them!
@@ -211,7 +298,7 @@ async function bot(client, message, command, args) {
   } else if (command === "ban") {
     // Most of this command is identical to kick, except that here we'll only let admins do it.
     // In the real world mods could ban too, but this is just an example, right? ;)
-    if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     let member = message.mentions.members.first();
@@ -228,11 +315,12 @@ async function bot(client, message, command, args) {
     message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
   } else if (command === "purge") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     // get the delete count, as an actual number.
     const deleteCount = parseInt(args[0], 10);
+
 
     // Ooooh nice, combined conditions. <3
     if (!deleteCount || deleteCount < 2 || deleteCount > 100)
@@ -242,14 +330,13 @@ async function bot(client, message, command, args) {
     const fetched = await message.channel.fetchMessages({
       limit: deleteCount
     });
-    message.channel.bulkDelete(fetched)
+    message.channel.bulkDelete(fetched).then(() => message.channel.send(":white_check_mark:"))
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
   } else if (command === "prefix") {
-    // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    // This command changes the bot prefix
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
-    // get the delete count, as an actual number.
     var setPrefix = args[0];
 
     config.serverconfigs[message.guild.id].prefix = setPrefix;
@@ -261,9 +348,23 @@ async function bot(client, message, command, args) {
       }
     });
 
+  } else if (command === "alexamode") {
+    // This command changes the bot prefix to "Alexa"
+    if (!message.member.permissions.has('ADMINISTRATOR'))
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+
+    config.serverconfigs[message.guild.id].prefix = "Alexa ";
+
+    message.channel.send({
+      embed: {
+        color: 3447003,
+        description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}, type Alexa <command>`
+      }
+    });
   } else if (command === "addbw") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     args.forEach((word) => {
@@ -271,11 +372,13 @@ async function bot(client, message, command, args) {
       config.serverconfigs[message.guild.id].automod.bannedwords.push(word);
 
       // Alert user
+      let embed = new Discord.RichEmbed()
+        .setTitle(`Added ${word} to banned words`)
+        .setAuthor(client.user.username + " - AUTOMOD", client.user.avatarURL)
+        .setColor(15844367)
+
       message.channel.send({
-        embed: {
-          color: 3447003,
-          description: `Added ${word} to banned words.`
-        }
+        embed
       })
       fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
     })
@@ -283,7 +386,7 @@ async function bot(client, message, command, args) {
 
   } else if (command === "removebw") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     args.forEach((word) => {
@@ -298,7 +401,7 @@ async function bot(client, message, command, args) {
         // Alert user
         let embed = new Discord.RichEmbed()
           .setTitle(`Removed ${word} from banned words`)
-          .setAuthor(client.user.username + "- AUTOMOD", client.user.avatarURL)
+          .setAuthor(client.user.username + " - AUTOMOD", client.user.avatarURL)
           .setColor(15844367)
 
         message.channel.send({
@@ -309,7 +412,7 @@ async function bot(client, message, command, args) {
     })
   } else if (command === "bws") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     let embed = new Discord.RichEmbed()
@@ -329,6 +432,28 @@ async function bot(client, message, command, args) {
       })
     })
 
+  } else if (command === "credits") {
+    message.author.send({
+      embed: {
+        color: 12370112,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: client.user.username + " - BOT",
+        description: "This bot was created by Avery & Nathan",
+        fields: [{
+          name: "Check out the Github, host your own, or invite one of ours! (try +invite)",
+          value: "https://github.com/ajmwagar/discordbot"
+        }]
+      }
+    });
+    message.reply("please check you direct messages.");
+  } else if (command === "invite") {
+    message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
+    message.reply("please check you direct messages.");
+  } else if (command === "reboot") {
+    process.exit(0);
   }
 }
 
