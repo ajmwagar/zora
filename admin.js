@@ -250,7 +250,7 @@ async function bot(client, message, command, args, defaultConfig) {
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
   } else if (command === "clearcfg") {
     // Only allow admins to wipe server config
-    if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
     // Reload and clear CFG
     console.log(
@@ -273,7 +273,7 @@ async function bot(client, message, command, args, defaultConfig) {
     // This command must be limited to mods and admins. In this example we just hardcode the role names.
     // Please read on Array.some() to understand this bit: 
     // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/some?
-    if (!message.member.roles.some(r => ["Owner", "Administrator", "Moderator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     // Let's first check if we have a member and if we can kick them!
@@ -298,7 +298,7 @@ async function bot(client, message, command, args, defaultConfig) {
   } else if (command === "ban") {
     // Most of this command is identical to kick, except that here we'll only let admins do it.
     // In the real world mods could ban too, but this is just an example, right? ;)
-    if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     let member = message.mentions.members.first();
@@ -315,7 +315,7 @@ async function bot(client, message, command, args, defaultConfig) {
     message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
   } else if (command === "purge") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     // get the delete count, as an actual number.
@@ -334,7 +334,7 @@ async function bot(client, message, command, args, defaultConfig) {
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
   } else if (command === "prefix") {
     // This command changes the bot prefix
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     var setPrefix = args[0];
@@ -350,7 +350,7 @@ async function bot(client, message, command, args, defaultConfig) {
 
   } else if (command === "alexamode") {
     // This command changes the bot prefix to "Alexa"
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
 
@@ -364,7 +364,7 @@ async function bot(client, message, command, args, defaultConfig) {
     });
   } else if (command === "addbw") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     args.forEach((word) => {
@@ -386,7 +386,7 @@ async function bot(client, message, command, args, defaultConfig) {
 
   } else if (command === "removebw") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     args.forEach((word) => {
@@ -412,7 +412,7 @@ async function bot(client, message, command, args, defaultConfig) {
     })
   } else if (command === "bws") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Owner", "Administrator"].includes(r.name)))
+    if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     let embed = new Discord.RichEmbed()
