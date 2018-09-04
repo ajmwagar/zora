@@ -29,7 +29,7 @@ if (!fs.existsSync("./config.json")) {
   };
   fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
 
-  console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+  console.log("Configuration file generated at ./config.json \nPlease add your bot token and youtube api key, then restart the bot.\n\n\n");
 }
 
 // Here we load the config.json file that contains our token and our prefix values.
