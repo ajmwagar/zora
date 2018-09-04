@@ -41,6 +41,7 @@ async function bot(client, message, command, args) {
             if (config.userprofiles[message.member.user.id].vip === false) {
                 // give normal users 500 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 500;
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -52,6 +53,7 @@ async function bot(client, message, command, args) {
             } else {
                 // give VIP users 5000 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 5000;
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -85,6 +87,7 @@ async function bot(client, message, command, args) {
                     file: winImg
                 });
                 config.userprofiles[message.member.user.id].zcoins += 500;
+                fs.writeFileSync("./config.json", JSON.stringify(config));
             }
 
             function lose() {
@@ -93,6 +96,7 @@ async function bot(client, message, command, args) {
                     file: loseImg
                 });
                 config.userprofiles[message.member.user.id].zcoins -= 250;
+                fs.writeFileSync("./config.json", JSON.stringify(config));
             }
         });
 
