@@ -67,6 +67,12 @@ client.on("ready", () => {
         fs.writeFileSync("./config.json", JSON.stringify(config));
       }
     });
+
+    if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)){
+      config.serverconfigs[guild.id] = defaultConfig;
+      fs.writeFileSync("./config.json", JSON.stringify(config));
+
+    }
   });
 
   // This event will run if the bot starts, and logs in, successfully.
