@@ -22,6 +22,7 @@
   - Custom prefix
   - Custom automod
   - Custom name
+- Auto-sharding
 - Admin commands
   - Kick
   - Ban
@@ -44,7 +45,7 @@ git clone https://github.com/ajmwagar/zora
 ### 2. Enter the repository
 
 ```bash
-cd discordbot
+cd zora
 ```
 ### 2. Install dependences
 

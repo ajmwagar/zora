@@ -41,6 +41,10 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "ban a user (admins only)"
           },
           {
+            name: helpprefix + "setlog <channel>",
+            value: "Set channel for modlog"
+          },
+          {
             name: helpprefix + "kick <user>",
             value: "kick a user (admins and mods only)"
           },
@@ -454,6 +458,19 @@ async function bot(client, message, command, args, defaultConfig) {
     message.reply("please check you direct messages.");
   } else if (command === "reboot") {
     process.exit(0);
+  } else if (command === "setlog") {
+    var channel = args[0].trim()
+
+    if (channel) {
+
+      config.serverconfigs[message.guild.id].modlogChannel = channel;
+
+      fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
+
+      return message.reply("Set channel to #" + channel);
+
+  }
+    
   }
 }
 
