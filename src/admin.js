@@ -341,9 +341,11 @@ async function bot(client, message, command, args, defaultConfig) {
     if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
+if (args.length > 0){
+
     var setPrefix = args[0];
 
-    if (setPrefix != undefined || setPrefix !== "" ){
+    if (setPrefix !== undefined || setPrefix !== "" ){
       config.serverconfigs[message.guild.id].prefix = setPrefix;
     message.channel.send({
       embed: {
@@ -352,6 +354,7 @@ async function bot(client, message, command, args, defaultConfig) {
       }
     });
     }
+}
     else {
       message.channel.send(`Please specify a prefix with ${config.serverconfigs[message.guild.id].prefix}prefix <new prefix>`);
     }
