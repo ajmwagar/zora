@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "brain.js": "^1.2.8",
+    "chalk": "^2.4.1",
     "discord.js": "^11.4.1",
     "get-json": "^1.0.0",
     "icanhazdadjoke-client": "0.0.2",
