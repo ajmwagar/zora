@@ -28,13 +28,9 @@ const overflow = require("./overflow");
 const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
-<<<<<<< HEAD
+
 const profile = require("./profile")
 const modlog = require("./events/modlog");
-=======
-
-const modlog = require('./events/modlog');
->>>>>>> 2a39e41e0f4155f88e7e42395fc87ab685413ac0
 
 // Default server configuration (also used with .clearcfg)
 var defaultConfig = {
@@ -65,15 +61,9 @@ var defaultprofile = {
 client.on("ready", () => {
   client.guilds.forEach(function (guild) {
     // Initialize User Profiles
-<<<<<<< HEAD
-    guild.members.forEach(function (member) {
-      if (!config.userprofiles.hasOwnProperty(member.user.id))
-        config.userprofiles[member.user.id] = defaultprofile;
-=======
     guild.members.forEach(function(member) {
       if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id))
         config.userprofiles[member.id] = defaultprofile;
->>>>>>> 2a39e41e0f4155f88e7e42395fc87ab685413ac0
       fs.writeFileSync("./config.json", JSON.stringify(config));
     });
   });
@@ -155,21 +145,9 @@ client.on("guildCreate", guild => {
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
 
-<<<<<<< HEAD
-  guild.defaultChannel.send(
-    "Thanks for adding me!\n\nMy prefix is `" +
-    config.serverconfigs[guild.id].prefix +
-    "`\nYou can see a list of commands with `" +
-    config.serverconfigs[guild.id].prefix +
-    "help`\nOr you can change my prefix with `" +
-    config.serverconfigs[guild.id].prefix +
-    "prefix`\n\nEnjoy!"
-  );
-=======
   // Get default
   const channel = getDefaultChannel(guild);
   channel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
->>>>>>> 2a39e41e0f4155f88e7e42395fc87ab685413ac0
 });
 
 client.on("guildDelete", guild => {
