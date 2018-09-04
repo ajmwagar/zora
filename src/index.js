@@ -15,6 +15,7 @@ const bugs = require("../bugs.json");
 
 const axios = require("axios");
 const moment = require("moment");
+var Long = require("long");
 
 // Internal modules
 const automod = require("./automod");
@@ -28,14 +29,7 @@ const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
 
-<<<<<<< HEAD
 const modlog = require('./events/modlog');
-var Long = require("long");
-
-
-=======
-const modlog = require("./events/modlog");
->>>>>>> ceaf4a849d3dc4f726d8e374a56e3cb8db4da45a
 
 // Default server configuration (also used with .clearcfg)
 var defaultConfig = {
