@@ -253,8 +253,7 @@ client.on("message", async message => {
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
     // TODO Automod filter
-    if (
-      message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
+    if (message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
       if (config.userprofiles){
@@ -278,81 +277,82 @@ client.on("message", async message => {
         });
 
       }
+    }
+
+
+      // Here we separate our "command" name, and our "arguments" for the command.
+      // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
+      // command = say
+      // args = ["Is", "this", "the", "real", "life?"]
+      const args = message.content
+        .slice(config.serverconfigs[message.guild.id].prefix.length)
+        .trim()
+        .split(/ +/g);
+      const command = args.shift().toLowerCase();
+
+      // Admin
+
+      admin.bot(client, message, command, args, defaultConfig);
+
+      // Weather
+
+      weather.bot(client, message, command, args);
+
+      // Memes
+
+      memes.bot(client, message, command, args);
+
+      // Music
+
+      radio.bot(client, message, command, args);
+
+      // Yodaspeak
+
+      yoda.bot(client, message, command, args);
+
+      // Stack Overflow
+
+      overflow.bot(client, message, command, args);
+
+      // Utility
+
+      utility.bot(client, message, command, args);
+
+      // Translate
+
+      translate.bot(client, message, command, args);
+
+      // Crypto
+
+      crypto.bot(client, message, command, args);
+
+      // Profile
+
+      profile.bot(client, message, command, args);
+
+      // Jokes
+
+      // Tell a joke using icanhazdadjoke.com (random dad jokes)
+      // Use axios to create an api
+      if (command === "joke") {
+        // Tee it up
+        const m = await message.channel.send("Let me think...");
+
+        // Get the joke
+        const jokeApi = axios.create({
+          baseURL: "https://icanhazdadjoke.com",
+          headers: {
+            Accept: "application/json"
+          }
+        });
+
+        // respond
+        jokeApi.get("/").then(res => {
+          m.edit(res.data.joke);
+        });
       }
     }
-
-    // Here we separate our "command" name, and our "arguments" for the command.
-    // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
-    // command = say
-    // args = ["Is", "this", "the", "real", "life?"]
-    const args = message.content
-      .slice(config.serverconfigs[message.guild.id].prefix.length)
-      .trim()
-      .split(/ +/g);
-    const command = args.shift().toLowerCase();
-
-    // Admin
-
-    admin.bot(client, message, command, args, defaultConfig);
-
-    // Weather
-
-    weather.bot(client, message, command, args);
-
-    // Memes
-
-    memes.bot(client, message, command, args);
-
-    // Music
-
-    radio.bot(client, message, command, args);
-
-    // Yodaspeak
-
-    yoda.bot(client, message, command, args);
-
-    // Stack Overflow
-
-    overflow.bot(client, message, command, args);
-
-    // Utility
-
-    utility.bot(client, message, command, args);
-
-    // Translate
-
-    translate.bot(client, message, command, args);
-
-    // Crypto
-
-    crypto.bot(client, message, command, args);
-
-    // Profile
-
-    profile.bot(client, message, command, args);
-
-    // Jokes
-
-    // Tell a joke using icanhazdadjoke.com (random dad jokes)
-    // Use axios to create an api
-    if (command === "joke") {
-      // Tee it up
-      const m = await message.channel.send("Let me think...");
-
-      // Get the joke
-      const jokeApi = axios.create({
-        baseURL: "https://icanhazdadjoke.com",
-        headers: {
-          Accept: "application/json"
-        }
-      });
-
-      // respond
-      jokeApi.get("/").then(res => {
-        m.edit(res.data.joke);
-      });
-    }
-  } else {}
+  }
 });
 
 const fire = (text, guild) => {
