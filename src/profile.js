@@ -202,7 +202,11 @@ async function bot(client, message, command, args) {
         for (var usr in sorted) {
             var user = sorted[counter - 1];
 
-            let profile = message.guild.members.get(user[0])
+            client.guilds.forEach(function (guild) {
+                if (guild.members.indexOf(user[0]) > -1) {
+                    let profile = guild.members.get(user[0])
+                }
+            });
 
             console.log(profile);
 
