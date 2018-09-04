@@ -53,13 +53,11 @@ async function bot(client, message, command, args) {
             var userInventory = config.userprofiles[message.member.user.id].inventory;
 
             if (userInventory.length > 0) {
-                userInventory.forEach(function (item) {
-                    const embed = new Discord.RichEmbed()
-                        .setColor("#FF7F50")
-                        .setTitle(item)
-                    message.channel.send({
-                        embed
-                    })
+                const embed = new Discord.RichEmbed()
+                    .setColor("#FF7F50")
+                    .setTitle(userInventory.join(" "))
+                message.channel.send({
+                    embed
                 })
 
             }
