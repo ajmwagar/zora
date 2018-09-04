@@ -422,6 +422,8 @@ const fire = (text, guild) => {
     c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
   );
 
+  if (msg.toLowerCase().includes("zora")) return;
+
   if (!channel) {
     console.log("Channel not found");
     return;
