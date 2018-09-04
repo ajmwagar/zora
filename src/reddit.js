@@ -55,7 +55,7 @@ async function bot(client, message, command, args) {
 
     config.serverconfigs[message.guild.id].reddit.subreddits.forEach((sub) => {
       var embed = new Discord.RichEmbed()
-        .setAuthor(client.user.username, client.user.avatarURL)
+        .setTitle('r/' + sub)
         .setColor(0xff5323)
       message.channel.send({
         embed
