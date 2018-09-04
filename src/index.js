@@ -80,11 +80,7 @@ client.on("ready", () => {
     });
 
     if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)){
-        console.log("Updating config for " + guild.name);
         config.serverconfigs[guild.id] = defaultConfig;
-    }
-    else {
-      console.log("not updating " + guild.name)
     }
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
