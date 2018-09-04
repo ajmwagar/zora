@@ -27,7 +27,7 @@ const overflow = require("./overflow");
 const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
-
+const profile = require("./profile")
 const modlog = require("./events/modlog");
 
 // Default server configuration (also used with .clearcfg)
@@ -46,20 +46,22 @@ var defaultConfig = {
   }
 };
 
+// Default user profile config
 var defaultprofile = {
-  level: "0",
-  xp: "0",
+  level: 1,
+  xp: 0,
+
   VIP: false
 };
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
-  client.guilds.forEach(function(guild) {
+  client.guilds.forEach(function (guild) {
     // Initialize User Profiles
-    guild.members.forEach(function(member) {
-      if (!config.userprofiles.hasOwnProperty(member.id))
-        config.userprofiles[member.id] = defaultprofile;
+    guild.members.forEach(function (member) {
+      if (!config.userprofiles.hasOwnProperty(member.user.id))
+        config.userprofiles[member.user.id] = defaultprofile;
       fs.writeFileSync("./config.json", JSON.stringify(config));
     });
   });
@@ -69,15 +71,14 @@ client.on("ready", () => {
   if (client.shard) {
     console.log(
       "Shard #" +
-        client.shard.id +
-        " active with " +
-        client.guilds.size +
-        " guilds"
+      client.shard.id +
+      " active with " +
+      client.guilds.size +
+      " guilds"
     );
     client.user.setPresence({
       game: {
-        name:
-          "@Nitro help | Shard " +
+        name: "@Nitro help | Shard " +
           (client.shard.id + 1) +
           "/" +
           client.shard.count,
@@ -87,13 +88,16 @@ client.on("ready", () => {
   } else {
     console.log("Shard #0 active with " + client.guilds.size + " guilds");
     client.user.setPresence({
-      game: { name: "@Nitro help | " + client.guilds.size + " guilds", type: 0 }
+      game: {
+        name: "@Nitro help | " + client.guilds.size + " guilds",
+        type: 0
+      }
     });
   }
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("../config.json", function(exists) {
+  fs.exists("../config.json", function (exists) {
     if (!exists) {
       var fileContent = {
         token: "",
@@ -110,7 +114,7 @@ client.on("ready", () => {
       });
     }
   });
-  fs.exists("bugs.json", function(exists) {
+  fs.exists("bugs.json", function (exists) {
     if (!exists) {
       var fileContent = {
         servers: {}
@@ -141,12 +145,12 @@ client.on("guildCreate", guild => {
 
   guild.defaultChannel.send(
     "Thanks for adding me!\n\nMy prefix is `" +
-      config.serverconfigs[guild.id].prefix +
-      "`\nYou can see a list of commands with `" +
-      config.serverconfigs[guild.id].prefix +
-      "help`\nOr you can change my prefix with `" +
-      config.serverconfigs[guild.id].prefix +
-      "prefix`\n\nEnjoy!"
+    config.serverconfigs[guild.id].prefix +
+    "`\nYou can see a list of commands with `" +
+    config.serverconfigs[guild.id].prefix +
+    "help`\nOr you can change my prefix with `" +
+    config.serverconfigs[guild.id].prefix +
+    "prefix`\n\nEnjoy!"
   );
 });
 
@@ -171,7 +175,7 @@ client.on("messageDelete", msg => {
   if (msg.channel.type !== "text") return;
   if (
     msg.channel.name &&
-    msg.channel.name.includes(config.serverconfigs[guild.id].modlogChannel)
+    msg.channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
   )
     return;
   fire(
@@ -251,10 +255,30 @@ client.on("message", async message => {
     // which is set in the configuration file.
     // TODO Automod filter
     if (
-      message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !==
-      0
-    )
-      return automod.censor(message);
+      message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
+      automod.censor(message);
+    } else {
+      // XP and leveling
+      config.userprofiles[message.member.user.id].xp += 100;
+      console.log(`${config.userprofiles[message.member.user.id].xp} out of ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`)
+      if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
+
+      } else {
+        config.userprofiles[message.member.user.id].xp = 0;
+        config.userprofiles[message.member.user.id].level += 1;
+        const embed = new Discord.RichEmbed()
+          .setAuthor(client.user.username, client.user.avatarURL)
+          .setColor("#FF7F50")
+          .setThumbnail(message.member.user.avatarURL)
+          .setTitle(`${message.member.user.username} just leveled up!`)
+          .setDescription(`**New Level: ${config.userprofiles[message.member.user.id].level}**, XP has been reset`)
+          .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`, client.user.avatarURL)
+        message.channel.send({
+          embed
+        });
+
+      }
+    }
 
     // Here we separate our "command" name, and our "arguments" for the command.
     // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
@@ -302,6 +326,10 @@ client.on("message", async message => {
 
     crypto.bot(client, message, command, args);
 
+    // Profile
+
+    profile.bot(client, message, command, args);
+
     // Jokes
 
     // Tell a joke using icanhazdadjoke.com (random dad jokes)
@@ -323,8 +351,7 @@ client.on("message", async message => {
         m.edit(res.data.joke);
       });
     }
-  } else {
-  }
+  } else {}
 });
 
 const fire = (text, guild) => {
