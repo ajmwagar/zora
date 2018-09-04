@@ -19,6 +19,21 @@ dbl.on('error', e => {
   console.log(`Oops! ${e}`);
 })
 
+fs.openSync("./config.json", 'r', (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      token: "",
+      youtubeKey: "",
+      serverconfigs: {},
+      userprofiles: {}
+    };
+    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+
+    console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+  }
+});
+
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("../config.json");
 const bugs = require("../bugs.json");
@@ -118,23 +133,6 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("../config.json", function (exists) {
-    if (!exists) {
-      var fileContent = {
-        token: "",
-        youtubeKey: "",
-        serverconfigs: {},
-        userprofiles: {}
-      };
-      var filepath = "../config.json";
-
-      fs.writeFile(filepath, fileContent, err => {
-        if (err) throw err;
-
-        console.log("Configuration file generated at ../config.json");
-      });
-    }
-  });
   fs.exists("bugs.json", function (exists) {
     if (!exists) {
       var fileContent = {
