@@ -220,8 +220,6 @@ const fire = (text, guild) => {
   // TODO Server set modlog channel
   let channel = guild.channels.find(c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel));
 
-  guild.channels.forEach(c => console.log(c.name));
-
   if (!channel) {
     console.log("Channel not found");
     return;
@@ -230,24 +228,21 @@ const fire = (text, guild) => {
   let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `
   channel.send(time + text, {
     split: true
-  }).then(() => console.log("Incident reported")).catch(console.log);
+  }).then().catch(console.log);
 }
 
 client.on('messageDelete', msg => {
-  console.log("messageDelete");
   if (msg.channel.type !== "text") return
   if (msg.channel.name && msg.channel.name.includes(config.serverconfigs[guild.id].modlogChannel)) return;
   fire(`**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${msg.content}\``, msg.guild)
 })
 
 client.on('messageUpdate', (msg, newMsg) => {
-  console.log("messageUpdate");
   if (msg.content === newMsg.content) return
   fire(`**#${msg.channel.name} | ${msg.author.tag} edited their message:**\n**before:** \`${msg.content}\`\n**+after:** \`${newMsg.content}\``, msg.guild)
 })
 
 client.on('guildMemberUpdate', (old, nw) => {
-  console.log("gmu");
   let txt
   if (old.roles.size !== nw.roles.size) {
     if (old.roles.size > nw.roles.size) {
@@ -266,17 +261,14 @@ client.on('guildMemberUpdate', (old, nw) => {
 })
 
 client.on('roleCreate', (role) => {
-  console.log("role added");
   fire("**New role created**", role.guild)
 })
 
 client.on('roleDelete', (role) => {
-  console.log("role removed");
   fire("**Role deleted -> `" + role.name + "`**", role.guild)
 })
 
 client.on('roleUpdate', (old, nw) => {
-  console.log("role updated");
   let txt
   if (old.name !== nw.name) {
     txt = `**${old.name} | Role name updated to -> \`${nw.name}\`**`
@@ -285,7 +277,6 @@ client.on('roleUpdate', (old, nw) => {
 })
 
 client.on('guildBanAdd', (guild, user) => {
-  console.log("ban add");
   fire(`**User banned -> \`${user.tag}\`**`, guild)
 })
 

@@ -41,6 +41,10 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "ban a user (admins only)"
           },
           {
+            name: helpprefix + "setlog <channel>",
+            value: "Set channel for modlog"
+          },
+          {
             name: helpprefix + "kick <user>",
             value: "kick a user (admins and mods only)"
           },
