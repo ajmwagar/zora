@@ -182,7 +182,56 @@ async function bot(client, message, command, args) {
                 });
             }
         }
+    } else if (command === "forbes") {
+        // No lag
+        var edit = await message.channel.send("Browsing Forbes...");
+
+        // Sort
+        var sorted = sortProperties(config.userprofiles).reverse();
+
+
+        // Default to 100
+        var top = parseInt(args[0]) || 100;
+
+        // Setup embed
+        let embed = new Discord.RichEmbed().setTitle("Forbes richest " + top)
+            .setAuthor(client.user.username + " - FORBES", client.user.avatarURL)
+            .setColor(15844367);
+
+        // Add fields
+        var counter = 1;
+        // console.log(sorted)
+        for (var usr in sorted) {
+            var user = sorted[counter - 1]
+
+            if (counter <= top) {
+                embed.addField(counter + ". " + message.guild.members.get(user[0]).user.username + ", Zcoins: " + user[1].zcoins);
+                counter++;
+            } else {
+                break;
+
+            }
+        }
+
+        // Send 
+        edit.edit(embed);
     }
+}
+
+function sortProperties(obj) {
+    // convert object into array
+    var sortable = [];
+    for (var key in obj)
+        if (obj.hasOwnProperty(key))
+            sortable.push([key, obj[key]]); // each item is an array in format [key, value]
+
+    // sort items by value
+    sortable.sort(function (a, b) {
+        var x = a[1].zcoins,
+            y = b[1].zcoins;
+        return x < y ? -1 : x > y ? 1 : 0;
+    });
+    return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
 }
 
 module.exports = {
