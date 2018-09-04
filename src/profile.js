@@ -208,8 +208,6 @@ async function bot(client, message, command, args) {
                 }
             });
 
-            console.log(profile);
-
             if (profile) {
 
                 if (counter <= top) {
