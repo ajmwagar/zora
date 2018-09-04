@@ -29,6 +29,7 @@ const translate = require("./translate");
 const crypto = require("./crypto");
 
 const modlog = require('./events/modlog');
+var Long = require("long");
 
 
 
@@ -108,7 +109,9 @@ client.on("guildCreate", guild => {
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
 
-  guild.defaultChannel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
+  // Get default
+  const channel = getDefaultChannel(member.guild);
+  channel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
 });
 
 client.on("guildDelete", guild => {
@@ -117,12 +120,12 @@ client.on("guildDelete", guild => {
   client.user.setActivity(`on ${client.guilds.size}`);
 });
 
-client.on('guildMemberAdd', (member) => {
-  // TODO Welcome messages / auto role
-  // joindm(member);
-  // autorole(member);
-  // welcome(member);
-})
+
+// This is called as, for instance:
+client.on("guildMemberAdd", member => {
+  const channel = getDefaultChannel(member.guild);
+  channel.send(`Welcome ${member} to the server, wooh!`);
+});
 
 client.on('guildMemberDelete', (member) => {
   // TODO Farewell message
@@ -286,6 +289,23 @@ const fire = (text, guild) => {
   }).then().catch(console.log);
 }
 
+const getDefaultChannel = (guild) => {
+  // get "original" default channel
+  if(guild.channels.has(guild.id))
+    return guild.channels.get(guild.id)
+
+  // Check for a "general" channel, which is often default chat
+  if(guild.channels.exists("name", "general"))
+    return guild.channels.find("name", "general");
+  // Now we get into the heavy stuff: first channel in order where the bot can speak
+  // hold on to your hats!
+  return guild.channels
+   .filter(c => c.type === "text" &&
+     c.permissionsFor(guild.client.user).has("SEND_MESSAGES"))
+   .sort((a, b) => a.position - b.position ||
+     Long.fromString(a.id).sub(Long.fromString(b.id)).toNumber())
+   .first();
+}
 
 // Login
 //
