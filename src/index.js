@@ -59,7 +59,7 @@ client.on("ready", () => {
   client.guilds.forEach(function(guild) {
     // Initialize User Profiles
     guild.members.forEach(function(member) {
-      if (!config.userprofiles.hasOwnProperty(member.id))
+      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id))
         config.userprofiles[member.id] = defaultprofile;
       fs.writeFileSync("./config.json", JSON.stringify(config));
     });
@@ -141,7 +141,7 @@ client.on("guildCreate", guild => {
   fs.writeFileSync("./config.json", JSON.stringify(config));
 
   // Get default
-  const channel = getDefaultChannel(member.guild);
+  const channel = getDefaultChannel(guild);
   channel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
 });
 
