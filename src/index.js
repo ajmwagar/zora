@@ -170,6 +170,36 @@ client.on("guildCreate", guild => {
 
 });
 
+client.on("channelCreate", channel => {
+  if (
+    channel.name &&
+    channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
+  )
+    return;
+  fire(
+    `**${msg.author.tag} created a channel:** #\`${
+      channel.name
+    }\``,
+    channel.guild
+  );
+
+})
+
+client.on("channelDelete", channel => {
+  if (
+    channel.name &&
+    channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
+  )
+    return;
+  fire(
+    `** ${msg.author.tag} deleted a channel:** #\`${
+      channel.name
+    }\``,
+    channel.guild
+  );
+
+})
+
 client.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
