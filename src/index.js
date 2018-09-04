@@ -2,7 +2,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 // This is your client. Some people call it `bot`, some people call it `self`,
-// some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
+// some might call it `cootchie`. Either way, when you see `client.something`, or `client.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 
@@ -45,11 +45,13 @@ var defaultConfig = {
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
-  console.log(
-    `Bot has started, with ${client.users.size} users, in ${
-      client.channels.size
-    } channels of ${client.guilds.size} guilds.`
-  );
+  if (client.shard) {
+    console.log("Shard #"+client.shard.id+" active with "+client.guilds.size+" guilds")
+    client.user.setPresence({ game: { name: "@Nitro help | Shard " + (client.shard.id + 1) + "/" + client.shard.count, type: 0 } })
+  } else {
+    console.log("Shard #0 active with "+client.guilds.size+" guilds")
+    client.user.setPresence({ game: { name: "@Nitro help | "+client.guilds.size+" guilds", type: 0 } })
+  }
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
