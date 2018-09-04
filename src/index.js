@@ -32,7 +32,9 @@ fs.openSync("./config.json", 'r', (err, fd) => {
       serverconfigs: {},
       userprofiles: {}
     };
-    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {
+      if (err) throw err;
+    });
 
     console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
     process.exit(0);
@@ -120,9 +122,9 @@ client.on("ready", () => {
     client.user.setPresence({
       game: {
         name: "@Nitro help | Shard " +
-        (client.shard.id + 1) +
-        "/" +
-        client.shard.count,
+          (client.shard.id + 1) +
+          "/" +
+          client.shard.count,
         type: 0
       }
     });
@@ -351,7 +353,7 @@ client.on("message", async message => {
 
       // Admin
 
-      admin.bot(client, message, command, args, defaultConfig);
+      admin.bot(client, message, command, args, defaultConfig, defaultprofile);
 
       // Weather
 
@@ -431,8 +433,8 @@ const fire = (text, guild) => {
 
   let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `
   var msg = time + text;
-  channel.send(
-    {embed: {
+  channel.send({
+    embed: {
       color: 12370112,
       author: {
         name: client.user.username,
@@ -440,8 +442,8 @@ const fire = (text, guild) => {
       },
       title: "Modlog",
       description: msg,
-    }}
-  ).then().catch(console.log);
+    }
+  }).then().catch(console.log);
 }
 
 const getDefaultChannel = (guild) => {
