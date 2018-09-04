@@ -203,10 +203,13 @@ async function bot(client, message, command, args) {
         // console.log(sorted)
         for (var usr in sorted) {
             var user = sorted[counter - 1];
-            console.log(message.guild.members.get(user[0]));
+
+            let profile = message.guild.members.get(user[0])
+
+            console.log(profile);
 
             if (counter <= top) {
-                embed.addField(counter + ". " + message.guild.members.get(user[0]).user.username + ", Zcoins: " + user[1].zcoins);
+                embed.addField(counter + ". " + profile.user.username + ", Zcoins: " + user[1].zcoins);
                 counter++;
             } else {
                 break;
