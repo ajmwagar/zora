@@ -175,7 +175,7 @@ client.on("guildCreate", guild => {
 });
 
 client.on("channelCreate", channel => {
-  console.log(channel);
+  if (channel.type == "dm") return;
   if (
     channel.name &&
     channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
@@ -191,7 +191,7 @@ client.on("channelCreate", channel => {
 })
 
 client.on("channelDelete", channel => {
-  console.log(channel);
+  if (channel.type == "dm") return;
   if (
     channel.name &&
     channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
@@ -414,7 +414,8 @@ client.on("message", async message => {
 });
 
 const fire = (text, guild) => {
-  if (!guild.channels) return;
+  if (guild)
+    if (!guild.channels) return;
 
   let channel = guild.channels.find(
     c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
