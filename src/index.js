@@ -189,7 +189,7 @@ client.on("guildMemberRemove", member => {
   }
 });
 
-client.on("messageRemove", msg => {
+client.on("messageDelete", msg => {
   if (msg.channel.type !== "text") return;
   if (
     msg.channel.name &&
