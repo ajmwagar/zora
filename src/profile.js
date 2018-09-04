@@ -7,6 +7,21 @@ const bugs = require("../bugs.json");
 
 const talkedRecently = new Set();
 
+var shopItems = {
+    Heart: {
+        Name: 'Heart',
+        Description: 'Adds a ❤️ to your inventory, can be used in battles',
+        Price: 500,
+        Icon: '❤️'
+    },
+    Mana: {
+        Name: 'Mana',
+        Description: 'Adds a 🌀 to your inventory, increases the chance to win battles',
+        Price: 1000,
+        Icon: '🌀'
+    }
+}
+
 var spinningImg = {
     attachment: './src/images/zslotsSpinning.gif',
     name: 'zslotsSpinning.gif'
@@ -29,16 +44,32 @@ async function bot(client, message, command, args) {
             .setTitle(`${message.member.user.username}'s profile`)
             .addField("Level:", `${config.userprofiles[message.member.user.id].level}`, true)
             .addField("XP:", `${config.userprofiles[message.member.user.id].xp}`, true)
-            .addField("ZCoins:", `${config.userprofiles[message.member.user.id].zcoins}`, true)
+            .addField("Inventory Contents Below:", "⏬", true)
+            .addField("💰 ZCoins: 💰", `${config.userprofiles[message.member.user.id].zcoins}`, true)
             .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`, client.user.avatarURL)
         message.channel.send({
             embed
+        }).then(() => {
+            var userInventory = config.userprofiles[message.member.user.id].inventory;
+
+            if (userInventory.length > 0) {
+                userInventory.forEach(function (item) {
+                    const embed = new Discord.RichEmbed()
+                        .setColor("#FF7F50")
+                        .setTitle(item)
+                    message.channel.send({
+                        embed
+                    })
+                })
+
+            }
         });
+
     } else if (command === "daily") {
         if (talkedRecently.has(message.author.id)) {
             message.channel.send("Wait 24 hours before using this again! - " + message.author);
         } else {
-            if (config.userprofiles[message.member.user.id].vip === false) {
+            if (config.userprofiles[message.member.user.id].VIP === false) {
                 // give normal users 500 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 500;
                 fs.writeFileSync("./config.json", JSON.stringify(config));
@@ -71,35 +102,86 @@ async function bot(client, message, command, args) {
             }, 86400000);
         }
     } else if (command === "slots") {
-        var slotstate = Math.random() >= 0.8;
-        message.channel.send("Spending 250 ZCoins on slots!", {
-            file: spinningImg
-        }).then((msg) => {
-            if (slotstate == true) {
-                setTimeout(win, 3000);
-            } else {
-                setTimeout(lose, 3000);
-            }
+        if (config.userprofiles[message.member.user.id].zcoins >= 250) {
+            var slotstate = Math.random() >= 0.8;
+            message.channel.send("Spending 250 ZCoins on slots!", {
+                file: spinningImg
+            }).then((msg) => {
+                if (slotstate == true) {
+                    setTimeout(win, 3000);
+                } else {
+                    setTimeout(lose, 3000);
+                }
 
-            function win() {
-                msg.delete();
-                message.channel.send("You won 500 ZCoins! - " + message.author, {
-                    file: winImg
-                });
-                config.userprofiles[message.member.user.id].zcoins += 500;
-                fs.writeFileSync("./config.json", JSON.stringify(config));
-            }
+                function win() {
+                    msg.delete();
+                    message.channel.send("You won 500 ZCoins! - " + message.author, {
+                        file: winImg
+                    });
+                    config.userprofiles[message.member.user.id].zcoins += 500;
+                    fs.writeFileSync("./config.json", JSON.stringify(config));
+                }
 
-            function lose() {
-                msg.delete();
-                message.channel.send("You lost 250 ZCoins! - " + message.author, {
-                    file: loseImg
+                function lose() {
+                    msg.delete();
+                    message.channel.send("You lost 250 ZCoins! - " + message.author, {
+                        file: loseImg
+                    });
+                    config.userprofiles[message.member.user.id].zcoins -= 250;
+                    fs.writeFileSync("./config.json", JSON.stringify(config));
+                }
+            });
+        }
+    } else if (command === "shop") {
+        var itemNames = Object.keys(shopItems)
+        const embed = new Discord.RichEmbed()
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .setColor("#FF7F50")
+            .setTitle(`🛒 Welcome ${message.member.user.username} to the shop 🛒`)
+            .setDescription(`We have wares if you got coin! ZCoin to be precise! Type ${config.serverconfigs[message.guild.id].prefix}buy <item>`)
+            .addField("Current Balance:", `${config.userprofiles[message.member.user.id].zcoins}`, true)
+        message.channel.send({
+            embed
+        }).then(() => {
+            itemNames.forEach(function (item) {
+                message.channel.send({
+                    embed: {
+                        color: 3447003,
+                        title: item,
+                        description: shopItems[item].Description,
+                        fields: [{
+                            name: "Price:",
+                            value: `${shopItems[item].Price} ZCoins 💰`
+                        }],
+                    }
                 });
-                config.userprofiles[message.member.user.id].zcoins -= 250;
-                fs.writeFileSync("./config.json", JSON.stringify(config));
-            }
+            })
         });
 
+    } else if (command === "buy") {
+        var item = args[0];
+        if (shopItems[item]) {
+            if (config.userprofiles[message.member.user.id].zcoins >= shopItems[item].Price) {
+                config.userprofiles[message.member.user.id].zcoins -= shopItems[item].Price;
+                config.userprofiles[message.member.user.id].inventory.push("[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]");
+                fs.writeFileSync("./config.json", JSON.stringify(config));
+                message.channel.send({
+                    embed: {
+                        color: 3447003,
+                        title: item,
+                        description: `✅ ${message.author} purchased 1 ${item}`
+                    }
+                });
+            } else {
+                message.channel.send({
+                    embed: {
+                        color: 3447003,
+                        title: item,
+                        description: `⛔ ${message.author} you don't have enough ZCoins!`
+                    }
+                });
+            }
+        }
     }
 }
 

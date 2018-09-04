@@ -65,7 +65,8 @@ var defaultprofile = {
   level: 1,
   xp: 0,
   zcoins: 100,
-  VIP: false
+  VIP: false,
+  inventory: []
 };
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
