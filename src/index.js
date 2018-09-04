@@ -141,14 +141,16 @@ client.on("guildCreate", guild => {
     } members!`
   );
   client.user.setActivity(`on ${client.guilds.size} servers`);
+
   if (!config.serverconfigs.hasOwnProperty(guild.id))
     config.serverconfigs[guild.id] = defaultConfig;
-
-  fs.writeFileSync("./config.json", JSON.stringify(config));
 
   // Get default
   const channel = getDefaultChannel(guild);
   channel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
+
+  fs.writeFileSync("./config.json", JSON.stringify(config));
+
 });
 
 client.on("guildDelete", guild => {
@@ -163,12 +165,12 @@ client.on("guildMemberAdd", member => {
   channel.send(`Welcome ${member} to the server, wooh!`);
 });
 
-client.on("guildMemberDelete", member => {
+client.on("guildMemberRemove", member => {
   const channel = getDefaultChannel(member.guild);
   channel.send(`Farewell, ${member} will be missed!`);
 });
 
-client.on("messageDelete", msg => {
+client.on("messageRemove", msg => {
   if (msg.channel.type !== "text") return;
   if (
     msg.channel.name &&
@@ -255,6 +257,8 @@ client.on("message", async message => {
       message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
+      if (config.userprofiles){
+
       // XP and leveling
       config.userprofiles[message.member.user.id].xp += 100;
       if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
@@ -273,6 +277,7 @@ client.on("message", async message => {
           embed
         });
 
+      }
       }
     }
 
