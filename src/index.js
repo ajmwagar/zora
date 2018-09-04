@@ -185,7 +185,9 @@ client.on("guildMemberAdd", member => {
 
 client.on("guildMemberRemove", member => {
   const channel = getDefaultChannel(member.guild);
-  channel.send(`Farewell, ${member} will be missed!`);
+  if (channel.send){
+    channel.send(`Farewell, ${member} will be missed!`);
+  }
 });
 
 client.on("messageRemove", msg => {
