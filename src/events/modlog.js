@@ -72,3 +72,5 @@ client.on('guildBanRemove', (guild, user) => {
 })
 
 }
+
+module.exports = modlog;
