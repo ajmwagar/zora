@@ -14,7 +14,7 @@ const bugs = require("../bugs.json");
 // config.serverconfigs[message.guild.id].prefix contains the message prefix.
 
 const axios = require("axios");
-const moment = require('moment')
+const moment = require("moment");
 
 // Internal modules
 const automod = require("./automod");
@@ -28,10 +28,14 @@ const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
 
+<<<<<<< HEAD
 const modlog = require('./events/modlog');
 var Long = require("long");
 
 
+=======
+const modlog = require("./events/modlog");
+>>>>>>> ceaf4a849d3dc4f726d8e374a56e3cb8db4da45a
 
 // Default server configuration (also used with .clearcfg)
 var defaultConfig = {
@@ -49,27 +53,60 @@ var defaultConfig = {
   }
 };
 
+var defaultprofile = {
+  level: "0",
+  xp: "0",
+  VIP: false
+};
+
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
+  client.guilds.forEach(function(guild) {
+    // Initialize User Profiles
+    guild.members.forEach(function(member) {
+      if (!config.userprofiles.hasOwnProperty(member.id))
+        config.userprofiles[member.id] = defaultprofile;
+      fs.writeFileSync("./config.json", JSON.stringify(config));
+    });
+  });
+
   // This event will run if the bot starts, and logs in, successfully.
-  console.log("Startup took: " + ((new Date).getTime() - start) + "MS")
+  console.log("Startup took: " + (new Date().getTime() - start) + "MS");
   if (client.shard) {
-    console.log("Shard #"+client.shard.id+" active with "+client.guilds.size+" guilds")
-    client.user.setPresence({ game: { name: "@Nitro help | Shard " + (client.shard.id + 1) + "/" + client.shard.count, type: 0 } })
+    console.log(
+      "Shard #" +
+        client.shard.id +
+        " active with " +
+        client.guilds.size +
+        " guilds"
+    );
+    client.user.setPresence({
+      game: {
+        name:
+          "@Nitro help | Shard " +
+          (client.shard.id + 1) +
+          "/" +
+          client.shard.count,
+        type: 0
+      }
+    });
   } else {
-    console.log("Shard #0 active with "+client.guilds.size+" guilds")
-    client.user.setPresence({ game: { name: "@Nitro help | "+client.guilds.size+" guilds", type: 0 } })
+    console.log("Shard #0 active with " + client.guilds.size + " guilds");
+    client.user.setPresence({
+      game: { name: "@Nitro help | " + client.guilds.size + " guilds", type: 0 }
+    });
   }
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("../config.json", function (exists) {
+  fs.exists("../config.json", function(exists) {
     if (!exists) {
       var fileContent = {
         token: "",
         youtubeKey: "",
-        serverconfigs: {}
+        serverconfigs: {},
+        userprofiles: {}
       };
       var filepath = "../config.json";
 
@@ -80,10 +117,10 @@ client.on("ready", () => {
       });
     }
   });
-  fs.exists("bugs.json", function (exists) {
+  fs.exists("bugs.json", function(exists) {
     if (!exists) {
       var fileContent = {
-        servers: {},
+        servers: {}
       };
       var filepath = "bugs.json";
 
@@ -120,70 +157,87 @@ client.on("guildDelete", guild => {
   client.user.setActivity(`on ${client.guilds.size}`);
 });
 
-
 // This is called as, for instance:
 client.on("guildMemberAdd", member => {
   const channel = getDefaultChannel(member.guild);
   channel.send(`Welcome ${member} to the server, wooh!`);
 });
 
-client.on('guildMemberDelete', (member) => {
-  // TODO Farewell message
-})
+client.on("guildMemberDelete", member => {
+  const channel = getDefaultChannel(member.guild);
+  channel.send(`Farewell, ${member} will be missed!`);
+});
 
+client.on("messageDelete", msg => {
+  if (msg.channel.type !== "text") return;
+  if (
+    msg.channel.name &&
+    msg.channel.name.includes(config.serverconfigs[guild.id].modlogChannel)
+  )
+    return;
+  fire(
+    `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
+      msg.content
+    }\``,
+    msg.guild
+  );
+});
 
-client.on('messageDelete', msg => {
-  if (msg.channel.type !== "text") return
-  if (msg.channel.name && msg.channel.name.includes(config.serverconfigs[guild.id].modlogChannel)) return;
-  fire(`**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${msg.content}\``, msg.guild)
-})
+client.on("messageUpdate", (msg, newMsg) => {
+  if (msg.content === newMsg.content) return;
+  fire(
+    `**#${msg.channel.name} | ${
+      msg.author.tag
+    } edited their message:**\n**before:** \`${msg.content}\`\n**+after:** \`${
+      newMsg.content
+    }\``,
+    msg.guild
+  );
+});
 
-client.on('messageUpdate', (msg, newMsg) => {
-  if (msg.content === newMsg.content) return
-  fire(`**#${msg.channel.name} | ${msg.author.tag} edited their message:**\n**before:** \`${msg.content}\`\n**+after:** \`${newMsg.content}\``, msg.guild)
-})
-
-client.on('guildMemberUpdate', (old, nw) => {
-  let txt
+client.on("guildMemberUpdate", (old, nw) => {
+  let txt;
   if (old.roles.size !== nw.roles.size) {
     if (old.roles.size > nw.roles.size) {
       //Taken
-      let dif = old.roles.filter(r => !nw.roles.has(r.id)).first()
-      txt = `**${nw.user.tag} | Role taken -> \`${dif.name}\`**`
+      let dif = old.roles.filter(r => !nw.roles.has(r.id)).first();
+      txt = `**${nw.user.tag} | Role taken -> \`${dif.name}\`**`;
     } else if (old.roles.size < nw.roles.size) {
       //Given
-      let dif = nw.roles.filter(r => !old.roles.has(r.id)).first()
-      txt = `**${nw.user.tag} | Role given -> \`${dif.name}\`**`
+      let dif = nw.roles.filter(r => !old.roles.has(r.id)).first();
+      txt = `**${nw.user.tag} | Role given -> \`${dif.name}\`**`;
     }
   } else if (old.nickname !== nw.nickname) {
-    txt = `**${nw.user.tag} | Changed their nickname to -> \`${nw.nickname}\`**`
-  } else return
-  fire(txt, nw.guild)
-})
+    txt = `**${nw.user.tag} | Changed their nickname to -> \`${
+      nw.nickname
+    }\`**`;
+  } else return;
+  fire(txt, nw.guild);
+});
 
-client.on('roleCreate', (role) => {
-  fire("**New role created**", role.guild)
-})
+client.on("roleCreate", role => {
+  fire("**New role created**", role.guild);
+});
 
-client.on('roleDelete', (role) => {
-  fire("**Role deleted -> `" + role.name + "`**", role.guild)
-})
+client.on("roleDelete", role => {
+  fire("**Role deleted -> `" + role.name + "`**", role.guild);
+});
 
-client.on('roleUpdate', (old, nw) => {
-  let txt
+client.on("roleUpdate", (old, nw) => {
+  let txt;
   if (old.name !== nw.name) {
-    txt = `**${old.name} | Role name updated to -> \`${nw.name}\`**`
-  } else return
-  fire(txt, nw.guild)
-})
+    txt = `**${old.name} | Role name updated to -> \`${nw.name}\`**`;
+  } else return;
+  fire(txt, nw.guild);
+});
 
-client.on('guildBanAdd', (guild, user) => {
-  fire(`**User banned -> \`${user.tag}\`**`, guild)
-})
+client.on("guildBanAdd", (guild, user) => {
+  fire(`**User banned -> \`${user.tag}\`**`, guild);
+});
 
-client.on('guildBanRemove', (guild, user) => {
-  fire(`**User unbanned -> \`${user.tag}\`**`, guild)
-})
+client.on("guildBanRemove", (guild, user) => {
+  fire(`**User unbanned -> \`${user.tag}\`**`, guild);
+});
 
 // Commands
 client.on("message", async message => {
@@ -270,13 +324,16 @@ client.on("message", async message => {
         m.edit(res.data.joke);
       });
     }
-  } else {}
+  } else {
+  }
 });
 
 const fire = (text, guild) => {
-  if (!guild.channels) return
+  if (!guild.channels) return;
 
-  let channel = guild.channels.find(c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel));
+  let channel = guild.channels.find(
+    c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
+  );
 
   if (!channel) {
     console.log("Channel not found");
