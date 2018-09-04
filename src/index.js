@@ -227,6 +227,7 @@ client.on("guildMemberRemove", member => {
 });
 
 client.on("messageDelete", msg => {
+    if (message.author.bot) return;
   if (msg.channel.type !== "text") return;
   if (
     msg.channel.name &&
@@ -243,6 +244,7 @@ client.on("messageDelete", msg => {
 
 client.on("messageUpdate", (msg, newMsg) => {
   if (msg.content === newMsg.content) return;
+  if (message.author.bot) return;
   fire(
     `**#${msg.channel.name} | ${
       msg.author.tag
@@ -422,7 +424,6 @@ const fire = (text, guild) => {
     c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
   );
 
-  if (msg.toLowerCase().includes("zora")) return;
 
   if (!channel) {
     console.log("Channel not found");
