@@ -7,6 +7,18 @@ const fs = require("fs");
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 
+const DBL = require("dblapi.js");
+const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ3ODYxNjQ3MTY0MDA4MDM5NSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTM2MDM5MDMwfQ.MXCzqXorJBqGc-bkRxnyn_9bJcpKPZDZUvZLk6U1Dp4', client);
+
+// Optional events
+dbl.on('posted', () => {
+  console.log('Server count posted!');
+})
+
+dbl.on('error', e => {
+ console.log(`Oops! ${e}`);
+})
+
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("../config.json");
 const bugs = require("../bugs.json");
