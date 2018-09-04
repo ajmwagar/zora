@@ -18,6 +18,13 @@
 - Yodaspeak translator
 - Google Translate
 - Currency Converter with Crypto Support
+- Economy commands
+  - Forbes (Richest people list)
+  - Shop
+  - Daily rewards
+  - Slots
+- Levels and XP
+  - Promote server engagement.
 - Custom server settings
   - Custom prefix
   - Custom automod
