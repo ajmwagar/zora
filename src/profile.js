@@ -71,7 +71,7 @@ async function bot(client, message, command, args) {
             }, 86400000);
         }
     } else if (command === "slots") {
-        var slotstate = Math.random() >= 0.2;
+        var slotstate = Math.random() >= 0.8;
         message.channel.send("Spending 250 ZCoins on slots!", {
             file: spinningImg
         }).then((msg) => {
