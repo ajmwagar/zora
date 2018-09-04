@@ -70,7 +70,7 @@ async function bot(client, message, command, args) {
             if (config.userprofiles[message.member.user.id].VIP === false) {
                 // give normal users 500 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 500;
-                fs.writeFile("./config.json", JSON.stringify(config));
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -82,7 +82,7 @@ async function bot(client, message, command, args) {
             } else {
                 // give VIP users 5000 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 5000;
-                fs.writeFile("./config.json", JSON.stringify(config));
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -117,7 +117,7 @@ async function bot(client, message, command, args) {
                         file: winImg
                     });
                     config.userprofiles[message.member.user.id].zcoins += 500;
-                    fs.writeFile("./config.json", JSON.stringify(config));
+                    fs.writeFileSync("./config.json", JSON.stringify(config));
                 }
 
                 function lose() {
@@ -126,7 +126,7 @@ async function bot(client, message, command, args) {
                         file: loseImg
                     });
                     config.userprofiles[message.member.user.id].zcoins -= 250;
-                    fs.writeFile("./config.json", JSON.stringify(config));
+                    fs.writeFileSync("./config.json", JSON.stringify(config));
                 }
             });
         }
@@ -162,7 +162,7 @@ async function bot(client, message, command, args) {
             if (config.userprofiles[message.member.user.id].zcoins >= shopItems[item].Price) {
                 config.userprofiles[message.member.user.id].zcoins -= shopItems[item].Price;
                 config.userprofiles[message.member.user.id].inventory.push("[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]");
-                fs.writeFile("./config.json", JSON.stringify(config));
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 message.channel.send({
                     embed: {
                         color: 3447003,

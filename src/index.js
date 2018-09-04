@@ -105,7 +105,7 @@ client.on("ready", () => {
       config.serverconfigs[guild.id] = defaultConfig;
     }
 
-    fs.writeFile("./config.json", JSON.stringify(config));
+    fs.writeFileSync("./config.json", JSON.stringify(config));
 
   });
 
@@ -173,7 +173,7 @@ client.on("guildCreate", guild => {
   const channel = getDefaultChannel(guild);
   channel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
 
-  fs.writeFile("./config.json", JSON.stringify(config));
+  fs.writeFileSync("./config.json", JSON.stringify(config));
 
 });
 
@@ -320,13 +320,13 @@ client.on("message", async message => {
 
         // XP and leveling
         config.userprofiles[message.member.user.id].xp += 100;
-        fs.writeFile("./config.json", JSON.stringify(config));
+        fs.writeFileSync("./config.json", JSON.stringify(config));
         if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
 
         } else {
           config.userprofiles[message.member.user.id].xp = 0;
           config.userprofiles[message.member.user.id].level += 1;
-          fs.writeFile("./config.json", JSON.stringify(config));
+          fs.writeFileSync("./config.json", JSON.stringify(config));
 
           const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
