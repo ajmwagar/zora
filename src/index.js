@@ -115,9 +115,9 @@ client.on("ready", () => {
     client.user.setPresence({
       game: {
         name: "@Nitro help | Shard " +
-          (client.shard.id + 1) +
-          "/" +
-          client.shard.count,
+        (client.shard.id + 1) +
+        "/" +
+        client.shard.count,
         type: 0
       }
     });
@@ -171,13 +171,14 @@ client.on("guildCreate", guild => {
 });
 
 client.on("channelCreate", channel => {
+  console.log(channel);
   if (
     channel.name &&
-    channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
+    channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
   )
     return;
   fire(
-    `**${msg.author.tag} created a channel:** #\`${
+    `**a channel was created:** #\`${
       channel.name
     }\``,
     channel.guild
@@ -186,13 +187,14 @@ client.on("channelCreate", channel => {
 })
 
 client.on("channelDelete", channel => {
+  console.log(channel);
   if (
     channel.name &&
-    channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
+    channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
   )
     return;
   fire(
-    `** ${msg.author.tag} deleted a channel:** #\`${
+    `**  a channel was deleted:** #\`${
       channel.name
     }\``,
     channel.guild
@@ -420,9 +422,18 @@ const fire = (text, guild) => {
   }
 
   let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `
-  channel.send(time + text, {
-    split: true
-  }).then().catch(console.log);
+  var msg = time + text;
+  channel.send(
+    {embed: {
+      color: 12370112,
+      author: {
+        name: client.user.username,
+        icon_url: client.user.avatarURL
+      },
+      title: "Modlog",
+      description: msg,
+    }}
+  ).then().catch(console.log);
 }
 
 const getDefaultChannel = (guild) => {
