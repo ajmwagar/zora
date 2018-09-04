@@ -104,18 +104,6 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Get the weather for a city"
           },
           {
-            name: helpprefix + "daily",
-            value: "Get 500 ZCoins every 24 hours"
-          },
-          {
-            name: helpprefix + "slots",
-            value: "Test your luck with 250 ZCoins!"
-          },
-          {
-            name: helpprefix + "profile",
-            value: "View your user profile (xp, zcoins, level)"
-          },
-          {
             name: helpprefix + "joke",
             value: "Tell a joke"
           },
@@ -167,6 +155,48 @@ async function bot(client, message, command, args, defaultConfig) {
             name: helpprefix + "support",
             value: "Join our support server."
           }
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 0xff5323,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Money Commands for " + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [
+          {
+            name: helpprefix + "daily",
+            value: "Get 500 ZCoins every 24 hours"
+          },
+          {
+            name: helpprefix + "slots",
+            value: "Test your luck with 250 ZCoins!"
+          },
+          {
+            name: helpprefix + "profile",
+            value: "View your user profile (xp, zcoins, level)"
+          },
+          {
+            name: helpprefix + "shop",
+            value: "View the shop"
+          },
+          {
+            name: helpprefix + "buy",
+            value: "Buy items from the shop"
+          },
+          {
+            name: helpprefix + "forbes",
+            value: "Checkout the richest people alive. Forbes."
+          },
         ],
         timestamp: new Date(),
         footer: {
