@@ -202,7 +202,8 @@ async function bot(client, message, command, args) {
         var counter = 1;
         // console.log(sorted)
         for (var usr in sorted) {
-            var user = sorted[counter - 1]
+            var user = sorted[counter - 1];
+            console.log(message.guild.members.get(user[0]));
 
             if (counter <= top) {
                 embed.addField(counter + ". " + message.guild.members.get(user[0]).user.username + ", Zcoins: " + user[1].zcoins);
