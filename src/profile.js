@@ -201,10 +201,10 @@ async function bot(client, message, command, args) {
         // console.log(sorted)
         for (var usr in sorted) {
             var user = sorted[counter - 1];
-
+            var profile;
             client.guilds.forEach(function (guild) {
                 if (guild.members[user[0]]) {
-                    let profile = guild.members.get(user[0])
+                    profile = guild.members.get(user[0])
                 }
             });
 
