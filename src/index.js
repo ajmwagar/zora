@@ -19,20 +19,18 @@ dbl.on('error', e => {
   console.log(`Oops! ${e}`);
 })
 
-fs.openSync("./config.json", 'r', (err, fd) => {
-  if (err) {
-    console.log("No config file detected.");
-    var fileContent = {
-      token: "",
-      youtubeKey: "",
-      serverconfigs: {},
-      userprofiles: {}
-    };
-    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+if (!fs.existsSync("./config.json")) {
+  console.log("No config file detected.");
+  var fileContent = {
+    token: "",
+    youtubeKey: "",
+    serverconfigs: {},
+    userprofiles: {}
+  };
+  fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
 
-    console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
-  }
-});
+  console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+}
 
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("../config.json");
