@@ -41,9 +41,25 @@ var defaultConfig = {
   }
 };
 
+var defaultprofile = {
+  level: "0",
+  xp: "0",
+  VIP: false,
+}
+
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
+  client.guilds.forEach(function (guild) {
+    // Initialize User Profiles
+    guild.members.forEach(function (member) {
+      if (!config.userprofiles.hasOwnProperty(member.id))
+        config.userprofiles[member.id] = defaultprofile;
+      fs.writeFileSync("./config.json", JSON.stringify(config));
+    });
+  });
+
+
   // This event will run if the bot starts, and logs in, successfully.
   console.log(
     `Bot has started, with ${client.users.size} users, in ${
@@ -58,7 +74,8 @@ client.on("ready", () => {
       var fileContent = {
         token: "",
         youtubeKey: "",
-        serverconfigs: {}
+        serverconfigs: {},
+        userprofiles: {}
       };
       var filepath = "config.json";
 
