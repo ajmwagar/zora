@@ -7,7 +7,7 @@ const fs = require("fs");
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 
-const DBL = require("dblapi.js");
+/*const DBL = require("dblapi.js");
 const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ3ODYxNjQ3MTY0MDA4MDM5NSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTM2MDM5MDMwfQ.MXCzqXorJBqGc-bkRxnyn_9bJcpKPZDZUvZLk6U1Dp4', client);
 
 // Optional events
@@ -16,8 +16,8 @@ dbl.on('posted', () => {
 })
 
 dbl.on('error', e => {
- console.log(`Oops! ${e}`);
-})
+  console.log(`Oops! ${e}`);
+})*/
 
 // Here we load the config.json file that contains our token and our prefix values.
 const config = require("../config.json");
@@ -64,7 +64,7 @@ var defaultConfig = {
 var defaultprofile = {
   level: 1,
   xp: 0,
-
+  zcoins: 100,
   VIP: false
 };
 
@@ -80,7 +80,7 @@ client.on("ready", () => {
       }
     });
 
-    if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)){
+    if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
       config.serverconfigs[guild.id] = defaultConfig;
       fs.writeFileSync("./config.json", JSON.stringify(config));
 
@@ -185,7 +185,7 @@ client.on("guildMemberAdd", member => {
 
 client.on("guildMemberRemove", member => {
   const channel = getDefaultChannel(member.guild);
-  if (channel.send){
+  if (channel.send) {
     channel.send(`Farewell, ${member} will be missed!`);
   }
 });
@@ -276,28 +276,31 @@ client.on("message", async message => {
     if (message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
-      if (config.userprofiles){
+      if (config.userprofiles) {
 
-      // XP and leveling
-      config.userprofiles[message.member.user.id].xp += 100;
-      if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
+        // XP and leveling
+        config.userprofiles[message.member.user.id].xp += 100;
+        fs.writeFileSync("./config.json", JSON.stringify(config));
+        if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
 
-      } else {
-        config.userprofiles[message.member.user.id].xp = 0;
-        config.userprofiles[message.member.user.id].level += 1;
-        const embed = new Discord.RichEmbed()
-          .setAuthor(client.user.username, client.user.avatarURL)
-          .setColor("#FF7F50")
-          .setThumbnail(message.member.user.avatarURL)
-          .setTitle(`${message.member.user.username} just leveled up!`)
-          .setDescription(`**New Level: ${config.userprofiles[message.member.user.id].level}**, XP has been reset`)
-          .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`, client.user.avatarURL)
-        message.channel.send({
-          embed
-        });
+        } else {
+          config.userprofiles[message.member.user.id].xp = 0;
+          config.userprofiles[message.member.user.id].level += 1;
+          fs.writeFileSync("./config.json", JSON.stringify(config));
 
+          const embed = new Discord.RichEmbed()
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .setColor("#FF7F50")
+            .setThumbnail(message.member.user.avatarURL)
+            .setTitle(`${message.member.user.username} just leveled up!`)
+            .setDescription(`**New Level: ${config.userprofiles[message.member.user.id].level}**, XP has been reset`)
+            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`, client.user.avatarURL)
+          message.channel.send({
+            embed
+          });
+
+        }
       }
-    }
 
 
       // Here we separate our "command" name, and our "arguments" for the command.
