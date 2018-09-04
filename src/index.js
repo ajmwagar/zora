@@ -7,8 +7,11 @@ const fs = require("fs");
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 
+const config = require("../config.json");
+
 const DBL = require("dblapi.js");
-const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ3ODYxNjQ3MTY0MDA4MDM5NSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTM2MDM5MDMwfQ.MXCzqXorJBqGc-bkRxnyn_9bJcpKPZDZUvZLk6U1Dp4', client);
+
+const dbl = new DBL(config.dbltoken, client);
 
 // Optional events
 dbl.on('posted', () => {
@@ -24,6 +27,7 @@ fs.openSync("./config.json", 'r', (err, fd) => {
     console.log("No config file detected.");
     var fileContent = {
       token: "",
+      dbltoken: "",
       youtubeKey: "",
       serverconfigs: {},
       userprofiles: {}
@@ -36,7 +40,6 @@ fs.openSync("./config.json", 'r', (err, fd) => {
 });
 
 // Here we load the config.json file that contains our token and our prefix values.
-const config = require("../config.json");
 const bugs = require("../bugs.json");
 // config.token contains the bot's token
 // config.serverconfigs[message.guild.id].prefix contains the message prefix.
@@ -144,7 +147,7 @@ client.on("ready", () => {
       fs.writeFile(filepath, fileContent, err => {
         if (err) throw err;
 
-        console.log("Configuration file generated at Config.json");
+        console.log("Bugs file generated at bugs.json");
       });
     }
   });
