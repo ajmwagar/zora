@@ -16,6 +16,7 @@ const bugs = require("../bugs.json");
 const axios = require("axios");
 const moment = require("moment");
 var Long = require("long");
+const chalk = require('chalk');
 
 // Internal modules
 const automod = require("./automod");
@@ -68,15 +69,15 @@ client.on("ready", () => {
   });
 
   // This event will run if the bot starts, and logs in, successfully.
-  console.log("Startup took: " + (new Date().getTime() - start) + "MS");
+  console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
   if (client.shard) {
-    console.log(
+    console.log(chalk.bgGreen(
       "Shard #" +
       client.shard.id +
       " active with " +
       client.guilds.size +
       " guilds"
-    );
+    ));
     client.user.setPresence({
       game: {
         name: "@Nitro help | Shard " +
@@ -87,7 +88,7 @@ client.on("ready", () => {
       }
     });
   } else {
-    console.log("Shard #0 active with " + client.guilds.size + " guilds");
+    console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
     client.user.setPresence({
       game: {
         name: "@Nitro help | " + client.guilds.size + " guilds",
@@ -255,7 +256,6 @@ client.on("message", async message => {
     } else {
       // XP and leveling
       config.userprofiles[message.member.user.id].xp += 100;
-      console.log(`${config.userprofiles[message.member.user.id].xp} out of ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`)
       if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
 
       } else {
