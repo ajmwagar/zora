@@ -62,9 +62,10 @@ client.on("ready", () => {
   client.guilds.forEach(function (guild) {
     // Initialize User Profiles
     guild.members.forEach(function (member) {
-      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id))
+      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id)) {
         config.userprofiles[member.id] = defaultprofile;
-      fs.writeFileSync("./config.json", JSON.stringify(config));
+        fs.writeFileSync("./config.json", JSON.stringify(config));
+      }
     });
   });
 
