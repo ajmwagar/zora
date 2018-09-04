@@ -106,6 +106,18 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Get the weather for a city"
           },
           {
+            name: helpprefix + "daily",
+            value: "Get 500 ZCoins every 24 hours"
+          },
+          {
+            name: helpprefix + "slots",
+            value: "Test your luck with 250 ZCoins!"
+          },
+          {
+            name: helpprefix + "profile",
+            value: "View your user profile (xp, zcoins, level)"
+          },
+          {
             name: helpprefix + "joke",
             value: "Tell a joke"
           },
@@ -341,22 +353,21 @@ async function bot(client, message, command, args, defaultConfig) {
     if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.reply("Sorry, you don't have permissions to use this!");
 
-if (args.length > 0){
+    if (args.length > 0) {
 
-    var setPrefix = args[0];
+      var setPrefix = args[0];
 
-    if (setPrefix !== undefined || setPrefix !== "" ){
-      config.serverconfigs[message.guild.id].prefix = setPrefix;
-      fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
-    message.channel.send({
-      embed: {
-        color: 3447003,
-        description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}`
+      if (setPrefix !== undefined || setPrefix !== "") {
+        config.serverconfigs[message.guild.id].prefix = setPrefix;
+        fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
+        message.channel.send({
+          embed: {
+            color: 3447003,
+            description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}`
+          }
+        });
       }
-    });
-    }
-}
-    else {
+    } else {
       message.channel.send(`Please specify a prefix with ${config.serverconfigs[message.guild.id].prefix}prefix <new prefix>`);
     }
 
@@ -478,8 +489,8 @@ if (args.length > 0){
 
       return message.reply("Set channel to #" + channel);
 
-  }
-    
+    }
+
   }
 }
 
