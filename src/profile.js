@@ -209,7 +209,7 @@ async function bot(client, message, command, args) {
             if (profile) {
 
                 if (counter <= top) {
-                    embed.addField(counter + ". " + profile.user.username + ", Zcoins: " + user[1].zcoins, "Level " + user[1].level, true);
+                    embed.addField(counter + ". " + profile.user.username + ", Zcoins: " + user[1].zcoins, "Level " + user[1].level);
                     counter++;
                 } else {
                     break;
