@@ -157,7 +157,7 @@ client.on("guildMemberAdd", member => {
   channel.send(`Welcome ${member} to the server, wooh!`);
 });
 
-client.on("guildMemberDelete", member => {
+client.on("guildMemberRemove", member => {
   const channel = getDefaultChannel(member.guild);
   channel.send(`Farewell, ${member} will be missed!`);
 });
