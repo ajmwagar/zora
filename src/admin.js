@@ -8,6 +8,8 @@ async function bot(client, message, command, args, defaultConfig) {
     // Help message
     // Lists of current commands
     message.reply("please check your direct messages.");
+
+    // Help message
     message.author.send({
       embed: {
         color: 12370112,
@@ -16,7 +18,7 @@ async function bot(client, message, command, args, defaultConfig) {
           icon_url: client.user.avatarURL
         },
         title: client.user.username + " - About",
-        description: "This bot was created by Avery & Nathan",
+        description: "This bot was created by Avery Wagar & Nathan Laha",
         fields: [{
           name: `Check out the Github, host your own, or invite one of ours! (try ${helpprefix}invite)`,
           value: "https://github.com/ajmwagar/discordbot"
@@ -77,12 +79,8 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Sets the bot prefix"
           },
           {
-            name: helpprefix + "credits",
-            value: "Visit the github repo!"
-          },
-          {
-            name: helpprefix + "invite",
-            value: "Invite our official bot to your server!"
+            name: helpprefix + "alexamode",
+            value: "Changes the prefix to Alexa <command>"
           }
         ],
         timestamp: new Date(),
@@ -99,7 +97,7 @@ async function bot(client, message, command, args, defaultConfig) {
           name: client.user.username,
           icon_url: client.user.avatarURL
         },
-        title: "Misc/Utility Commands for " + client.user.username,
+        title: "Utility/Joke Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "weather <city>",
@@ -142,10 +140,6 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Does basic math operations. Gets pissed off if you divide by 0"
           },
           {
-            name: helpprefix + "alexamode",
-            value: "Changes the prefix to Alexa <command>"
-          },
-          {
             name: helpprefix + "dab",
             value: "Dabs on them haters"
           },
@@ -160,6 +154,18 @@ async function bot(client, message, command, args, defaultConfig) {
           {
             name: helpprefix + "bug <description>",
             value: "Report a bug"
+          },
+          {
+            name: helpprefix + "credits",
+            value: "Visit the github repo!"
+          },
+          {
+            name: helpprefix + "invite",
+            value: "Invite our official bot to your server!"
+          }, 
+          {
+            name: helpprefix + "support",
+            value: "Join our support server."
           }
         ],
         timestamp: new Date(),

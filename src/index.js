@@ -31,6 +31,7 @@ fs.openSync("./config.json", 'r', (err, fd) => {
     fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
 
     console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+    process.exit(0);
   }
 });
 
