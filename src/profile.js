@@ -112,7 +112,7 @@ async function bot(client, message, command, args) {
                 }
 
                 function win() {
-                    msg.delete();
+                    msg.delete().catch(message.channel.send("you have to give this bot permission to delete messages in order to use slots!"));
                     message.channel.send("You won 500 ZCoins! - " + message.author, {
                         file: winImg
                     });
@@ -198,7 +198,7 @@ async function bot(client, message, command, args) {
 
         // Add fields
         var counter = 1;
-        // console.log(sorted)
+        console.log(sorted)
         for (var usr in sorted) {
             var user = sorted[counter - 1];
             var profile;
