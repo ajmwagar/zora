@@ -321,7 +321,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     client.guilds.forEach(function (guild) {
       // Initialize User Profiles
       guild.members.forEach(function (member) {
-        config.userprofiles[member.id] = defaultprofile;
+        config.userprofiles[member.user.id] = defaultprofile;
       });
       fs.writeFileSync("./config.json", JSON.stringify(config));
     });

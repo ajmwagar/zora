@@ -96,8 +96,8 @@ client.on("ready", () => {
   client.guilds.forEach(function (guild) {
     // Initialize User Profiles
     guild.members.forEach(function (member) {
-      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id)) {
-        config.userprofiles[member.id] = defaultprofile;
+      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.user.id)) {
+        config.userprofiles[member.user.id] = defaultprofile;
       }
     });
 
