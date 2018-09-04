@@ -70,7 +70,7 @@ async function bot(client, message, command, args) {
             if (config.userprofiles[message.member.user.id].VIP === false) {
                 // give normal users 500 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 500;
-                fs.writeFileSync("./config.json", JSON.stringify(config));
+                fs.writeFile("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -82,7 +82,7 @@ async function bot(client, message, command, args) {
             } else {
                 // give VIP users 5000 zcoins
                 config.userprofiles[message.member.user.id].zcoins += 5000;
-                fs.writeFileSync("./config.json", JSON.stringify(config));
+                fs.writeFile("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -112,12 +112,12 @@ async function bot(client, message, command, args) {
                 }
 
                 function win() {
-                    msg.delete().catch(message.channel.send("you have to give this bot permission to delete messages in order to use slots!"));
+                    msg.delete();
                     message.channel.send("You won 500 ZCoins! - " + message.author, {
                         file: winImg
                     });
                     config.userprofiles[message.member.user.id].zcoins += 500;
-                    fs.writeFileSync("./config.json", JSON.stringify(config));
+                    fs.writeFile("./config.json", JSON.stringify(config));
                 }
 
                 function lose() {
@@ -126,7 +126,7 @@ async function bot(client, message, command, args) {
                         file: loseImg
                     });
                     config.userprofiles[message.member.user.id].zcoins -= 250;
-                    fs.writeFileSync("./config.json", JSON.stringify(config));
+                    fs.writeFile("./config.json", JSON.stringify(config));
                 }
             });
         }
@@ -162,7 +162,7 @@ async function bot(client, message, command, args) {
             if (config.userprofiles[message.member.user.id].zcoins >= shopItems[item].Price) {
                 config.userprofiles[message.member.user.id].zcoins -= shopItems[item].Price;
                 config.userprofiles[message.member.user.id].inventory.push("[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]");
-                fs.writeFileSync("./config.json", JSON.stringify(config));
+                fs.writeFile("./config.json", JSON.stringify(config));
                 message.channel.send({
                     embed: {
                         color: 3447003,
@@ -198,7 +198,6 @@ async function bot(client, message, command, args) {
 
         // Add fields
         var counter = 1;
-        console.log(sorted)
         for (var usr in sorted) {
             var user = sorted[counter - 1];
             var profile;
@@ -206,6 +205,7 @@ async function bot(client, message, command, args) {
                 if (guild.members[user[0]]) {
                     profile = guild.members.get(user[0])
                 }
+                console.log(user[0])
             });
 
             if (profile) {
