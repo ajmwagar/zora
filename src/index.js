@@ -228,6 +228,7 @@ client.on("guildMemberRemove", member => {
 
 client.on("messageDelete", msg => {
   if (msg.channel.type !== "text") return;
+  if (msg.author.bot) return;
   if (
     msg.channel.name &&
     msg.channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
@@ -243,6 +244,7 @@ client.on("messageDelete", msg => {
 
 client.on("messageUpdate", (msg, newMsg) => {
   if (msg.content === newMsg.content) return;
+  if (msg.author.bot) return;
   fire(
     `**#${msg.channel.name} | ${
       msg.author.tag
