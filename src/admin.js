@@ -343,14 +343,19 @@ async function bot(client, message, command, args, defaultConfig) {
 
     var setPrefix = args[0];
 
-    config.serverconfigs[message.guild.id].prefix = setPrefix;
-
+    if (setPrefix != undefined || setPrefix !== "" ){
+      config.serverconfigs[message.guild.id].prefix = setPrefix;
     message.channel.send({
       embed: {
         color: 3447003,
         description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}`
       }
     });
+    }
+    else {
+      message.channel.send(`Please specify a prefix with ${config.serverconfigs[message.guild.id].prefix}prefix <new prefix>`);
+    }
+
 
   } else if (command === "alexamode") {
     // This command changes the bot prefix to "Alexa"
