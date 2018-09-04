@@ -76,15 +76,19 @@ client.on("ready", () => {
     guild.members.forEach(function (member) {
       if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id)) {
         config.userprofiles[member.id] = defaultprofile;
-        fs.writeFileSync("./config.json", JSON.stringify(config));
       }
     });
 
     if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)){
-      config.serverconfigs[guild.id] = defaultConfig;
-      fs.writeFileSync("./config.json", JSON.stringify(config));
-
+        console.log("Updating config for " + guild.name);
+        config.serverconfigs[guild.id] = defaultConfig;
     }
+    else {
+      console.log("not updating " + guild.name)
+    }
+
+  fs.writeFileSync("./config.json", JSON.stringify(config));
+
   });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -160,8 +164,9 @@ client.on("guildCreate", guild => {
   );
   client.user.setActivity(`on ${client.guilds.size} servers`);
 
-  if (!config.serverconfigs.hasOwnProperty(guild.id))
+  if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)){
     config.serverconfigs[guild.id] = defaultConfig;
+  }
 
   // Get default
   const channel = getDefaultChannel(guild);
@@ -273,7 +278,7 @@ client.on("message", async message => {
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
     // TODO Automod filter
-    if (message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
+    if (config.serverconfigs[message.guild.id] && message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
       if (config.userprofiles){
