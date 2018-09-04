@@ -7,8 +7,11 @@ const fs = require("fs");
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 
+const config = require("../config.json");
+
 const DBL = require("dblapi.js");
-const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ3ODYxNjQ3MTY0MDA4MDM5NSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTM2MDM5MDMwfQ.MXCzqXorJBqGc-bkRxnyn_9bJcpKPZDZUvZLk6U1Dp4', client);
+
+const dbl = new DBL(config.dbltoken, client);
 
 // Optional events
 dbl.on('posted', () => {
@@ -19,8 +22,24 @@ dbl.on('error', e => {
   console.log(`Oops! ${e}`);
 })
 
+fs.openSync("./config.json", 'r', (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      token: "",
+      dbltoken: "",
+      youtubeKey: "",
+      serverconfigs: {},
+      userprofiles: {}
+    };
+    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+
+    console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+    process.exit(0);
+  }
+});
+
 // Here we load the config.json file that contains our token and our prefix values.
-const config = require("../config.json");
 const bugs = require("../bugs.json");
 // config.token contains the bot's token
 // config.serverconfigs[message.guild.id].prefix contains the message prefix.
@@ -101,9 +120,9 @@ client.on("ready", () => {
     client.user.setPresence({
       game: {
         name: "@Nitro help | Shard " +
-          (client.shard.id + 1) +
-          "/" +
-          client.shard.count,
+        (client.shard.id + 1) +
+        "/" +
+        client.shard.count,
         type: 0
       }
     });
@@ -119,23 +138,6 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("../config.json", function (exists) {
-    if (!exists) {
-      var fileContent = {
-        token: "",
-        youtubeKey: "",
-        serverconfigs: {},
-        userprofiles: {}
-      };
-      var filepath = "../config.json";
-
-      fs.writeFile(filepath, fileContent, err => {
-        if (err) throw err;
-
-        console.log("Configuration file generated at ../config.json");
-      });
-    }
-  });
   fs.exists("bugs.json", function (exists) {
     if (!exists) {
       var fileContent = {
@@ -146,7 +148,7 @@ client.on("ready", () => {
       fs.writeFile(filepath, fileContent, err => {
         if (err) throw err;
 
-        console.log("Configuration file generated at Config.json");
+        console.log("Bugs file generated at bugs.json");
       });
     }
   });
@@ -173,6 +175,38 @@ client.on("guildCreate", guild => {
 
 });
 
+client.on("channelCreate", channel => {
+  if (channel.type == "dm") return;
+  if (
+    channel.name &&
+    channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
+  )
+    return;
+  fire(
+    `**a channel was created:** #\`${
+      channel.name
+    }\``,
+    channel.guild
+  );
+
+})
+
+client.on("channelDelete", channel => {
+  if (channel.type == "dm") return;
+  if (
+    channel.name &&
+    channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
+  )
+    return;
+  fire(
+    `**  a channel was deleted:** #\`${
+      channel.name
+    }\``,
+    channel.guild
+  );
+
+})
+
 client.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
@@ -192,7 +226,7 @@ client.on("guildMemberRemove", member => {
   }
 });
 
-client.on("messageRemove", msg => {
+client.on("messageDelete", msg => {
   if (msg.channel.type !== "text") return;
   if (
     msg.channel.name &&
@@ -381,7 +415,8 @@ client.on("message", async message => {
 });
 
 const fire = (text, guild) => {
-  if (!guild.channels) return;
+  if (guild)
+    if (!guild.channels) return;
 
   let channel = guild.channels.find(
     c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
@@ -393,9 +428,18 @@ const fire = (text, guild) => {
   }
 
   let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `
-  channel.send(time + text, {
-    split: true
-  }).then().catch(console.log);
+  var msg = time + text;
+  channel.send(
+    {embed: {
+      color: 12370112,
+      author: {
+        name: client.user.username,
+        icon_url: client.user.avatarURL
+      },
+      title: "Modlog",
+      description: msg,
+    }}
+  ).then().catch(console.log);
 }
 
 const getDefaultChannel = (guild) => {
