@@ -347,6 +347,7 @@ if (args.length > 0){
 
     if (setPrefix !== undefined || setPrefix !== "" ){
       config.serverconfigs[message.guild.id].prefix = setPrefix;
+      fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
     message.channel.send({
       embed: {
         color: 3447003,
