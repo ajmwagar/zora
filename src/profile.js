@@ -3,7 +3,6 @@ const axios = require("axios");
 const fs = require("fs");
 
 const config = require("../config.json");
-const profiles = require("../profiles.json");
 const bugs = require("../bugs.json");
 
 const talkedRecently = new Set();
@@ -45,25 +44,25 @@ async function bot(client, message, command, args) {
             .setTitle(`${message.member.user.username}'s profile`)
             .addField(
                 "Level:",
-                `${profiles.userprofiles[message.author.id].level}`,
+                `${config.userprofiles[message.author.id].level}`,
                 true
             )
             .addField(
                 "XP:",
-                `${profiles.userprofiles[message.author.id].xp}`,
+                `${config.userprofiles[message.author.id].xp}`,
                 true
             )
             .addField("Inventory Contents Below:", "⏬", true)
             .addField(
                 "💰 ZCoins: 💰",
-                `${profiles.userprofiles[message.author.id].zcoins}`,
+                `${config.userprofiles[message.author.id].zcoins}`,
                 true
             )
             .setFooter(
                 `XP until next level: ${Math.round(
           Math.pow(
             100,
-            profiles.userprofiles[message.author.id].level / 10 + 1
+            config.userprofiles[message.author.id].level / 10 + 1
           )
         )}`,
                 client.user.avatarURL
@@ -74,7 +73,7 @@ async function bot(client, message, command, args) {
             })
             .then(() => {
                 var userInventory =
-                    profiles.userprofiles[message.author.id].inventory;
+                    config.userprofiles[message.author.id].inventory;
 
                 if (userInventory.length > 0) {
                     const embed = new Discord.RichEmbed()
@@ -91,17 +90,17 @@ async function bot(client, message, command, args) {
                 "Wait 24 hours before using this again! - " + message.author
             );
         } else {
-            if (profiles.userprofiles[message.author.id].VIP === false) {
+            if (config.userprofiles[message.author.id].VIP === false) {
                 // give normal users 500 zcoins
-                profiles.userprofiles[message.author.id].zcoins += 500;
-                fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+                config.userprofiles[message.author.id].zcoins += 500;
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
                     .setTitle(`Gave ${message.member.user.username} 500 ZCoins!`)
                     .addField(
                         "Current Balance:",
-                        `${profiles.userprofiles[message.author.id].zcoins}`,
+                        `${config.userprofiles[message.author.id].zcoins}`,
                         true
                     );
                 message.channel.send({
@@ -109,8 +108,8 @@ async function bot(client, message, command, args) {
                 });
             } else {
                 // give VIP users 5000 zcoins
-                profiles.userprofiles[message.author.id].zcoins += 5000;
-                fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+                config.userprofiles[message.author.id].zcoins += 5000;
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
                     .setColor("#FF7F50")
@@ -119,7 +118,7 @@ async function bot(client, message, command, args) {
                     )
                     .addField(
                         "Current Balance:",
-                        `${profiles.userprofiles[message.author.id].zcoins}`,
+                        `${config.userprofiles[message.author.id].zcoins}`,
                         true
                     );
                 message.channel.send({
@@ -134,7 +133,7 @@ async function bot(client, message, command, args) {
             }, 86400000);
         }
     } else if (command === "slots") {
-        if (profiles.userprofiles[message.author.id].zcoins >= 250) {
+        if (config.userprofiles[message.author.id].zcoins >= 250) {
             var slotstate = Math.random() >= 0.8;
             message.channel
                 .send("Spending 250 ZCoins on slots!", {
@@ -152,8 +151,8 @@ async function bot(client, message, command, args) {
                         message.channel.send("You won 500 ZCoins! - " + message.author, {
                             file: winImg
                         });
-                        profiles.userprofiles[message.author.id].zcoins += 500;
-                        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+                        config.userprofiles[message.author.id].zcoins += 500;
+                        fs.writeFileSync("./config.json", JSON.stringify(config));
                     }
 
                     function lose() {
@@ -161,8 +160,8 @@ async function bot(client, message, command, args) {
                         message.channel.send("You lost 250 ZCoins! - " + message.author, {
                             file: loseImg
                         });
-                        profiles.userprofiles[message.author.id].zcoins -= 250;
-                        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+                        config.userprofiles[message.author.id].zcoins -= 250;
+                        fs.writeFileSync("./config.json", JSON.stringify(config));
                     }
                 });
         }
@@ -179,7 +178,7 @@ async function bot(client, message, command, args) {
             )
             .addField(
                 "Current Balance:",
-                `${profiles.userprofiles[message.author.id].zcoins}`,
+                `${config.userprofiles[message.author.id].zcoins}`,
                 true
             );
         message.channel
@@ -205,15 +204,15 @@ async function bot(client, message, command, args) {
         var item = args[0];
         if (shopItems[item]) {
             if (
-                profiles.userprofiles[message.author.id].zcoins >=
+                config.userprofiles[message.author.id].zcoins >=
                 shopItems[item].Price
             ) {
-                profiles.userprofiles[message.author.id].zcoins -=
+                config.userprofiles[message.author.id].zcoins -=
                     shopItems[item].Price;
-                profiles.userprofiles[message.author.id].inventory.push(
+                config.userprofiles[message.author.id].inventory.push(
                     "[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]"
                 );
-                fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+                fs.writeFileSync("./config.json", JSON.stringify(config));
                 message.channel.send({
                     embed: {
                         color: 3447003,
@@ -236,7 +235,7 @@ async function bot(client, message, command, args) {
         var edit = await message.channel.send("Browsing Forbes...");
 
         // Sort
-        var sorted = sortProperties(profiles.userprofiles).reverse();
+        var sorted = sortProperties(config.userprofiles).reverse();
 
         // Default to 100
         var top = parseInt(args[0]) || 100;
