@@ -112,7 +112,6 @@ client.on("ready", () => {
   BotUsers = client.users;
   BotUsers.forEach(function (user) {
     if (user instanceof Discord.User) {
-      console.log(user.username);
       if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
         profiles.userprofiles[user.id] = defaultprofile;
         fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
