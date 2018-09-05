@@ -8,6 +8,7 @@ const fs = require("fs");
 const client = new Discord.Client();
 
 const config = require("../config.json");
+const profiles = require("../profiles.json");
 
 const DBL = require("dblapi.js");
 
@@ -29,14 +30,27 @@ fs.openSync("./config.json", 'r', (err, fd) => {
       token: "",
       dbltoken: "",
       youtubeKey: "",
-      serverconfigs: {},
-      userprofiles: {}
+      serverconfigs: {}
     };
     fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {
       if (err) throw err;
     });
 
     console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+    process.exit(0);
+  }
+});
+fs.openSync("./profiles.json", 'r', (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      userprofiles: {}
+    };
+    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {
+      if (err) throw err;
+    });
+
+    console.log("Profiles file generated at ./profiles.json");
     process.exit(0);
   }
 });
@@ -98,64 +112,66 @@ client.on("ready", () => {
   BotUsers = client.users;
   BotUsers.forEach(function (user) {
     if (user instanceof Discord.User) {
+      console.log(user.username);
       if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
         profiles.userprofiles[user.id] = defaultprofile;
         fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
       }
     }
   });
-  if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
-    config.serverconfigs[guild.id] = defaultConfig;
-  }
 
-  fs.writeFileSync("./config.json", JSON.stringify(config));
-
-});
-
-// This event will run if the bot starts, and logs in, successfully.
-console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
-if (client.shard) {
-  console.log(chalk.bgGreen(
-    "Shard #" +
-    client.shard.id +
-    " active with " +
-    client.guilds.size +
-    " guilds"
-  ));
-  client.user.setPresence({
-    game: {
-      name: "@Nitro help | Shard " +
-        (client.shard.id + 1) +
-        "/" +
-        client.shard.count,
-      type: 0
+  client.guilds.forEach(function (guild) {
+    if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
+      config.serverconfigs[guild.id] = defaultConfig;
+      fs.writeFileSync("./config.json", JSON.stringify(config));
     }
   });
-} else {
-  console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
-  client.user.setPresence({
-    game: {
-      name: "@Nitro help | " + client.guilds.size + " guilds",
-      type: 0
-    }
-  });
-}
-// Example of changing the bot's playing game to something useful. `client.user` is what the
-// docs refer to as the "ClientUser".
-client.user.setActivity(`on ${client.guilds.size} servers`);
-fs.exists("bugs.json", function (exists) {
-  if (!exists) {
-    var fileContent = {
-      servers: {}
-    };
-    var filepath = "bugs.json";
 
-    fs.writeFile(filepath, fileContent, err => {
-      if (err) throw err;
-
-      console.log("Bugs file generated at bugs.json");
+  // This event will run if the bot starts, and logs in, successfully.
+  console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
+  if (client.shard) {
+    console.log(chalk.bgGreen(
+      "Shard #" +
+      client.shard.id +
+      " active with " +
+      client.guilds.size +
+      " guilds"
+    ));
+    client.user.setPresence({
+      game: {
+        name: "@Nitro help | Shard " +
+          (client.shard.id + 1) +
+          "/" +
+          client.shard.count,
+        type: 0
+      }
+    });
+  } else {
+    console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
+    client.user.setPresence({
+      game: {
+        name: "@Nitro help | " + client.guilds.size + " guilds",
+        type: 0
+      }
     });
   }
+  // Example of changing the bot's playing game to something useful. `client.user` is what the
+  // docs refer to as the "ClientUser".
+  client.user.setActivity(`on ${client.guilds.size} servers`);
+  fs.exists("bugs.json", function (exists) {
+    if (!exists) {
+      var fileContent = {
+        servers: {}
+      };
+      var filepath = "bugs.json";
+
+      fs.writeFile(filepath, fileContent, err => {
+        if (err) throw err;
+
+        console.log("Bugs file generated at bugs.json");
+      });
+    }
+  });
 });
 
 client.on("guildCreate", guild => {
@@ -318,25 +334,25 @@ client.on("message", async message => {
     if (config.serverconfigs[message.guild.id] && message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
-      if (config.userprofiles) {
+      if (profiles.userprofiles) {
 
         // XP and leveling
-        config.userprofiles[message.author.id].xp += 100;
-        fs.writeFileSync("./config.json", JSON.stringify(config));
-        if (config.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.author.id].level) / 10) + 1)))) {
+        profiles.userprofiles[message.author.id].xp += 100;
+        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+        if (profiles.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))) {
 
         } else {
-          config.userprofiles[message.author.id].xp = 0;
-          config.userprofiles[message.author.id].level += 1;
-          fs.writeFileSync("./config.json", JSON.stringify(config));
+          profiles.userprofiles[message.author.id].xp = 0;
+          profiles.userprofiles[message.author.id].level += 1;
+          fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
 
           const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(`**New Level: ${config.userprofiles[message.author.id].level}**, XP has been reset`)
-            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
+            .setDescription(`**New Level: ${profiles.userprofiles[message.author.id].level}**, XP has been reset`)
+            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
           message.channel.send({
             embed
           });
