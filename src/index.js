@@ -144,19 +144,18 @@ if (client.shard) {
 // docs refer to as the "ClientUser".
 client.user.setActivity(`on ${client.guilds.size} servers`);
 fs.exists("bugs.json", function (exists) {
-if (!exists) {
-  var fileContent = {
-    servers: {}
-  };
-  var filepath = "bugs.json";
+  if (!exists) {
+    var fileContent = {
+      servers: {}
+    };
+    var filepath = "bugs.json";
 
-  fs.writeFile(filepath, fileContent, err => {
-    if (err) throw err;
+    fs.writeFile(filepath, fileContent, err => {
+      if (err) throw err;
 
-    console.log("Bugs file generated at bugs.json");
-  });
-}
-});
+      console.log("Bugs file generated at bugs.json");
+    });
+  }
 });
 
 client.on("guildCreate", guild => {
