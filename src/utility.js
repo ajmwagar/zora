@@ -3,6 +3,7 @@ const axios = require("axios");
 const fs = require("fs");
 
 const config = require("../config.json");
+const profiles = require("../profiles.json");
 const bugs = require("../bugs.json");
 
 async function bot(client, message, command, args) {
@@ -57,8 +58,7 @@ async function bot(client, message, command, args) {
     } else {
       message.channel.send(`Please add a description of the problem!`);
     }
-  }
-  else if (command === "support") {
+  } else if (command === "support") {
     message.author.send("Support server invite: https://discord.gg/nDwfeKt")
     message.reply("please check your direct messages.")
 

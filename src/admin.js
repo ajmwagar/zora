@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("../config.json");
+const profiles = require("../profiles.json");
 
 async function bot(client, message, command, args, defaultConfig, defaultprofile) {
   if (command === "help") {
@@ -310,7 +311,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     } members!`
     );
     config.serverconfigs[message.guild.id] = defaultConfig;
-    fs.writeFileSync("./config.json", JSON.stringify(config));
+    fs.writeFileSync("./profiles.json", JSON.stringify(config));
     message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
   } else if (command === "clearprofiles") {
     // Only allow Bot Owners to wipe user config
@@ -321,9 +322,9 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     client.guilds.forEach(function (guild) {
       // Initialize User Profiles
       guild.members.forEach(function (member) {
-        config.userprofiles[member.user.id] = defaultprofile;
+        profiles.userprofiles[member.user.id] = defaultprofile;
       });
-      fs.writeFileSync("./config.json", JSON.stringify(config));
+      fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
     });
     message.channel.send(`User Config Reloaded!`);
 

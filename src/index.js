@@ -8,7 +8,8 @@ const fs = require("fs");
 const client = new Discord.Client();
 
 const config = require("../config.json");
-
+const profiles = require("../profiles.json");
+/*
 const DBL = require("dblapi.js");
 
 const dbl = new DBL(config.dbltoken, client);
@@ -21,7 +22,7 @@ dbl.on('posted', () => {
 dbl.on('error', e => {
   console.log(`Oops! ${e}`);
 })
-
+*/
 fs.openSync("./config.json", 'r', (err, fd) => {
   if (err) {
     console.log("No config file detected.");
@@ -29,14 +30,27 @@ fs.openSync("./config.json", 'r', (err, fd) => {
       token: "",
       dbltoken: "",
       youtubeKey: "",
-      serverconfigs: {},
-      userprofiles: {}
+      serverconfigs: {}
     };
     fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {
       if (err) throw err;
     });
 
     console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+    process.exit(0);
+  }
+});
+fs.openSync("./profiles.json", 'r', (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      userprofiles: {}
+    };
+    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {
+      if (err) throw err;
+    });
+
+    console.log("Profiles file generated at ./profiles.json");
     process.exit(0);
   }
 });
@@ -93,20 +107,24 @@ var defaultprofile = {
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
-  client.guilds.forEach(function (guild) {
-    // Initialize User Profiles
-    guild.members.forEach(function (member) {
-      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.user.id)) {
-        config.userprofiles[member.user.id] = defaultprofile;
+  console.log('client ready')
+  console.log("bot users:")
+  BotUsers = client.users;
+  BotUsers.forEach(function (user) {
+    if (user instanceof Discord.User) {
+      console.log(user.username);
+      if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
+        profiles.userprofiles[user.id] = defaultprofile;
+        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
       }
-    });
+    }
+  });
 
+  client.guilds.forEach(function (guild) {
     if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
       config.serverconfigs[guild.id] = defaultConfig;
+      fs.writeFileSync("./config.json", JSON.stringify(config));
     }
-
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-
   });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -316,25 +334,25 @@ client.on("message", async message => {
     if (config.serverconfigs[message.guild.id] && message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
-      if (config.userprofiles) {
+      if (profiles.userprofiles) {
 
         // XP and leveling
-        config.userprofiles[message.author.id].xp += 100;
-        fs.writeFileSync("./config.json", JSON.stringify(config));
-        if (config.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.author.id].level) / 10) + 1)))) {
+        profiles.userprofiles[message.author.id].xp += 100;
+        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+        if (profiles.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))) {
 
         } else {
-          config.userprofiles[message.author.id].xp = 0;
-          config.userprofiles[message.author.id].level += 1;
-          fs.writeFileSync("./config.json", JSON.stringify(config));
+          profiles.userprofiles[message.author.id].xp = 0;
+          profiles.userprofiles[message.author.id].level += 1;
+          fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
 
           const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(`**New Level: ${config.userprofiles[message.author.id].level}**, XP has been reset`)
-            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
+            .setDescription(`**New Level: ${profiles.userprofiles[message.author.id].level}**, XP has been reset`)
+            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
           message.channel.send({
             embed
           });
