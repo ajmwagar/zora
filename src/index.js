@@ -97,20 +97,20 @@ client.on("ready", () => {
   console.log("bot users:")
   BotUsers = client.users;
   BotUsers.forEach(function (user) {
-      if (user instanceof Discord.User) {
-        if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
-          profiles.userprofiles[user.id] = defaultprofile;
-          fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-        }
-      });
-
-    if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
-      config.serverconfigs[guild.id] = defaultConfig;
+    if (user instanceof Discord.User) {
+      if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
+        profiles.userprofiles[user.id] = defaultprofile;
+        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+      }
     }
-
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-
   });
+  if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
+    config.serverconfigs[guild.id] = defaultConfig;
+  }
+
+  fs.writeFileSync("./config.json", JSON.stringify(config));
+
+});
 
 // This event will run if the bot starts, and logs in, successfully.
 console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
@@ -142,19 +142,20 @@ if (client.shard) {
 }
 // Example of changing the bot's playing game to something useful. `client.user` is what the
 // docs refer to as the "ClientUser".
-client.user.setActivity(`on ${client.guilds.size} servers`); fs.exists("bugs.json", function (exists) {
-  if (!exists) {
-    var fileContent = {
-      servers: {}
-    };
-    var filepath = "bugs.json";
+client.user.setActivity(`on ${client.guilds.size} servers`);
+fs.exists("bugs.json", function (exists) {
+if (!exists) {
+  var fileContent = {
+    servers: {}
+  };
+  var filepath = "bugs.json";
 
-    fs.writeFile(filepath, fileContent, err => {
-      if (err) throw err;
+  fs.writeFile(filepath, fileContent, err => {
+    if (err) throw err;
 
-      console.log("Bugs file generated at bugs.json");
-    });
-  }
+    console.log("Bugs file generated at bugs.json");
+  });
+}
 });
 });
 
