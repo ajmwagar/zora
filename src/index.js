@@ -93,24 +93,16 @@ var defaultprofile = {
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
-<<<<<<< HEAD
   console.log('client ready')
   console.log("bot users:")
   BotUsers = client.users;
   BotUsers.forEach(function (user) {
-    if (user instanceof Discord.User) {
-      if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
-        profiles.userprofiles[user.id] = defaultprofile;
-        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-=======
-  client.guilds.forEach(function (guild) {
-    // Initialize User Profiles
-    guild.members.forEach(function (member) {
-      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.user.id)) {
-        config.userprofiles[member.user.id] = defaultprofile;
->>>>>>> parent of 71dbf10... moved userprofiles into new json
-      }
-    });
+      if (user instanceof Discord.User) {
+        if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
+          profiles.userprofiles[user.id] = defaultprofile;
+          fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+        }
+      });
 
     if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
       config.serverconfigs[guild.id] = defaultConfig;
@@ -120,51 +112,50 @@ client.on("ready", () => {
 
   });
 
-  // This event will run if the bot starts, and logs in, successfully.
-  console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
-  if (client.shard) {
-    console.log(chalk.bgGreen(
-      "Shard #" +
-      client.shard.id +
-      " active with " +
-      client.guilds.size +
-      " guilds"
-    ));
-    client.user.setPresence({
-      game: {
-        name: "@Nitro help | Shard " +
-          (client.shard.id + 1) +
-          "/" +
-          client.shard.count,
-        type: 0
-      }
-    });
-  } else {
-    console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
-    client.user.setPresence({
-      game: {
-        name: "@Nitro help | " + client.guilds.size + " guilds",
-        type: 0
-      }
-    });
-  }
-  // Example of changing the bot's playing game to something useful. `client.user` is what the
-  // docs refer to as the "ClientUser".
-  client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("bugs.json", function (exists) {
-    if (!exists) {
-      var fileContent = {
-        servers: {}
-      };
-      var filepath = "bugs.json";
-
-      fs.writeFile(filepath, fileContent, err => {
-        if (err) throw err;
-
-        console.log("Bugs file generated at bugs.json");
-      });
+// This event will run if the bot starts, and logs in, successfully.
+console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
+if (client.shard) {
+  console.log(chalk.bgGreen(
+    "Shard #" +
+    client.shard.id +
+    " active with " +
+    client.guilds.size +
+    " guilds"
+  ));
+  client.user.setPresence({
+    game: {
+      name: "@Nitro help | Shard " +
+        (client.shard.id + 1) +
+        "/" +
+        client.shard.count,
+      type: 0
     }
   });
+} else {
+  console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
+  client.user.setPresence({
+    game: {
+      name: "@Nitro help | " + client.guilds.size + " guilds",
+      type: 0
+    }
+  });
+}
+// Example of changing the bot's playing game to something useful. `client.user` is what the
+// docs refer to as the "ClientUser".
+client.user.setActivity(`on ${client.guilds.size} servers`); fs.exists("bugs.json", function (exists) {
+  if (!exists) {
+    var fileContent = {
+      servers: {}
+    };
+    var filepath = "bugs.json";
+
+    fs.writeFile(filepath, fileContent, err => {
+      if (err) throw err;
+
+      console.log("Bugs file generated at bugs.json");
+    });
+  }
+});
 });
 
 client.on("guildCreate", guild => {
