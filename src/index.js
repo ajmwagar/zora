@@ -108,7 +108,6 @@ var defaultprofile = {
 
 client.on("ready", () => {
   console.log('client ready')
-  console.log("bot users:")
   BotUsers = client.users;
   BotUsers.forEach(function (user) {
     if (user instanceof Discord.User) {
