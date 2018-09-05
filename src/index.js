@@ -319,13 +319,13 @@ client.on("message", async message => {
       if (config.userprofiles) {
 
         // XP and leveling
-        config.userprofiles[message.member.user.id].xp += 100;
+        config.userprofiles[message.author.id].xp += 100;
         fs.writeFileSync("./config.json", JSON.stringify(config));
-        if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
+        if (config.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.author.id].level) / 10) + 1)))) {
 
         } else {
-          config.userprofiles[message.member.user.id].xp = 0;
-          config.userprofiles[message.member.user.id].level += 1;
+          config.userprofiles[message.author.id].xp = 0;
+          config.userprofiles[message.author.id].level += 1;
           fs.writeFileSync("./config.json", JSON.stringify(config));
 
           const embed = new Discord.RichEmbed()
@@ -333,8 +333,8 @@ client.on("message", async message => {
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(`**New Level: ${config.userprofiles[message.member.user.id].level}**, XP has been reset`)
-            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`, client.user.avatarURL)
+            .setDescription(`**New Level: ${config.userprofiles[message.author.id].level}**, XP has been reset`)
+            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
           message.channel.send({
             embed
           });

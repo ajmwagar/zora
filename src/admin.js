@@ -314,7 +314,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
   } else if (command === "clearprofiles") {
     // Only allow Bot Owners to wipe user config
-    if (!message.member.user.id == "205419165366878211" || !message.member.user.id == "226021264018374656")
+    if (!message.author.id == "205419165366878211" || !message.author.id == "226021264018374656")
       return message.reply("Sorry, you don't have permissions to use this!");
     // Reload and clear CFG
     console.log('Userprofiles Cleared')

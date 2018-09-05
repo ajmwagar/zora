@@ -44,25 +44,25 @@ async function bot(client, message, command, args) {
             .setTitle(`${message.member.user.username}'s profile`)
             .addField(
                 "Level:",
-                `${config.userprofiles[message.member.user.id].level}`,
+                `${config.userprofiles[message.author.id].level}`,
                 true
             )
             .addField(
                 "XP:",
-                `${config.userprofiles[message.member.user.id].xp}`,
+                `${config.userprofiles[message.author.id].xp}`,
                 true
             )
             .addField("Inventory Contents Below:", "⏬", true)
             .addField(
                 "💰 ZCoins: 💰",
-                `${config.userprofiles[message.member.user.id].zcoins}`,
+                `${config.userprofiles[message.author.id].zcoins}`,
                 true
             )
             .setFooter(
                 `XP until next level: ${Math.round(
           Math.pow(
             100,
-            config.userprofiles[message.member.user.id].level / 10 + 1
+            config.userprofiles[message.author.id].level / 10 + 1
           )
         )}`,
                 client.user.avatarURL
@@ -73,7 +73,7 @@ async function bot(client, message, command, args) {
             })
             .then(() => {
                 var userInventory =
-                    config.userprofiles[message.member.user.id].inventory;
+                    config.userprofiles[message.author.id].inventory;
 
                 if (userInventory.length > 0) {
                     const embed = new Discord.RichEmbed()
@@ -90,9 +90,9 @@ async function bot(client, message, command, args) {
                 "Wait 24 hours before using this again! - " + message.author
             );
         } else {
-            if (config.userprofiles[message.member.user.id].VIP === false) {
+            if (config.userprofiles[message.author.id].VIP === false) {
                 // give normal users 500 zcoins
-                config.userprofiles[message.member.user.id].zcoins += 500;
+                config.userprofiles[message.author.id].zcoins += 500;
                 fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
@@ -100,7 +100,7 @@ async function bot(client, message, command, args) {
                     .setTitle(`Gave ${message.member.user.username} 500 ZCoins!`)
                     .addField(
                         "Current Balance:",
-                        `${config.userprofiles[message.member.user.id].zcoins}`,
+                        `${config.userprofiles[message.author.id].zcoins}`,
                         true
                     );
                 message.channel.send({
@@ -108,7 +108,7 @@ async function bot(client, message, command, args) {
                 });
             } else {
                 // give VIP users 5000 zcoins
-                config.userprofiles[message.member.user.id].zcoins += 5000;
+                config.userprofiles[message.author.id].zcoins += 5000;
                 fs.writeFileSync("./config.json", JSON.stringify(config));
                 const embed = new Discord.RichEmbed()
                     .setAuthor(client.user.username, client.user.avatarURL)
@@ -118,7 +118,7 @@ async function bot(client, message, command, args) {
                     )
                     .addField(
                         "Current Balance:",
-                        `${config.userprofiles[message.member.user.id].zcoins}`,
+                        `${config.userprofiles[message.author.id].zcoins}`,
                         true
                     );
                 message.channel.send({
@@ -133,7 +133,7 @@ async function bot(client, message, command, args) {
             }, 86400000);
         }
     } else if (command === "slots") {
-        if (config.userprofiles[message.member.user.id].zcoins >= 250) {
+        if (config.userprofiles[message.author.id].zcoins >= 250) {
             var slotstate = Math.random() >= 0.8;
             message.channel
                 .send("Spending 250 ZCoins on slots!", {
@@ -151,7 +151,7 @@ async function bot(client, message, command, args) {
                         message.channel.send("You won 500 ZCoins! - " + message.author, {
                             file: winImg
                         });
-                        config.userprofiles[message.member.user.id].zcoins += 500;
+                        config.userprofiles[message.author.id].zcoins += 500;
                         fs.writeFileSync("./config.json", JSON.stringify(config));
                     }
 
@@ -160,7 +160,7 @@ async function bot(client, message, command, args) {
                         message.channel.send("You lost 250 ZCoins! - " + message.author, {
                             file: loseImg
                         });
-                        config.userprofiles[message.member.user.id].zcoins -= 250;
+                        config.userprofiles[message.author.id].zcoins -= 250;
                         fs.writeFileSync("./config.json", JSON.stringify(config));
                     }
                 });
@@ -178,7 +178,7 @@ async function bot(client, message, command, args) {
             )
             .addField(
                 "Current Balance:",
-                `${config.userprofiles[message.member.user.id].zcoins}`,
+                `${config.userprofiles[message.author.id].zcoins}`,
                 true
             );
         message.channel
@@ -204,12 +204,12 @@ async function bot(client, message, command, args) {
         var item = args[0];
         if (shopItems[item]) {
             if (
-                config.userprofiles[message.member.user.id].zcoins >=
+                config.userprofiles[message.author.id].zcoins >=
                 shopItems[item].Price
             ) {
-                config.userprofiles[message.member.user.id].zcoins -=
+                config.userprofiles[message.author.id].zcoins -=
                     shopItems[item].Price;
-                config.userprofiles[message.member.user.id].inventory.push(
+                config.userprofiles[message.author.id].inventory.push(
                     "[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]"
                 );
                 fs.writeFileSync("./config.json", JSON.stringify(config));
