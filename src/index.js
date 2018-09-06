@@ -23,37 +23,27 @@ dbl.on('error', e => {
   console.log(`Oops! ${e}`);
 })
 
-fs.openSync("./config.json", 'r', (err, fd) => {
-  if (err) {
-    console.log("No config file detected.");
-    var fileContent = {
-      token: "",
-      dbltoken: "",
-      youtubeKey: "",
-      serverconfigs: {}
-    };
-    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {
-      if (err) throw err;
-    });
+if (!fs.existsSync("./config.json")) {
+  console.log("No config file detected.");
+  var fileContent = {
+    token: "",
+    youtubeKey: "",
+    serverconfigs: {},
+    userprofiles: {}
+  };
+  fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
 
-    console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
-    process.exit(0);
-  }
-});
-fs.openSync("./profiles.json", 'r', (err, fd) => {
-  if (err) {
-    console.log("No config file detected.");
-    var fileContent = {
-      userprofiles: {}
-    };
-    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {
-      if (err) throw err;
-    });
+  console.log("Configuration file generated at ./config.json \nPlease add your bot token and youtube api key, then restart the bot.\n\n\n");
+}
+if (!fs.existsSync("./profiles.json")) {
+  console.log("No profiles file detected.");
+  var fileContent = {
+    userprofiles: {}
+  };
+  fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
 
-    console.log("Profiles file generated at ./profiles.json");
-    process.exit(0);
-  }
-});
+  console.log("Profiles file generated at ./profiles.json\n\n");
+}
 
 // Here we load the config.json file that contains our token and our prefix values.
 const bugs = require("../bugs.json");
