@@ -2,12 +2,14 @@ const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("../config.json");
 
-async function bot(client, message, command, args, defaultConfig) {
+async function bot(client, message, command, args, defaultConfig, defaultprofile) {
   if (command === "help") {
     var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
     // Lists of current commands
     message.reply("please check your direct messages.");
+
+    // Help message
     message.author.send({
       embed: {
         color: 12370112,
@@ -16,7 +18,7 @@ async function bot(client, message, command, args, defaultConfig) {
           icon_url: client.user.avatarURL
         },
         title: client.user.username + " - About",
-        description: "This bot was created by Avery & Nathan",
+        description: "This bot was created by Avery Wagar & Nathan Laha",
         fields: [{
           name: `Check out the Github, host your own, or invite one of ours! (try ${helpprefix}invite)`,
           value: "https://github.com/ajmwagar/discordbot"
@@ -77,12 +79,8 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Sets the bot prefix"
           },
           {
-            name: helpprefix + "credits",
-            value: "Visit the github repo!"
-          },
-          {
-            name: helpprefix + "invite",
-            value: "Invite our official bot to your server!"
+            name: helpprefix + "alexamode",
+            value: "Changes the prefix to Alexa <command>"
           }
         ],
         timestamp: new Date(),
@@ -99,23 +97,11 @@ async function bot(client, message, command, args, defaultConfig) {
           name: client.user.username,
           icon_url: client.user.avatarURL
         },
-        title: "Misc/Utility Commands for " + client.user.username,
+        title: "Utility/Joke Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "weather <city>",
             value: "Get the weather for a city"
-          },
-          {
-            name: helpprefix + "daily",
-            value: "Get 500 ZCoins every 24 hours"
-          },
-          {
-            name: helpprefix + "slots",
-            value: "Test your luck with 250 ZCoins!"
-          },
-          {
-            name: helpprefix + "profile",
-            value: "View your user profile (xp, zcoins, level)"
           },
           {
             name: helpprefix + "joke",
@@ -142,10 +128,6 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Does basic math operations. Gets pissed off if you divide by 0"
           },
           {
-            name: helpprefix + "alexamode",
-            value: "Changes the prefix to Alexa <command>"
-          },
-          {
             name: helpprefix + "dab",
             value: "Dabs on them haters"
           },
@@ -160,7 +142,60 @@ async function bot(client, message, command, args, defaultConfig) {
           {
             name: helpprefix + "bug <description>",
             value: "Report a bug"
+          },
+          {
+            name: helpprefix + "credits",
+            value: "Visit the github repo!"
+          },
+          {
+            name: helpprefix + "invite",
+            value: "Invite our official bot to your server!"
+          },
+          {
+            name: helpprefix + "support",
+            value: "Join our support server."
           }
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 0xff5323,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Money Commands for " + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [{
+            name: helpprefix + "daily",
+            value: "Get 500 ZCoins every 24 hours"
+          },
+          {
+            name: helpprefix + "slots",
+            value: "Test your luck with 250 ZCoins!"
+          },
+          {
+            name: helpprefix + "profile",
+            value: "View your user profile (xp, zcoins, level)"
+          },
+          {
+            name: helpprefix + "shop",
+            value: "View the shop"
+          },
+          {
+            name: helpprefix + "buy",
+            value: "Buy items from the shop"
+          },
+          {
+            name: helpprefix + "forbes",
+            value: "Checkout the richest people alive. Forbes."
+          },
         ],
         timestamp: new Date(),
         footer: {
@@ -277,6 +312,21 @@ async function bot(client, message, command, args, defaultConfig) {
     config.serverconfigs[message.guild.id] = defaultConfig;
     fs.writeFileSync("./config.json", JSON.stringify(config));
     message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
+  } else if (command === "clearprofiles") {
+    // Only allow Bot Owners to wipe user config
+    if (!message.author.id == "205419165366878211" || !message.author.id == "226021264018374656")
+      return message.reply("Sorry, you don't have permissions to use this!");
+    // Reload and clear CFG
+    console.log('Userprofiles Cleared')
+    client.guilds.forEach(function (guild) {
+      // Initialize User Profiles
+      guild.members.forEach(function (member) {
+        config.userprofiles[member.user.id] = defaultprofile;
+      });
+      fs.writeFileSync("./config.json", JSON.stringify(config));
+    });
+    message.channel.send(`User Config Reloaded!`);
+
   } else if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
