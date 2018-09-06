@@ -8,22 +8,23 @@ const fs = require("fs");
 const client = new Discord.Client();
 
 const config = require("../config.json");
-const profiles = require("../profiles.json");
+// const profiles = require("../profiles.json");
+// TODO add mongo db, everything still refrences "profiles" so we need to either change that or make mongoDB work that way
 
 const DBL = require("dblapi.js");
 
 const dbl = new DBL(config.dbltoken, client);
 
 // Optional events
-dbl.on('posted', () => {
-  console.log('Server count posted!');
-})
+dbl.on("posted", () => {
+  console.log("Server count posted!");
+});
 
-dbl.on('error', e => {
+dbl.on("error", e => {
   console.log(`Oops! ${e}`);
-})
+});
 
-fs.openSync("./config.json", 'r', (err, fd) => {
+fs.openSync("./config.json", "r", (err, fd) => {
   if (err) {
     console.log("No config file detected.");
     var fileContent = {
@@ -32,21 +33,24 @@ fs.openSync("./config.json", 'r', (err, fd) => {
       youtubeKey: "",
       serverconfigs: {}
     };
-    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {
+    fs.writeFileSync("./config.json", JSON.stringify(fileContent), err => {
       if (err) throw err;
     });
 
-    console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
+    console.log(
+      "Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot."
+    );
     process.exit(0);
   }
 });
-fs.openSync("./profiles.json", 'r', (err, fd) => {
+/*
+fs.openSync("./profiles.json", "r", (err, fd) => {
   if (err) {
     console.log("No config file detected.");
     var fileContent = {
       userprofiles: {}
     };
-    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {
+    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), err => {
       if (err) throw err;
     });
 
@@ -54,6 +58,7 @@ fs.openSync("./profiles.json", 'r', (err, fd) => {
     process.exit(0);
   }
 });
+*/
 
 // Here we load the config.json file that contains our token and our prefix values.
 const bugs = require("../bugs.json");
@@ -63,7 +68,7 @@ const bugs = require("../bugs.json");
 const axios = require("axios");
 const moment = require("moment");
 var Long = require("long");
-const chalk = require('chalk');
+const chalk = require("chalk");
 
 // Internal modules
 const automod = require("./automod");
@@ -76,7 +81,7 @@ const overflow = require("./overflow");
 const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
-const profile = require("./profile")
+const profile = require("./profile");
 const modlog = require("./events/modlog");
 
 // Default server configuration (also used with .clearcfg)
@@ -107,19 +112,25 @@ var defaultprofile = {
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
-  console.log('client ready')
+  console.log("client ready");
+  /*
   BotUsers = client.users;
-  BotUsers.forEach(function (user) {
+  BotUsers.forEach(function(user) {
     if (user instanceof Discord.User) {
-      if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
+      if (
+        config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)
+      ) {
         profiles.userprofiles[user.id] = defaultprofile;
         fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
       }
     }
   });
-
-  client.guilds.forEach(function (guild) {
-    if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
+  */
+  client.guilds.forEach(function(guild) {
+    if (
+      config.serverconfigs &&
+      !config.serverconfigs.hasOwnProperty(guild.id)
+    ) {
       config.serverconfigs[guild.id] = defaultConfig;
       fs.writeFileSync("./config.json", JSON.stringify(config));
     }
@@ -128,16 +139,19 @@ client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
   console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
   if (client.shard) {
-    console.log(chalk.bgGreen(
-      "Shard #" +
-      client.shard.id +
-      " active with " +
-      client.guilds.size +
-      " guilds"
-    ));
+    console.log(
+      chalk.bgGreen(
+        "Shard #" +
+          client.shard.id +
+          " active with " +
+          client.guilds.size +
+          " guilds"
+      )
+    );
     client.user.setPresence({
       game: {
-        name: "@Nitro help | Shard " +
+        name:
+          "@Nitro help | Shard " +
           (client.shard.id + 1) +
           "/" +
           client.shard.count,
@@ -145,7 +159,9 @@ client.on("ready", () => {
       }
     });
   } else {
-    console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
+    console.log(
+      chalk.bgGreen("Shard #0 active with " + client.guilds.size + " guilds")
+    );
     client.user.setPresence({
       game: {
         name: "@Nitro help | " + client.guilds.size + " guilds",
@@ -156,7 +172,7 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("bugs.json", function (exists) {
+  fs.exists("bugs.json", function(exists) {
     if (!exists) {
       var fileContent = {
         servers: {}
@@ -187,10 +203,17 @@ client.on("guildCreate", guild => {
 
   // Get default
   const channel = getDefaultChannel(guild);
-  channel.send("Thanks for adding me!\n\nMy prefix is `" + config.serverconfigs[guild.id].prefix + "`\nYou can see a list of commands with `" + config.serverconfigs[guild.id].prefix + "help`\nOr you can change my prefix with `" + config.serverconfigs[guild.id].prefix + "prefix`\n\nEnjoy!")
+  channel.send(
+    "Thanks for adding me!\n\nMy prefix is `" +
+      config.serverconfigs[guild.id].prefix +
+      "`\nYou can see a list of commands with `" +
+      config.serverconfigs[guild.id].prefix +
+      "help`\nOr you can change my prefix with `" +
+      config.serverconfigs[guild.id].prefix +
+      "prefix`\n\nEnjoy!"
+  );
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
-
 });
 
 client.on("channelCreate", channel => {
@@ -200,14 +223,8 @@ client.on("channelCreate", channel => {
     channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
   )
     return;
-  fire(
-    `**a channel was created:** #\`${
-      channel.name
-    }\``,
-    channel.guild
-  );
-
-})
+  fire(`**a channel was created:** #\`${channel.name}\``, channel.guild);
+});
 
 client.on("channelDelete", channel => {
   if (channel.type == "dm") return;
@@ -216,14 +233,8 @@ client.on("channelDelete", channel => {
     channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
   )
     return;
-  fire(
-    `**  a channel was deleted:** #\`${
-      channel.name
-    }\``,
-    channel.guild
-  );
-
-})
+  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild);
+});
 
 client.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
@@ -329,35 +340,55 @@ client.on("message", async message => {
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
     // TODO Automod filter
-    if (config.serverconfigs[message.guild.id] && message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
+    if (
+      config.serverconfigs[message.guild.id] &&
+      message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !==
+        0
+    ) {
       automod.censor(message);
     } else {
       if (profiles.userprofiles) {
-
         // XP and leveling
         profiles.userprofiles[message.author.id].xp += 100;
-        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-        if (profiles.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))) {
-
+        // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+        if (
+          profiles.userprofiles[message.author.id].xp <
+          Math.round(
+            Math.pow(
+              100,
+              profiles.userprofiles[message.author.id].level / 10 + 1
+            )
+          )
+        ) {
         } else {
           profiles.userprofiles[message.author.id].xp = 0;
           profiles.userprofiles[message.author.id].level += 1;
-          fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+          // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
 
           const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(`**New Level: ${profiles.userprofiles[message.author.id].level}**, XP has been reset`)
-            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
+            .setDescription(
+              `**New Level: ${
+                profiles.userprofiles[message.author.id].level
+              }**, XP has been reset`
+            )
+            .setFooter(
+              `XP until next level: ${Math.round(
+                Math.pow(
+                  100,
+                  profiles.userprofiles[message.author.id].level / 10 + 1
+                )
+              )}`,
+              client.user.avatarURL
+            );
           message.channel.send({
             embed
           });
-
         }
       }
-
 
       // Here we separate our "command" name, and our "arguments" for the command.
       // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
@@ -435,38 +466,38 @@ client.on("message", async message => {
 });
 
 const fire = (text, guild) => {
-  if (guild)
-    if (!guild.channels) return;
+  if (guild) if (!guild.channels) return;
 
   let channel = guild.channels.find(
     c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
   );
-
 
   if (!channel) {
     console.log("Channel not found");
     return;
   }
 
-  let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `
+  let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
   var msg = time + text;
-  channel.send({
-    embed: {
-      color: 12370112,
-      author: {
-        name: client.user.username,
-        icon_url: client.user.avatarURL
-      },
-      title: "Modlog",
-      description: msg,
-    }
-  }).then().catch(console.log);
-}
+  channel
+    .send({
+      embed: {
+        color: 12370112,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Modlog",
+        description: msg
+      }
+    })
+    .then()
+    .catch(console.log);
+};
 
-const getDefaultChannel = (guild) => {
+const getDefaultChannel = guild => {
   // get "original" default channel
-  if (guild.channels.has(guild.id))
-    return guild.channels.get(guild.id)
+  if (guild.channels.has(guild.id)) return guild.channels.get(guild.id);
 
   // Check for a "general" channel, which is often default chat
   if (guild.channels.exists("name", "general"))
@@ -474,12 +505,20 @@ const getDefaultChannel = (guild) => {
   // Now we get into the heavy stuff: first channel in order where the bot can speak
   // hold on to your hats!
   return guild.channels
-    .filter(c => c.type === "text" &&
-      c.permissionsFor(guild.client.user).has("SEND_MESSAGES"))
-    .sort((a, b) => a.position - b.position ||
-      Long.fromString(a.id).sub(Long.fromString(b.id)).toNumber())
+    .filter(
+      c =>
+        c.type === "text" &&
+        c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
+    )
+    .sort(
+      (a, b) =>
+        a.position - b.position ||
+        Long.fromString(a.id)
+          .sub(Long.fromString(b.id))
+          .toNumber()
+    )
     .first();
-}
+};
 
 // Login
 //
