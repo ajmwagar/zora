@@ -160,6 +160,12 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
+  // Set activity
+   setInterval (function (){
+    client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size} users`);
+   }, 10000);
+
+
   console.log(chalk.bgGreen("Client Ready!"));
   BotUsers = client.users;
 
@@ -227,7 +233,7 @@ client.on("ready", () => {
   }
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity(`on ${client.guilds.size} servers`);
+
   fs.exists("bugs.json", function (exists) {
     if (!exists) {
       var fileContent = {
@@ -251,7 +257,7 @@ client.on("guildCreate", guild => {
       guild.memberCount
     } members!`
   );
-  client.user.setActivity(`on ${client.guilds.size} servers`);
+
 
   // Add this new guild to database
   var defaultserver = new defaultServer();
