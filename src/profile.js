@@ -35,7 +35,7 @@ var loseImg = {
     name: "zslotsLose.gif"
 };
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, cuser, cserver, UserM, ServerM) {
     if (command === "profile") {
         const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
@@ -44,25 +44,25 @@ async function bot(client, message, command, args) {
             .setTitle(`${message.member.user.username}'s profile`)
             .addField(
                 "Level:",
-                `${config.userprofiles[message.author.id].level}`,
+                `${cuser.level}`,
                 true
             )
             .addField(
                 "XP:",
-                `${config.userprofiles[message.author.id].xp}`,
+                `${cuser.xp}`,
                 true
             )
             .addField("Inventory Contents Below:", "⏬", true)
             .addField(
                 "💰 ZCoins: 💰",
-                `${config.userprofiles[message.author.id].zcoins}`,
+                `${cuser.zcoins}`,
                 true
             )
             .setFooter(
                 `XP until next level: ${Math.round(
           Math.pow(
             100,
-            config.userprofiles[message.author.id].level / 10 + 1
+            cuser.level / 10 + 1
           )
         )}`,
                 client.user.avatarURL
@@ -73,7 +73,7 @@ async function bot(client, message, command, args) {
             })
             .then(() => {
                 var userInventory =
-                    config.userprofiles[message.author.id].inventory;
+                    cuser.inventory;
 
                 if (userInventory.length > 0) {
                     const embed = new Discord.RichEmbed()
@@ -90,39 +90,43 @@ async function bot(client, message, command, args) {
                 "Wait 24 hours before using this again! - " + message.author
             );
         } else {
-            if (config.userprofiles[message.author.id].VIP === false) {
+            if (cuser.VIP === false) {
                 // give normal users 500 zcoins
-                config.userprofiles[message.author.id].zcoins += 500;
-                fs.writeFileSync("./config.json", JSON.stringify(config));
-                const embed = new Discord.RichEmbed()
-                    .setAuthor(client.user.username, client.user.avatarURL)
-                    .setColor("#FF7F50")
-                    .setTitle(`Gave ${message.member.user.username} 500 ZCoins!`)
-                    .addField(
-                        "Current Balance:",
-                        `${config.userprofiles[message.author.id].zcoins}`,
-                        true
-                    );
-                message.channel.send({
-                    embed
+                UserM.findById(message.author.id, function (err, user) {
+                    user.zcoins += 500;
+                    user.save();
+                    const embed = new Discord.RichEmbed()
+                        .setAuthor(client.user.username, client.user.avatarURL)
+                        .setColor("#FF7F50")
+                        .setTitle(`Gave ${message.member.user.username} 500 ZCoins!`)
+                        .addField(
+                            "Current Balance:",
+                            `${cuser.zcoins}`,
+                            true
+                        );
+                    message.channel.send({
+                        embed
+                    });
                 });
             } else {
                 // give VIP users 5000 zcoins
-                config.userprofiles[message.author.id].zcoins += 5000;
-                fs.writeFileSync("./config.json", JSON.stringify(config));
-                const embed = new Discord.RichEmbed()
-                    .setAuthor(client.user.username, client.user.avatarURL)
-                    .setColor("#FF7F50")
-                    .setTitle(
-                        `⭐[VIP] Gave ${message.member.user.username} 5000 ZCoins! [VIP]⭐`
-                    )
-                    .addField(
-                        "Current Balance:",
-                        `${config.userprofiles[message.author.id].zcoins}`,
-                        true
-                    );
-                message.channel.send({
-                    embed
+                UserM.findById(message.author.id, function (err, user) {
+                    user.zcoins += 5000;
+                    user.save();
+                    const embed = new Discord.RichEmbed()
+                        .setAuthor(client.user.username, client.user.avatarURL)
+                        .setColor("#FF7F50")
+                        .setTitle(
+                            `⭐[VIP] Gave ${message.member.user.username} 5000 ZCoins! [VIP]⭐`
+                        )
+                        .addField(
+                            "Current Balance:",
+                            `${cuser.zcoins}`,
+                            true
+                        );
+                    message.channel.send({
+                        embed
+                    });
                 });
             }
             // Adds the user to the set so that they can't talk for a minute
@@ -133,7 +137,7 @@ async function bot(client, message, command, args) {
             }, 86400000);
         }
     } else if (command === "slots") {
-        if (config.userprofiles[message.author.id].zcoins >= 250) {
+        if (cuser.zcoins >= 250) {
             var slotstate = Math.random() >= 0.8;
             message.channel
                 .send("Spending 250 ZCoins on slots!", {
@@ -151,8 +155,11 @@ async function bot(client, message, command, args) {
                         message.channel.send("You won 500 ZCoins! - " + message.author, {
                             file: winImg
                         });
-                        config.userprofiles[message.author.id].zcoins += 500;
-                        fs.writeFileSync("./config.json", JSON.stringify(config));
+                        UserM.findById(message.author.id, function (err, user) {
+                            user.zcoins += 500;
+                            user.save();
+                        });
+
                     }
 
                     function lose() {
@@ -160,8 +167,11 @@ async function bot(client, message, command, args) {
                         message.channel.send("You lost 250 ZCoins! - " + message.author, {
                             file: loseImg
                         });
-                        config.userprofiles[message.author.id].zcoins -= 250;
-                        fs.writeFileSync("./config.json", JSON.stringify(config));
+                        UserM.findById(message.author.id, function (err, user) {
+                            user.zcoins -= 250;
+                            user.save();
+                        });
+
                     }
                 });
         }
@@ -173,12 +183,12 @@ async function bot(client, message, command, args) {
             .setTitle(`🛒 Welcome ${message.member.user.username} to the shop 🛒`)
             .setDescription(
                 `We have wares if you got coin! ZCoin to be precise! Type ${
-          config.serverconfigs[message.guild.id].prefix
+          cserver.prefix
         }buy <item>`
             )
             .addField(
                 "Current Balance:",
-                `${config.userprofiles[message.author.id].zcoins}`,
+                `${cuser.zcoins}`,
                 true
             );
         message.channel
@@ -203,16 +213,14 @@ async function bot(client, message, command, args) {
     } else if (command === "buy") {
         var item = args[0];
         if (shopItems[item]) {
-            if (
-                config.userprofiles[message.author.id].zcoins >=
-                shopItems[item].Price
-            ) {
-                config.userprofiles[message.author.id].zcoins -=
-                    shopItems[item].Price;
-                config.userprofiles[message.author.id].inventory.push(
-                    "[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]"
-                );
-                fs.writeFileSync("./config.json", JSON.stringify(config));
+            if (cuser.zcoins >= shopItems[item].Price) {
+                UserM.findById(message.author.id, function (err, user) {
+                    user.zcoins -= shopItems[item].Price;
+                    user.inventory.push(
+                        "[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]"
+                    );
+                    user.save();
+                });
                 message.channel.send({
                     embed: {
                         color: 3447003,

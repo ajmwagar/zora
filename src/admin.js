@@ -2,9 +2,9 @@ const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("../config.json");
 
-async function bot(client, message, command, args, defaultConfig, defaultprofile) {
+async function bot(client, message, command, args, defaultConfig, defaultprofile, cuser, cserver, UserM, ServerM) {
   if (command === "help") {
-    var helpprefix = config.serverconfigs[message.guild.id].prefix;
+    var helpprefix = cserver.prefix;
     // Help message
     // Lists of current commands
     message.reply("please check your direct messages.");
@@ -309,27 +309,8 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       message.guild.memberCount
     } members!`
     );
-    config.serverconfigs[message.guild.id] = defaultConfig;
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-    message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
-  }
-  /*else if (command === "clearprofiles") {
-     // Only allow Bot Owners to wipe user config
-     if (!message.author.id == "205419165366878211" || !message.author.id == "226021264018374656")
-       return message.reply("Sorry, you don't have permissions to use this!");
-     // Reload and clear CFG
-     console.log('Userprofiles Cleared')
-     client.guilds.forEach(function (guild) {
-       // Initialize User Profiles
-       guild.members.forEach(function (member) {
-         config.userprofiles[member.user.id] = defaultprofile;
-       });
-       fs.writeFileSync("./config.json", JSON.stringify(config));
-     });
-     message.channel.send(`User Config Reloaded!`);
-
-   }*/
-  else if (command === "say") {
+    message.channel.send(`Server Config Reloaded! My prefix is now "${cserver.prefix}"`);
+  } else if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
     const sayMessage = args.join(" ");
@@ -410,17 +391,17 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       var setPrefix = args[0];
 
       if (setPrefix !== undefined || setPrefix !== "") {
-        config.serverconfigs[message.guild.id].prefix = setPrefix;
+        cserver.prefix = setPrefix;
         fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
         message.channel.send({
           embed: {
             color: 3447003,
-            description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}`
+            description: `Bot prefix changed to ${cserver.prefix}`
           }
         });
       }
     } else {
-      message.channel.send(`Please specify a prefix with ${config.serverconfigs[message.guild.id].prefix}prefix <new prefix>`);
+      message.channel.send(`Please specify a prefix with ${cserver.prefix}prefix <new prefix>`);
     }
 
 
@@ -430,12 +411,12 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       return message.reply("Sorry, you don't have permissions to use this!");
 
 
-    config.serverconfigs[message.guild.id].prefix = "Alexa ";
+    cserver.prefix = "Alexa ";
 
     message.channel.send({
       embed: {
         color: 3447003,
-        description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}, type Alexa <command>`
+        description: `Bot prefix changed to ${cserver.prefix}, type Alexa <command>`
       }
     });
   } else if (command === "addbw") {
@@ -445,7 +426,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
     args.forEach((word) => {
       // Add word
-      config.serverconfigs[message.guild.id].automod.bannedwords.push(word);
+      cserver.automod.bannedwords.push(word);
 
       // Alert user
       let embed = new Discord.RichEmbed()
@@ -466,13 +447,13 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       return message.reply("Sorry, you don't have permissions to use this!");
 
     args.forEach((word) => {
-      let index = config.serverconfigs[message.guild.id].automod.bannedwords.indexOf(word)
+      let index = cserver.automod.bannedwords.indexOf(word)
 
 
       if (index > -1) {
 
         // Add word
-        config.serverconfigs[message.guild.id].automod.bannedwords.splice(index, 1);
+        cserver.automod.bannedwords.splice(index, 1);
 
         // Alert user
         let embed = new Discord.RichEmbed()
@@ -495,13 +476,13 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       .setTitle("Banned Words")
       .setAuthor(client.user.username + "- AUTOMOD", client.user.avatarURL)
       .setColor(15844367)
-      .setDescription("Currently moderating " + config.serverconfigs[message.guild.id].automod.bannedwords.length + " words.")
+      .setDescription("Currently moderating " + cserver.automod.bannedwords.length + " words.")
 
     message.channel.send({
       embed
     })
 
-    config.serverconfigs[message.guild.id].automod.bannedwords.forEach((word) => {
+    cserver.automod.bannedwords.forEach((word) => {
       var embed = new Discord.RichEmbed().setTitle(word).setAuthor(client.user.username, client.user.avatarURL).setColor(3447003)
       message.channel.send({
         embed
@@ -535,7 +516,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
     if (channel) {
 
-      config.serverconfigs[message.guild.id].modlogChannel = channel;
+      cserver.modlogChannel = channel;
 
       fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
 

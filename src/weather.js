@@ -3,7 +3,7 @@ const axios = require('axios');
 
 const config = require("../config.json");
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, cuser, cserver, UserM, ServerM) {
   if (command === "weather") {
 
     var city = args[0];

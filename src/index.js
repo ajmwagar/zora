@@ -2,7 +2,7 @@ var start = Date.now();
 // Load up the discord.js library
 const Discord = require("discord.js");
 const fs = require("fs");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
@@ -98,14 +98,14 @@ var defaultConfig = new Schema({
     type: String,
     default: config.name
   },
-  _id: Number,
+  _id: Schema.Types.Decimal128,
   prefix: {
     type: String,
-    default: '+'
+    default: "+"
   },
   modlogChannel: {
     type: String,
-    default: 'modlog'
+    default: "modlog"
   },
   reddit: {
     subreddits: [],
@@ -115,7 +115,7 @@ var defaultConfig = new Schema({
     },
     channel: {
       type: String,
-      default: 'memes'
+      default: "memes"
     },
     interval: {
       type: Number,
@@ -131,27 +131,28 @@ var defaultConfig = new Schema({
 var defaultprofile = new Schema({
   level: {
     type: Number,
-    default: '1'
+    default: "1"
   },
+  username: String,
   xp: {
     type: Number,
-    default: '0'
+    default: "0"
   },
   zcoins: {
     type: Number,
-    default: '100'
+    default: "100"
   },
   VIP: {
     type: Boolean,
     default: false
   },
   inventory: [],
-  _id: Number
+  _id: Schema.Types.Decimal128
 });
 
 // Define models
-const defaultUser = mongoose.model('Users', defaultprofile);
-const defaultServer = mongoose.model('Servers', defaultConfig);
+const UserM = mongoose.model("Users", defaultprofile);
+const ServerM = mongoose.model("Servers", defaultConfig);
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
@@ -162,19 +163,31 @@ client.on("ready", () => {
   // Write users into database
   BotUsers.forEach(function (user) {
     if (user instanceof Discord.User) {
-      var defaultuser = new defaultUser();
+      var defaultuser = new UserM();
       defaultuser._id = user.id;
+      defaultuser.username = user.username;
       defaultuser.save(function (err) {});
-      console.log(chalk.yellow(chalk.blue(`[USER] `) + `${user.username} has been inserted into the database`));
+      console.log(
+        chalk.yellow(
+          chalk.blue(`[USER] `) +
+          `${user.username} has been inserted into the database` +
+          chalk.blue(`[ID] ${user.id}`)
+        )
+      );
     }
   });
 
   // Write servers into database
   client.guilds.forEach(function (guild) {
-    var defaultserver = new defaultServer();
+    var defaultserver = new ServerM();
     defaultserver._id = guild.id;
     defaultserver.save(function (err) {});
-    console.log(chalk.yellow(chalk.red(`[SERVER] `) + `${guild.id} has been inserted into the database`));
+    console.log(
+      chalk.yellow(
+        chalk.red(`[SERVER] `) +
+        `${guild.id} has been inserted into the database`
+      )
+    );
   });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -237,42 +250,54 @@ client.on("guildCreate", guild => {
   );
   client.user.setActivity(`on ${client.guilds.size} servers`);
 
-  if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
-    config.serverconfigs[guild.id] = defaultConfig;
-  }
+  // Add this new guild to database
+  var defaultserver = new defaultServer();
+  defaultserver._id = guild.id;
+  defaultserver.save(function (err) {});
+  console.log(
+    chalk.yellow(
+      chalk.red(`[SERVER] `) + `${guild.id} has been inserted into the database`
+    )
+  );
+
+  // Get the new server's prefix
+  let newprefix = "";
+  ServerM.findById(guild.id, function (err, server) {
+    newprefix = server.prefix;
+  });
 
   // Get default
   const channel = getDefaultChannel(guild);
   channel.send(
     "Thanks for adding me!\n\nMy prefix is `" +
-    config.serverconfigs[guild.id].prefix +
+    newprefix +
     "`\nYou can see a list of commands with `" +
-    config.serverconfigs[guild.id].prefix +
+    newprefix +
     "help`\nOr you can change my prefix with `" +
-    config.serverconfigs[guild.id].prefix +
+    newprefix +
     "prefix`\n\nEnjoy!"
   );
-
-  fs.writeFileSync("./config.json", JSON.stringify(config));
 });
 
 client.on("channelCreate", channel => {
+  // Get the modlog channel
   if (channel.type == "dm") return;
-  if (
-    channel.name &&
-    channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
-  )
-    return;
+  let modlog = "";
+  ServerM.findById(channel.guild.id, function (err, server) {
+    modlog = server.modlogChannel;
+  });
+  if (channel.name && channel.name.includes(modlog)) return;
   fire(`**a channel was created:** #\`${channel.name}\``, channel.guild);
 });
 
 client.on("channelDelete", channel => {
+  // Get the modlog channel
   if (channel.type == "dm") return;
-  if (
-    channel.name &&
-    channel.name.includes(config.serverconfigs[channel.guild.id].modlogChannel)
-  )
-    return;
+  let modlog = "";
+  ServerM.findById(channel.guild.id, function (err, server) {
+    modlog = server.modlogChannel;
+  });
+  if (channel.name && channel.name.includes(modlog)) return;
   fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild);
 });
 
@@ -296,13 +321,15 @@ client.on("guildMemberRemove", member => {
 });
 
 client.on("messageDelete", msg => {
+  // Get the modlog channel
+  let modlog = "";
+  ServerM.findById(msg.guild.id, function (err, server) {
+    modlog = server.modlogChannel;
+  });
+
   if (msg.channel.type !== "text") return;
   if (msg.author.bot) return;
-  if (
-    msg.channel.name &&
-    msg.channel.name.includes(config.serverconfigs[msg.guild.id].modlogChannel)
-  )
-    return;
+  if (msg.channel.name && msg.channel.name.includes(modlog)) return;
   fire(
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
@@ -379,105 +406,108 @@ client.on("message", async message => {
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
-    // TODO Automod filter
-    if (
-      config.serverconfigs[message.guild.id] &&
-      message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !==
-      0
-    ) {
-      automod.censor(message);
-    } else {
-      if (profiles.userprofiles) {
-        // XP and leveling
-        profiles.userprofiles[message.author.id].xp += 100;
-        // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-        if (
-          profiles.userprofiles[message.author.id].xp <
-          Math.round(
-            Math.pow(
-              100,
-              profiles.userprofiles[message.author.id].level / 10 + 1
-            )
-          )
-        ) {} else {
-          profiles.userprofiles[message.author.id].xp = 0;
-          profiles.userprofiles[message.author.id].level += 1;
-          // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
 
+    // Get the current server and user configs
+    const cserverF = (id) => {
+      return ServerM.findById(id).exec()
+    }
+    const cuserF = (id) => {
+      return ServerM.findById(id).exec();
+    }
+    const cserver = await cserverF(message.guild.id);
+    const cuser = await cuserF(message.author.id);
+
+
+    // TODO Automod filter
+    if (message.content.indexOf(cserver.prefix) !== 0) {
+      automod.censor(message, cserver);
+    } else {
+      // XP and leveling
+      UserM.findById(message.author.id, function (err, user) {
+        user.xp += 100;
+        user.save();
+      });
+      // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+      UserM.findById(message.author.id, function (err, user) {
+        if (user.xp < Math.round(Math.pow(100, user.level / 10 + 1))) {} else {
+          user.xp = 0;
+          user.level += 1;
+          user.save();
           const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(
-              `**New Level: ${
-                profiles.userprofiles[message.author.id].level
-              }**, XP has been reset`
-            )
+            .setDescription(`**New Level: ${user.level}**, XP has been reset`)
             .setFooter(
               `XP until next level: ${Math.round(
-                Math.pow(
-                  100,
-                  profiles.userprofiles[message.author.id].level / 10 + 1
-                )
-              )}`,
+              Math.pow(100, user.level / 10 + 1)
+            )}`,
               client.user.avatarURL
             );
           message.channel.send({
             embed
           });
         }
-      }
+      });
+      // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
 
       // Here we separate our "command" name, and our "arguments" for the command.
       // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
       // command = say
       // args = ["Is", "this", "the", "real", "life?"]
       const args = message.content
-        .slice(config.serverconfigs[message.guild.id].prefix.length)
+        .slice(cserver.prefix.length)
         .trim()
         .split(/ +/g);
       const command = args.shift().toLowerCase();
 
+      // ServerM is the model for server configs
+      // UserM is the model for user configs
+      // cuser refrences the current user config object
+      // cserver refrences the current server config object
+
       // Admin
+      UserM.findById(message.author.id, function (err, user) {
 
-      admin.bot(client, message, command, args, defaultConfig, defaultprofile);
+        admin.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
 
-      // Weather
+        // Weather
 
-      weather.bot(client, message, command, args);
+        weather.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Memes
+        // Memes
 
-      memes.bot(client, message, command, args);
+        memes.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Music
+        // Music
 
-      radio.bot(client, message, command, args);
+        radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Yodaspeak
+        // Yodaspeak
 
-      yoda.bot(client, message, command, args);
+        yoda.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Stack Overflow
+        // Stack Overflow
 
-      overflow.bot(client, message, command, args);
+        overflow.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Utility
+        // Utility
 
-      utility.bot(client, message, command, args);
+        utility.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Translate
+        // Translate
 
-      translate.bot(client, message, command, args);
+        translate.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Crypto
+        // Crypto
 
-      crypto.bot(client, message, command, args);
+        crypto.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
-      // Profile
+        // Profile
 
-      profile.bot(client, message, command, args);
+        profile.bot(client, message, command, args, user, cserver, UserM, ServerM);
+      });
 
       // Jokes
 
@@ -559,7 +589,6 @@ const getDefaultChannel = guild => {
     )
     .first();
 };
-
 
 // Login
 //
