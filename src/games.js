@@ -36,12 +36,16 @@ async function bot(client, message, command, args, cuser, cserver) {
       });
 
 
-    } else if command === "pubg"{
-      if (args) {
+	}
+else {
+message.channel.send("Please provide both platform and username");
+}
+    } else if (command === "pubg"){
+      if (args.length > 1) {
         var input = args;
         var platform, profile;
 
-        platform = input.shift().trim();
+        platform = input[0].trim();
         profile = input[1].trim();
 
         pubg.get(`/profile/${platform}/${profile}`).then((res) => {
@@ -53,7 +57,11 @@ async function bot(client, message, command, args, cuser, cserver) {
         });
 
       }
+else {
+message.channel.send("Please provide both platform and username");
+}
     }
+}
 
     module.exports = {
       bot

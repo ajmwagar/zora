@@ -339,7 +339,7 @@ client.on("guildMemberRemove", member => {
 client.on("messageDelete", msg => {
   // Get the modlog channel
   let modlog = "";
-  ServerM.findById(channel.guild.id, function (err, server) {
+  ServerM.findById(msg.guild.id, function (err, server) {
     modlog = server.modlogChannel;
   });
 
@@ -558,8 +558,6 @@ const fire = async (text, guild) => {
   );
 
   if (!channel) {
-    console.log(cserver);
-    console.log(channel);
     console.log("Channel not found");
     return;
   }
