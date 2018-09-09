@@ -161,9 +161,9 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 
 client.on("ready", () => {
   // Set activity
-   setInterval (function (){
+  setInterval(function () {
     client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size} users`);
-   }, 10000);
+  }, 10000);
 
 
   console.log(chalk.bgGreen("Client Ready!"));
@@ -302,6 +302,10 @@ client.on("channelCreate", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = await cserverF(message.guild.id);
   fire(`**a channel was created:** #\`${channel.name}\``, channel.guild, cserver);
 });
 
