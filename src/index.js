@@ -305,7 +305,7 @@ client.on("channelCreate", channel => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = await cserverF(message.guild.id);
+  const cserver = cserverF(message.guild.id);
   fire(`**a channel was created:** #\`${channel.name}\``, channel.guild, cserver);
 });
 
