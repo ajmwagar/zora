@@ -211,15 +211,6 @@ client.on("ready", () => {
         " guilds"
       )
     );
-    client.user.setPresence({
-      game: {
-        name: "@Nitro help | Shard " +
-          (client.shard.id + 1) +
-          "/" +
-          client.shard.count,
-        type: 0
-      }
-    });
   } else {
     console.log(
       chalk.bgGreen("Shard #0 active with " + client.guilds.size + " guilds")
