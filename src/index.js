@@ -262,6 +262,21 @@ client.on("guildCreate", guild => {
       chalk.red(`[SERVER] `) + `${guild.id} has been inserted into the database`
     )
   );
+  guild.members.forEach(function (guildMember) {
+    if (guildMember.user instanceof Discord.User) {
+      var defaultuser = new UserM();
+      defaultuser._id = guildMember.user.id;
+      defaultuser.username = guildMember.user.username;
+      defaultuser.save(function (err) {});
+      console.log(
+        chalk.yellow(
+          chalk.blue(`[USER] `) +
+          `${guildMember.user.username} has been inserted into the database` +
+          chalk.blue(`[ID] ${guildMember.user.id}`)
+        )
+      );
+    }
+  });
 
   // Get the new server's prefix
   let newprefix = "";
