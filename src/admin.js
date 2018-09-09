@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("../config.json");
 
-async function bot(client, message, command, args, defaultConfig) {
+async function bot(client, message, command, args, defaultConfig, defaultprofile) {
   if (command === "help") {
     var helpprefix = config.serverconfigs[message.guild.id].prefix;
     // Help message
@@ -150,7 +150,7 @@ async function bot(client, message, command, args, defaultConfig) {
           {
             name: helpprefix + "invite",
             value: "Invite our official bot to your server!"
-          }, 
+          },
           {
             name: helpprefix + "support",
             value: "Join our support server."
@@ -172,8 +172,7 @@ async function bot(client, message, command, args, defaultConfig) {
         },
         title: "Money Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
-        fields: [
-          {
+        fields: [{
             name: helpprefix + "daily",
             value: "Get 500 ZCoins every 24 hours"
           },
@@ -313,6 +312,21 @@ async function bot(client, message, command, args, defaultConfig) {
     config.serverconfigs[message.guild.id] = defaultConfig;
     fs.writeFileSync("./config.json", JSON.stringify(config));
     message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
+  } else if (command === "clearprofiles") {
+    // Only allow Bot Owners to wipe user config
+    if (!message.author.id == "205419165366878211" || !message.author.id == "226021264018374656")
+      return message.reply("Sorry, you don't have permissions to use this!");
+    // Reload and clear CFG
+    console.log('Userprofiles Cleared')
+    client.guilds.forEach(function (guild) {
+      // Initialize User Profiles
+      guild.members.forEach(function (member) {
+        config.userprofiles[member.user.id] = defaultprofile;
+      });
+      fs.writeFileSync("./config.json", JSON.stringify(config));
+    });
+    message.channel.send(`User Config Reloaded!`);
+
   } else if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 

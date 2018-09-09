@@ -8,6 +8,7 @@ const fs = require("fs");
 const client = new Discord.Client();
 
 const config = require("../config.json");
+const profiles = require("../profiles.json");
 
 const DBL = require("dblapi.js");
 
@@ -22,22 +23,27 @@ dbl.on('error', e => {
   console.log(`Oops! ${e}`);
 })
 
-fs.openSync("./config.json", 'r', (err, fd) => {
-  if (err) {
-    console.log("No config file detected.");
-    var fileContent = {
-      token: "",
-      dbltoken: "",
-      youtubeKey: "",
-      serverconfigs: {},
-      userprofiles: {}
-    };
-    fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+if (!fs.existsSync("./config.json")) {
+  console.log("No config file detected.");
+  var fileContent = {
+    token: "",
+    youtubeKey: "",
+    serverconfigs: {},
+    userprofiles: {}
+  };
+  fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
 
-    console.log("Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot.");
-    process.exit(0);
-  }
-});
+  console.log("Configuration file generated at ./config.json \nPlease add your bot token and youtube api key, then restart the bot.\n\n\n");
+}
+if (!fs.existsSync("./profiles.json")) {
+  console.log("No profiles file detected.");
+  var fileContent = {
+    userprofiles: {}
+  };
+  fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+
+  console.log("Profiles file generated at ./profiles.json\n\n");
+}
 
 // Here we load the config.json file that contains our token and our prefix values.
 const bugs = require("../bugs.json");
@@ -91,20 +97,22 @@ var defaultprofile = {
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
-  client.guilds.forEach(function (guild) {
-    // Initialize User Profiles
-    guild.members.forEach(function (member) {
-      if (config.userprofiles && !config.userprofiles.hasOwnProperty(member.id)) {
-        config.userprofiles[member.id] = defaultprofile;
+  console.log('client ready')
+  BotUsers = client.users;
+  BotUsers.forEach(function (user) {
+    if (user instanceof Discord.User) {
+      if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
+        profiles.userprofiles[user.id] = defaultprofile;
+        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
       }
-    });
+    }
+  });
 
+  client.guilds.forEach(function (guild) {
     if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
       config.serverconfigs[guild.id] = defaultConfig;
+      fs.writeFileSync("./config.json", JSON.stringify(config));
     }
-
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-
   });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -120,9 +128,9 @@ client.on("ready", () => {
     client.user.setPresence({
       game: {
         name: "@Nitro help | Shard " +
-        (client.shard.id + 1) +
-        "/" +
-        client.shard.count,
+          (client.shard.id + 1) +
+          "/" +
+          client.shard.count,
         type: 0
       }
     });
@@ -314,25 +322,25 @@ client.on("message", async message => {
     if (config.serverconfigs[message.guild.id] && message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !== 0) {
       automod.censor(message);
     } else {
-      if (config.userprofiles) {
+      if (profiles.userprofiles) {
 
         // XP and leveling
-        config.userprofiles[message.member.user.id].xp += 100;
-        fs.writeFileSync("./config.json", JSON.stringify(config));
-        if (config.userprofiles[message.member.user.id].xp < Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))) {
+        profiles.userprofiles[message.author.id].xp += 100;
+        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
+        if (profiles.userprofiles[message.author.id].xp < Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))) {
 
         } else {
-          config.userprofiles[message.member.user.id].xp = 0;
-          config.userprofiles[message.member.user.id].level += 1;
-          fs.writeFileSync("./config.json", JSON.stringify(config));
+          profiles.userprofiles[message.author.id].xp = 0;
+          profiles.userprofiles[message.author.id].level += 1;
+          fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
 
           const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(`**New Level: ${config.userprofiles[message.member.user.id].level}**, XP has been reset`)
-            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((config.userprofiles[message.member.user.id].level) / 10) + 1)))}`, client.user.avatarURL)
+            .setDescription(`**New Level: ${profiles.userprofiles[message.author.id].level}**, XP has been reset`)
+            .setFooter(`XP until next level: ${Math.round(Math.pow(100, (((profiles.userprofiles[message.author.id].level) / 10) + 1)))}`, client.user.avatarURL)
           message.channel.send({
             embed
           });
@@ -353,7 +361,7 @@ client.on("message", async message => {
 
       // Admin
 
-      admin.bot(client, message, command, args, defaultConfig);
+      admin.bot(client, message, command, args, defaultConfig, defaultprofile);
 
       // Weather
 
@@ -432,8 +440,8 @@ const fire = (text, guild) => {
 
   let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `
   var msg = time + text;
-  channel.send(
-    {embed: {
+  channel.send({
+    embed: {
       color: 12370112,
       author: {
         name: client.user.username,
@@ -441,8 +449,8 @@ const fire = (text, guild) => {
       },
       title: "Modlog",
       description: msg,
-    }}
-  ).then().catch(console.log);
+    }
+  }).then().catch(console.log);
 }
 
 const getDefaultChannel = (guild) => {
