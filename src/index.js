@@ -90,7 +90,10 @@ const modlog = require("./events/modlog");
 var url = "mongodb://localhost:27017/zora";
 
 // Connect/Create MongoDB database
-mongoose.connect(url);
+mongoose.connect(url, {
+  user: config.databaseuser,
+  pass: config.databasepass
+});
 
 // Default server configuration (also used with .clearcfg)
 var defaultConfig = new Schema({
