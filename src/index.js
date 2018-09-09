@@ -1,112 +1,112 @@
-// var start = Date.now();
-// // Load up the discord.js library
-// const Discord = require("discord.js");
-// const fs = require("fs");
-// const mongoose = require("mongoose");
-// const Schema = mongoose.Schema;
-// const ObjectId = Schema.ObjectId;
-// // This is your client. Some people call it `bot`, some people call it `self`,
-// // some might call it `cootchie`. Either way, when you see `client.something`, or `client.something`,
-// // this is what we're refering to. Your client.
-// const client = new Discord.Client();
+var start = Date.now();
+// Load up the discord.js library
+const Discord = require("discord.js");
+const fs = require("fs");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
+// This is your client. Some people call it `bot`, some people call it `self`,
+// some might call it `cootchie`. Either way, when you see `client.something`, or `client.something`,
+// this is what we're refering to. Your client.
+const client = new Discord.Client();
 
-// const config = require("../config.json");
-// // const profiles = require("../profiles.json");
+const config = require("../config.json");
+// const profiles = require("../profiles.json");
 
-// const DBL = require("dblapi.js");
+const DBL = require("dblapi.js");
 
-// const dbl = new DBL(config.dbltoken, client);
+const dbl = new DBL(config.dbltoken, client);
 
-// // Optional events
-// dbl.on("posted", () => {
-//   console.log("Server count posted!");
-// });
+// Optional events
+dbl.on("posted", () => {
+  console.log("Server count posted!");
+});
 
-// dbl.on("error", e => {
-//   console.log(`Oops! ${e}`);
-// });
+dbl.on("error", e => {
+  console.log(`Oops! ${e}`);
+});
 
-// fs.openSync("./config.json", "r", (err, fd) => {
-//   if (err) {
-//     console.log("No config file detected.");
-//     var fileContent = {
-//       token: "",
-//       dbltoken: "",
-//       youtubeKey: "",
-//       serverconfigs: {}
-//     };
-//     fs.writeFileSync("./config.json", JSON.stringify(fileContent), err => {
-//       if (err) throw err;
-//     });
+fs.openSync("./config.json", "r", (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      token: "",
+      dbltoken: "",
+      youtubeKey: "",
+      serverconfigs: {}
+    };
+    fs.writeFileSync("./config.json", JSON.stringify(fileContent), err => {
+      if (err) throw err;
+    });
 
-//     console.log(
-//       "Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot."
-//     );
-//     process.exit(0);
-//   }
-// });
-// /*
-// fs.openSync("./profiles.json", "r", (err, fd) => {
-//   if (err) {
-//     console.log("No config file detected.");
-//     var fileContent = {
-//       userprofiles: {}
-//     };
-//     fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), err => {
-//       if (err) throw err;
-//     });
+    console.log(
+      "Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot."
+    );
+    process.exit(0);
+  }
+});
+/*
+fs.openSync("./profiles.json", "r", (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      userprofiles: {}
+    };
+    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), err => {
+      if (err) throw err;
+    });
 
-//     console.log("Profiles file generated at ./profiles.json");
-//     process.exit(0);
-//   }
-// });
-// */
+    console.log("Profiles file generated at ./profiles.json");
+    process.exit(0);
+  }
+});
+*/
 
-// // Here we load the config.json file that contains our token and our prefix values.
-// const bugs = require("../bugs.json");
-// // config.token contains the bot's token
-// // config.serverconfigs[message.guild.id].prefix contains the message prefix.
+// Here we load the config.json file that contains our token and our prefix values.
+const bugs = require("../bugs.json");
+// config.token contains the bot's token
+// config.serverconfigs[message.guild.id].prefix contains the message prefix.
 
-// const axios = require("axios");
-// const moment = require("moment");
-// var Long = require("long");
-// const chalk = require("chalk");
+const axios = require("axios");
+const moment = require("moment");
+var Long = require("long");
+const chalk = require("chalk");
 
-// // Internal modules
-// const automod = require("./automod");
-// const admin = require("./admin");
-// const memes = require("./reddit");
-// const radio = require("./radio");
-// const weather = require("./weather");
-// const yoda = require("./yoda");
-// const overflow = require("./overflow");
-// const utility = require("./utility");
-// const translate = require("./translate");
-// const crypto = require("./crypto");
-// const profile = require("./profile");
-// const modlog = require("./events/modlog");
+// Internal modules
+const automod = require("./automod");
+const admin = require("./admin");
+const memes = require("./reddit");
+const radio = require("./radio");
+const weather = require("./weather");
+const yoda = require("./yoda");
+const overflow = require("./overflow");
+const utility = require("./utility");
+const translate = require("./translate");
+const crypto = require("./crypto");
+const profile = require("./profile");
+const modlog = require("./events/modlog");
 
-// // URL that points to MongoDB database
-// var url = "mongodb://localhost:27017/zora";
+// URL that points to MongoDB database
+var url = "mongodb://localhost:27017/zora";
 
-// // Connect/Create MongoDB database
-// mongoose.connect(url, {
-//   user: config.databaseuser,
-//   pass: config.databasepass
-// });
+// Connect/Create MongoDB database
+mongoose.connect(url, {
+  user: config.databaseuser,
+  pass: config.databasepass
+});
 
-// // Default server configuration (also used with .clearcfg)
-// var defaultConfig = new Schema({
-//   name: {
-//     type: String,
-//     default: config.name
-//   },
-//   _id: Schema.Types.Decimal128,
-//   prefix: {
-//     type: String,
-//     default: "+"
-//   },
-//   modlogChannel: {
+// Default server configuration (also used with .clearcfg)
+var defaultConfig = new Schema({
+  name: {
+    type: String,
+    default: config.name
+  },
+  _id: Schema.Types.Decimal128,
+  prefix: {
+    type: String,
+    default: "+"
+  },
+  modlogChannel: {
     type: String,
     default: "modlog"
   },
@@ -561,8 +561,8 @@ const fire = (text, guild) => {
   );
 
   if (!channel) {
+    console.log(cserver);
     console.log(channel);
-    console.log(cserver.modlogChannel);
     console.log("Channel not found");
     return;
   }
