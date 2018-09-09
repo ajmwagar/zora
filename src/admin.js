@@ -391,8 +391,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       var setPrefix = args[0];
 
       if (setPrefix !== undefined || setPrefix !== "") {
-        cserver.prefix = setPrefix;
-        fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
+        UserM.findById(message.author.id, function (err, user) {
+          user.prefix = setPrefix;
+          user.save();
+        });
         message.channel.send({
           embed: {
             color: 3447003,
@@ -426,7 +428,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
     args.forEach((word) => {
       // Add word
-      cserver.automod.bannedwords.push(word);
+      UserM.findById(message.author.id, function (err, user) {
+        user.automod.bannedwords.push(word);
+        user.save();
+      });
 
       // Alert user
       let embed = new Discord.RichEmbed()
@@ -437,7 +442,6 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       message.channel.send({
         embed
       })
-      fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
     })
 
 
@@ -453,7 +457,11 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       if (index > -1) {
 
         // Add word
-        cserver.automod.bannedwords.splice(index, 1);
+
+        UserM.findById(message.author.id, function (err, user) {
+          user.automod.bannedwords.splice(index, 1);
+          user.save();
+        });
 
         // Alert user
         let embed = new Discord.RichEmbed()
@@ -464,7 +472,6 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
         message.channel.send({
           embed
         })
-        fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
       }
     })
   } else if (command === "bws") {
@@ -516,9 +523,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
     if (channel) {
 
-      cserver.modlogChannel = channel;
-
-      fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
+      UserM.findById(message.author.id, function (err, user) {
+        user.modlogChannel = channel;
+        user.save();
+      });
 
       return message.reply("Set channel to #" + channel);
 
