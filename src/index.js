@@ -550,8 +550,8 @@ client.on("message", async message => {
   }
 });
 
-const fire = (text, guild) => {
-  var cserver = getConfig(guild.id);
+const fire = async (text, guild) => {
+  var cserver = await getConfig(guild.id);
 
   if (guild)
     if (!guild.channels) return;
