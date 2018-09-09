@@ -294,7 +294,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 embed
             });
         } else {
-            if (duelplayer.opponent.length == 0) {
+            if (duelplayer.opponent.length == 0 || !message.member.user.id == duelplayer.playerid) {
                 duelplayer.opponent.push(message.member.user.username);
                 duelplayer.opponentid = message.member.user.id;
                 clearTimeout(timeout);
