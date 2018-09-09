@@ -35,9 +35,11 @@ async function bot(client, message, command, args, cuser, cserver) {
 
         var embed = new Discord.RichEmbed()
           .setTitle(`Fortnite Stats | ${res.data.epicUserHandle}`)
+          .setThumbnail("http://www.stickpng.com/assets/images/5b43b818e99939b4572e32ab.png")
           .setDescription("Platform: " + res.data.platformNameLong)
           .setAuthor(client.user.username + " - Stats", client.user.avatarURL)
           .setColor(15844367)
+          .addBlankField(true)
 
         for (var obj in res.data.lifeTimeStats){
          var stat = res.data.lifeTimeStats[obj]
