@@ -302,11 +302,7 @@ client.on("channelCreate", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
-  const cserverF = (id) => {
-    return ServerM.findById(id).exec()
-  }
-  const cserver = cserverF(message.guild.id);
-  fire(`**a channel was created:** #\`${channel.name}\``, channel.guild, cserver);
+  fire(`**a channel was created:** #\`${channel.name}\``, channel.guild);
 });
 
 client.on("channelDelete", channel => {
@@ -317,7 +313,7 @@ client.on("channelDelete", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
-  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild, cserver);
+  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild);
 });
 
 client.on("guildDelete", guild => {
@@ -353,7 +349,7 @@ client.on("messageDelete", msg => {
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
     }\``,
-    msg.guild, cserver
+    msg.guild
   );
 });
 
@@ -366,7 +362,7 @@ client.on("messageUpdate", (msg, newMsg) => {
     } edited their message:**\n**before:** \`${msg.content}\`\n**+after:** \`${
       newMsg.content
     }\``,
-    msg.guild, cserver
+    msg.guild
   );
 });
 
@@ -387,15 +383,15 @@ client.on("guildMemberUpdate", (old, nw) => {
       nw.nickname
     }\`**`;
   } else return;
-  fire(txt, nw.guild, cserver);
+  fire(txt, nw.guild);
 });
 
 client.on("roleCreate", role => {
-  fire("**New role created**", role.guild, cserver);
+  fire("**New role created**", role.guild);
 });
 
 client.on("roleDelete", role => {
-  fire("**Role deleted -> `" + role.name + "`**", role.guild, cserver);
+  fire("**Role deleted -> `" + role.name + "`**", role.guild);
 });
 
 client.on("roleUpdate", (old, nw) => {
@@ -403,15 +399,15 @@ client.on("roleUpdate", (old, nw) => {
   if (old.name !== nw.name) {
     txt = `**${old.name} | Role name updated to -> \`${nw.name}\`**`;
   } else return;
-  fire(txt, nw.guild, cserver);
+  fire(txt, nw.guild);
 });
 
 client.on("guildBanAdd", (guild, user) => {
-  fire(`**User banned -> \`${user.tag}\`**`, guild, cserver);
+  fire(`**User banned -> \`${user.tag}\`**`, guild);
 });
 
 client.on("guildBanRemove", (guild, user) => {
-  fire(`**User unbanned -> \`${user.tag}\`**`, guild, cserver);
+  fire(`**User unbanned -> \`${user.tag}\`**`, guild);
 });
 
 // Commands
@@ -426,15 +422,8 @@ client.on("message", async message => {
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
 
-    // Get the current server and user configs
-    const cserverF = (id) => {
-      return ServerM.findById(id).exec()
-    }
-    const cuserF = (id) => {
-      return ServerM.findById(id).exec();
-    }
-    const cserver = await cserverF(message.guild.id);
-    const cuser = await cuserF(message.author.id);
+    const cserver = await getConfig(message.guild.id);
+    const cuser = await getUserConfig(message.author.id);
 
 
     // TODO Automod filter
@@ -460,8 +449,8 @@ client.on("message", async message => {
             .setDescription(`**New Level: ${user.level}**, XP has been reset`)
             .setFooter(
               `XP until next level: ${Math.round(
-              Math.pow(100, user.level / 10 + 1)
-            )}`,
+                Math.pow(100, user.level / 10 + 1)
+              )}`,
               client.user.avatarURL
             );
           message.channel.send({
@@ -553,7 +542,9 @@ client.on("message", async message => {
   }
 });
 
-const fire = (text, guild, cserver) => {
+const fire = (text, guild) => {
+  var cserver = getConfig(message.guild.id);
+
   if (guild)
     if (!guild.channels) return;
 
@@ -583,6 +574,14 @@ const fire = (text, guild, cserver) => {
     .then()
     .catch(console.log);
 };
+
+// Get the current server and user configs
+const getUserConfig= (id) => {
+  return ServerM.findById(id).exec();
+}
+const getConfig = (id) => {
+  return ServerM.findById(id).exec()
+}
 
 const getDefaultChannel = guild => {
   // get "original" default channel
