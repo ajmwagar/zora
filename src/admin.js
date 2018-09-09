@@ -391,15 +391,15 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       var setPrefix = args[0];
 
       if (setPrefix !== undefined || setPrefix !== "") {
-        UserM.findById(message.author.id, function (err, user) {
-          user.prefix = setPrefix;
-          user.save();
-        });
-        message.channel.send({
-          embed: {
-            color: 3447003,
-            description: `Bot prefix changed to ${cserver.prefix}`
-          }
+        ServerM.findById(message.guild.id, function (err, server) {
+          server.prefix = setPrefix;
+          server.save();
+          message.channel.send({
+            embed: {
+              color: 3447003,
+              description: `Bot prefix changed to ${server.prefix}`
+            }
+          });
         });
       }
     } else {
@@ -413,7 +413,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
       return message.reply("Sorry, you don't have permissions to use this!");
 
 
-    cserver.prefix = "Alexa ";
+    ServerM.findById(message.guild.id, function (err, server) {
+      server.prefix = "Alexa "
+      server.save();
+    });
 
     message.channel.send({
       embed: {
@@ -428,9 +431,9 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
     args.forEach((word) => {
       // Add word
-      UserM.findById(message.author.id, function (err, user) {
-        user.automod.bannedwords.push(word);
-        user.save();
+      ServerM.findById(message.guild.id, function (err, server) {
+        server.automod.bannedwords.push(word);
+        server.save();
       });
 
       // Alert user
@@ -458,9 +461,9 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
         // Add word
 
-        UserM.findById(message.author.id, function (err, user) {
-          user.automod.bannedwords.splice(index, 1);
-          user.save();
+        ServerM.findById(message.guild.id, function (err, server) {
+          server.automod.bannedwords.splice(index, 1);
+          server.save();
         });
 
         // Alert user
@@ -523,9 +526,9 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
 
     if (channel) {
 
-      UserM.findById(message.author.id, function (err, user) {
-        user.modlogChannel = channel;
-        user.save();
+      ServerM.findById(message.guild.id, function (err, server) {
+        server.modlogChannel = channel;
+        server.save();
       });
 
       return message.reply("Set channel to #" + channel);
