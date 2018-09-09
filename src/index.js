@@ -91,6 +91,11 @@ var defaultprofile = {
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
+   setInterval (function (){
+      client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size}`);
+   }, 10000);});
+
+
   client.guilds.forEach(function (guild) {
     // Initialize User Profiles
     guild.members.forEach(function (member) {
@@ -137,7 +142,6 @@ client.on("ready", () => {
   }
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
-  client.user.setActivity(`on ${client.guilds.size} servers`);
   fs.exists("bugs.json", function (exists) {
     if (!exists) {
       var fileContent = {
@@ -161,7 +165,6 @@ client.on("guildCreate", guild => {
       guild.memberCount
     } members!`
   );
-  client.user.setActivity(`on ${client.guilds.size} servers`);
 
   if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
     config.serverconfigs[guild.id] = defaultConfig;
@@ -210,7 +213,6 @@ client.on("channelDelete", channel => {
 client.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-  client.user.setActivity(`on ${client.guilds.size}`);
 });
 
 // This is called as, for instance:
