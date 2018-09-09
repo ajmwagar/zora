@@ -313,15 +313,7 @@ client.on("channelDelete", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
-<<<<<<< HEAD
   fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild);
-=======
-  const cserverF = (id) => {
-    return ServerM.findById(id).exec()
-  }
-  const cserver = cserverF(message.guild.id);
-  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild, cserver);
->>>>>>> 4494ef1a7ad56cd5d63e1290ec5d92840aab7181
 });
 
 client.on("guildDelete", guild => {
