@@ -313,7 +313,15 @@ client.on("channelDelete", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
+<<<<<<< HEAD
   fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild);
+=======
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
+  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild, cserver);
+>>>>>>> 4494ef1a7ad56cd5d63e1290ec5d92840aab7181
 });
 
 client.on("guildDelete", guild => {
@@ -345,6 +353,10 @@ client.on("messageDelete", msg => {
   if (msg.channel.type !== "text") return;
   if (msg.author.bot) return;
   if (msg.channel.name && msg.channel.name.includes(modlog)) return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(msg.guild.id);
   fire(
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
@@ -356,6 +368,10 @@ client.on("messageDelete", msg => {
 client.on("messageUpdate", (msg, newMsg) => {
   if (msg.content === newMsg.content) return;
   if (msg.author.bot) return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(newMsg.guild.id);
   fire(
     `**#${msg.channel.name} | ${
       msg.author.tag
