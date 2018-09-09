@@ -176,13 +176,13 @@ client.on("ready", () => {
       defaultuser._id = user.id;
       defaultuser.username = user.username;
       defaultuser.save(function (err) {});
-      console.log(
+      /*console.log(
         chalk.yellow(
           chalk.blue(`[USER] `) +
           `${user.username} has been inserted into the database` +
           chalk.blue(`[ID] ${user.id}`)
         )
-      );
+      );*/
     }
   });
 
@@ -302,7 +302,7 @@ client.on("channelCreate", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
-  fire(`**a channel was created:** #\`${channel.name}\``, channel.guild);
+  fire(`**a channel was created:** #\`${channel.name}\``, channel.guild, cserver);
 });
 
 client.on("channelDelete", channel => {
@@ -549,12 +549,12 @@ client.on("message", async message => {
   }
 });
 
-const fire = (text, guild) => {
+const fire = (text, guild, cserver) => {
   if (guild)
     if (!guild.channels) return;
 
   let channel = guild.channels.find(
-    c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
+    c => c.name && c.name.includes(cserver.modlogChannel)
   );
 
   if (!channel) {
