@@ -356,7 +356,7 @@ client.on("messageDelete", msg => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(msg.guild.id);
   fire(
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
@@ -371,7 +371,7 @@ client.on("messageUpdate", (msg, newMsg) => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(newMsg.guild.id);
   fire(
     `**#${msg.channel.name} | ${
       msg.author.tag
@@ -402,7 +402,7 @@ client.on("guildMemberUpdate", (old, nw) => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(nw.guild.id);
   fire(txt, nw.guild, cserver);
 });
 
@@ -410,7 +410,7 @@ client.on("roleCreate", role => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(role.guild.id);
   fire("**New role created**", role.guild, cserver);
 });
 
@@ -418,7 +418,7 @@ client.on("roleDelete", role => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(role.guild.id);
   fire("**Role deleted -> `" + role.name + "`**", role.guild, cserver);
 });
 
@@ -430,7 +430,7 @@ client.on("roleUpdate", (old, nw) => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(nw.guild.id);
   fire(txt, nw.guild, cserver);
 });
 
@@ -438,7 +438,7 @@ client.on("guildBanAdd", (guild, user) => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(guild.id);
   fire(`**User banned -> \`${user.tag}\`**`, guild, cserver);
 });
 
@@ -446,7 +446,7 @@ client.on("guildBanRemove", (guild, user) => {
   const cserverF = (id) => {
     return ServerM.findById(id).exec()
   }
-  const cserver = cserverF(message.guild.id);
+  const cserver = cserverF(guild.id);
   fire(`**User unbanned -> \`${user.tag}\`**`, guild, cserver);
 });
 
