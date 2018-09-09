@@ -2,6 +2,9 @@ var start = Date.now();
 // Load up the discord.js library
 const Discord = require("discord.js");
 const fs = require("fs");
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `client.something`,
 // this is what we're refering to. Your client.
@@ -9,7 +12,6 @@ const client = new Discord.Client();
 
 const config = require("../config.json");
 // const profiles = require("../profiles.json");
-// TODO add mongo db, everything still refrences "profiles" so we need to either change that or make mongoDB work that way
 
 const DBL = require("dblapi.js");
 
@@ -84,56 +86,95 @@ const crypto = require("./crypto");
 const profile = require("./profile");
 const modlog = require("./events/modlog");
 
+// URL that points to MongoDB database
+var url = "mongodb://localhost:27017/zora";
+
+// Connect/Create MongoDB database
+mongoose.connect(url);
+
 // Default server configuration (also used with .clearcfg)
-var defaultConfig = {
-  name: config.name,
-  prefix: ".",
-  modlogChannel: "modlog",
+var defaultConfig = new Schema({
+  name: {
+    type: String,
+    default: config.name
+  },
+  _id: Number,
+  prefix: {
+    type: String,
+    default: '+'
+  },
+  modlogChannel: {
+    type: String,
+    default: 'modlog'
+  },
   reddit: {
     subreddits: [],
-    posts: 3,
-    channel: "",
-    interval: 1
+    posts: {
+      type: String,
+      default: 3
+    },
+    channel: {
+      type: String,
+      default: 'memes'
+    },
+    interval: {
+      type: Number,
+      default: 1
+    }
   },
   automod: {
     bannedwords: []
   }
-};
+});
 
 // Default user profile config
-var defaultprofile = {
-  level: 1,
-  xp: 0,
-  zcoins: 100,
-  VIP: false,
-  inventory: []
-};
+var defaultprofile = new Schema({
+  level: {
+    type: Number,
+    default: '1'
+  },
+  xp: {
+    type: Number,
+    default: '0'
+  },
+  zcoins: {
+    type: Number,
+    default: '100'
+  },
+  VIP: {
+    type: Boolean,
+    default: false
+  },
+  inventory: [],
+  _id: Number
+});
+
+// Define models
+const defaultUser = mongoose.model('Users', defaultprofile);
+const defaultServer = mongoose.model('Servers', defaultConfig);
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", () => {
-  console.log("client ready");
-  /*
+  console.log(chalk.bgGreen("Client Ready!"));
   BotUsers = client.users;
-  BotUsers.forEach(function(user) {
+
+  // Write users into database
+  BotUsers.forEach(function (user) {
     if (user instanceof Discord.User) {
-      if (
-        config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)
-      ) {
-        profiles.userprofiles[user.id] = defaultprofile;
-        fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-      }
+      var defaultuser = new defaultUser();
+      defaultuser._id = user.id;
+      defaultuser.save(function (err) {});
+      console.log(chalk.yellow(chalk.blue(`[USER] `) + `${user.username} has been inserted into the database`));
     }
   });
-  */
-  client.guilds.forEach(function(guild) {
-    if (
-      config.serverconfigs &&
-      !config.serverconfigs.hasOwnProperty(guild.id)
-    ) {
-      config.serverconfigs[guild.id] = defaultConfig;
-      fs.writeFileSync("./config.json", JSON.stringify(config));
-    }
+
+  // Write servers into database
+  client.guilds.forEach(function (guild) {
+    var defaultserver = new defaultServer();
+    defaultserver._id = guild.id;
+    defaultserver.save(function (err) {});
+    console.log(chalk.yellow(chalk.red(`[SERVER] `) + `${guild.id} has been inserted into the database`));
   });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -142,16 +183,15 @@ client.on("ready", () => {
     console.log(
       chalk.bgGreen(
         "Shard #" +
-          client.shard.id +
-          " active with " +
-          client.guilds.size +
-          " guilds"
+        client.shard.id +
+        " active with " +
+        client.guilds.size +
+        " guilds"
       )
     );
     client.user.setPresence({
       game: {
-        name:
-          "@Nitro help | Shard " +
+        name: "@Nitro help | Shard " +
           (client.shard.id + 1) +
           "/" +
           client.shard.count,
@@ -172,7 +212,7 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`on ${client.guilds.size} servers`);
-  fs.exists("bugs.json", function(exists) {
+  fs.exists("bugs.json", function (exists) {
     if (!exists) {
       var fileContent = {
         servers: {}
@@ -205,12 +245,12 @@ client.on("guildCreate", guild => {
   const channel = getDefaultChannel(guild);
   channel.send(
     "Thanks for adding me!\n\nMy prefix is `" +
-      config.serverconfigs[guild.id].prefix +
-      "`\nYou can see a list of commands with `" +
-      config.serverconfigs[guild.id].prefix +
-      "help`\nOr you can change my prefix with `" +
-      config.serverconfigs[guild.id].prefix +
-      "prefix`\n\nEnjoy!"
+    config.serverconfigs[guild.id].prefix +
+    "`\nYou can see a list of commands with `" +
+    config.serverconfigs[guild.id].prefix +
+    "help`\nOr you can change my prefix with `" +
+    config.serverconfigs[guild.id].prefix +
+    "prefix`\n\nEnjoy!"
   );
 
   fs.writeFileSync("./config.json", JSON.stringify(config));
@@ -343,7 +383,7 @@ client.on("message", async message => {
     if (
       config.serverconfigs[message.guild.id] &&
       message.content.indexOf(config.serverconfigs[message.guild.id].prefix) !==
-        0
+      0
     ) {
       automod.censor(message);
     } else {
@@ -359,8 +399,7 @@ client.on("message", async message => {
               profiles.userprofiles[message.author.id].level / 10 + 1
             )
           )
-        ) {
-        } else {
+        ) {} else {
           profiles.userprofiles[message.author.id].xp = 0;
           profiles.userprofiles[message.author.id].level += 1;
           // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
@@ -466,7 +505,8 @@ client.on("message", async message => {
 });
 
 const fire = (text, guild) => {
-  if (guild) if (!guild.channels) return;
+  if (guild)
+    if (!guild.channels) return;
 
   let channel = guild.channels.find(
     c => c.name && c.name.includes(config.serverconfigs[guild.id].modlogChannel)
@@ -507,18 +547,19 @@ const getDefaultChannel = guild => {
   return guild.channels
     .filter(
       c =>
-        c.type === "text" &&
-        c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
+      c.type === "text" &&
+      c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
     )
     .sort(
       (a, b) =>
-        a.position - b.position ||
-        Long.fromString(a.id)
-          .sub(Long.fromString(b.id))
-          .toNumber()
+      a.position - b.position ||
+      Long.fromString(a.id)
+      .sub(Long.fromString(b.id))
+      .toNumber()
     )
     .first();
 };
+
 
 // Login
 //
