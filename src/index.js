@@ -551,7 +551,7 @@ client.on("message", async message => {
 });
 
 const fire = (text, guild) => {
-  var cserver = getConfig(message.guild.id);
+  var cserver = getConfig(guild.id);
 
   if (guild)
     if (!guild.channels) return;
