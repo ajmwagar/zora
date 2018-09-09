@@ -317,7 +317,7 @@ client.on("channelDelete", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
-  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild);
+  fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild, cserver);
 });
 
 client.on("guildDelete", guild => {
@@ -353,7 +353,7 @@ client.on("messageDelete", msg => {
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
     }\``,
-    msg.guild
+    msg.guild, cserver
   );
 });
 
@@ -366,7 +366,7 @@ client.on("messageUpdate", (msg, newMsg) => {
     } edited their message:**\n**before:** \`${msg.content}\`\n**+after:** \`${
       newMsg.content
     }\``,
-    msg.guild
+    msg.guild, cserver
   );
 });
 
@@ -387,15 +387,15 @@ client.on("guildMemberUpdate", (old, nw) => {
       nw.nickname
     }\`**`;
   } else return;
-  fire(txt, nw.guild);
+  fire(txt, nw.guild, cserver);
 });
 
 client.on("roleCreate", role => {
-  fire("**New role created**", role.guild);
+  fire("**New role created**", role.guild, cserver);
 });
 
 client.on("roleDelete", role => {
-  fire("**Role deleted -> `" + role.name + "`**", role.guild);
+  fire("**Role deleted -> `" + role.name + "`**", role.guild, cserver);
 });
 
 client.on("roleUpdate", (old, nw) => {
@@ -403,15 +403,15 @@ client.on("roleUpdate", (old, nw) => {
   if (old.name !== nw.name) {
     txt = `**${old.name} | Role name updated to -> \`${nw.name}\`**`;
   } else return;
-  fire(txt, nw.guild);
+  fire(txt, nw.guild, cserver);
 });
 
 client.on("guildBanAdd", (guild, user) => {
-  fire(`**User banned -> \`${user.tag}\`**`, guild);
+  fire(`**User banned -> \`${user.tag}\`**`, guild, cserver);
 });
 
 client.on("guildBanRemove", (guild, user) => {
-  fire(`**User unbanned -> \`${user.tag}\`**`, guild);
+  fire(`**User unbanned -> \`${user.tag}\`**`, guild, cserver);
 });
 
 // Commands
@@ -558,7 +558,7 @@ const fire = (text, guild, cserver) => {
     if (!guild.channels) return;
 
   let channel = guild.channels.find(
-    c => c.name && c.name.includes(cserver.modlogChannel)
+    c => cserver && c.name && c.name.includes(cserver.modlogChannel)
   );
 
   if (!channel) {
