@@ -162,7 +162,7 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 client.on("ready", () => {
   // Set activity
    setInterval (function (){
-    client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size}`);
+    client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size} users`);
    }, 10000);
 
 
