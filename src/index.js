@@ -446,7 +446,7 @@ client.on("message", async message => {
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
-            .setTitle(`${message.member.user.username} just leveled up!`)
+            .setTitle(`🆙 ${message.member.user.username} just leveled up! 🆙`)
             .setDescription(`**New Level: ${user.level}**, XP has been reset`)
             .setFooter(
               `XP until next level: ${Math.round(
@@ -581,7 +581,7 @@ const fire = async (text, guild) => {
 };
 
 // Get the current server and user configs
-const getUserConfig= (id) => {
+const getUserConfig = (id) => {
   return ServerM.findById(id).exec();
 }
 const getConfig = (id) => {
