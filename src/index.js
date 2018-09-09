@@ -317,6 +317,10 @@ client.on("channelDelete", channel => {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(`**  a channel was deleted:** #\`${channel.name}\``, channel.guild, cserver);
 });
 
@@ -349,6 +353,10 @@ client.on("messageDelete", msg => {
   if (msg.channel.type !== "text") return;
   if (msg.author.bot) return;
   if (msg.channel.name && msg.channel.name.includes(modlog)) return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
@@ -360,6 +368,10 @@ client.on("messageDelete", msg => {
 client.on("messageUpdate", (msg, newMsg) => {
   if (msg.content === newMsg.content) return;
   if (msg.author.bot) return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(
     `**#${msg.channel.name} | ${
       msg.author.tag
@@ -387,14 +399,26 @@ client.on("guildMemberUpdate", (old, nw) => {
       nw.nickname
     }\`**`;
   } else return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(txt, nw.guild, cserver);
 });
 
 client.on("roleCreate", role => {
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire("**New role created**", role.guild, cserver);
 });
 
 client.on("roleDelete", role => {
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire("**Role deleted -> `" + role.name + "`**", role.guild, cserver);
 });
 
@@ -403,14 +427,26 @@ client.on("roleUpdate", (old, nw) => {
   if (old.name !== nw.name) {
     txt = `**${old.name} | Role name updated to -> \`${nw.name}\`**`;
   } else return;
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(txt, nw.guild, cserver);
 });
 
 client.on("guildBanAdd", (guild, user) => {
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(`**User banned -> \`${user.tag}\`**`, guild, cserver);
 });
 
 client.on("guildBanRemove", (guild, user) => {
+  const cserverF = (id) => {
+    return ServerM.findById(id).exec()
+  }
+  const cserver = cserverF(message.guild.id);
   fire(`**User unbanned -> \`${user.tag}\`**`, guild, cserver);
 });
 
