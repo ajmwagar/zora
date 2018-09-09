@@ -76,6 +76,7 @@ const chalk = require("chalk");
 const automod = require("./automod");
 const admin = require("./admin");
 const memes = require("./reddit");
+const games = require("./games");
 const radio = require("./radio");
 const weather = require("./weather");
 const yoda = require("./yoda");
@@ -338,17 +339,13 @@ client.on("guildMemberRemove", member => {
 client.on("messageDelete", msg => {
   // Get the modlog channel
   let modlog = "";
-  ServerM.findById(msg.guild.id, function (err, server) {
+  ServerM.findById(channel.guild.id, function (err, server) {
     modlog = server.modlogChannel;
   });
 
   if (msg.channel.type !== "text") return;
   if (msg.author.bot) return;
   if (msg.channel.name && msg.channel.name.includes(modlog)) return;
-  const cserverF = (id) => {
-    return ServerM.findById(id).exec()
-  }
-  const cserver = cserverF(msg.guild.id);
   fire(
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
       msg.content
@@ -360,10 +357,6 @@ client.on("messageDelete", msg => {
 client.on("messageUpdate", (msg, newMsg) => {
   if (msg.content === newMsg.content) return;
   if (msg.author.bot) return;
-  const cserverF = (id) => {
-    return ServerM.findById(id).exec()
-  }
-  const cserver = cserverF(newMsg.guild.id);
   fire(
     `**#${msg.channel.name} | ${
       msg.author.tag
@@ -503,6 +496,10 @@ client.on("message", async message => {
         // Yodaspeak
 
         yoda.bot(client, message, command, args, user, cserver, UserM, ServerM);
+
+        // Game stats
+
+        games.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Stack Overflow
 

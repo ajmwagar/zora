@@ -165,7 +165,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     });
     message.author.send({
       embed: {
-        color: 0xff5323,
+        color: 0x47d10c,
         author: {
           name: client.user.username,
           icon_url: client.user.avatarURL
@@ -196,6 +196,31 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
             name: helpprefix + "forbes",
             value: "Checkout the richest people alive. Forbes."
           },
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 0xff5323,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Game Commands for" + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [{
+          name: helpprefix + "fortnite <platform> <username>",
+            value: "Fortnite Stats"
+          },
+          {
+            name: helpprefix + "pubg <platform> <username>",
+            value: "PUBG Stats"
+          }
         ],
         timestamp: new Date(),
         footer: {
