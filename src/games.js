@@ -1,4 +1,3 @@
-
 const Discord = require("discord.js");
 
 const config = require("../config.json");
@@ -9,12 +8,16 @@ const axios = require('axios');
 const pubg = axios.create({
   baseURL: 'https://api.pubgtracker.com/v2/profile/pc/',
   timeout: 100000,
-  headers: {'TRN-Api-Key': 'e4499a16-fa6a-4ba7-8c87-590c622475ca'}
+  headers: {
+    'TRN-Api-Key': 'e4499a16-fa6a-4ba7-8c87-590c622475ca'
+  }
 });
 const fortnite = axios.create({
   baseURL: 'https://api.fortnitetracker.com/v1/',
   timeout: 100000,
-  headers: {'TRN-Api-Key': 'e4499a16-fa6a-4ba7-8c87-590c622475ca'}
+  headers: {
+    'TRN-Api-Key': 'e4499a16-fa6a-4ba7-8c87-590c622475ca'
+  }
 });
 
 
@@ -30,8 +33,6 @@ async function bot(client, message, command, args, cuser, cserver) {
       profile = input[1].trim();
 
       fortnite.get(`/profile/${platform}/${profile}`).then((res) => {
-        console.log(res.data.lifeTimeStats);
-        console.log(res.data.recentMatches);
 
         var embed = new Discord.RichEmbed()
           .setTitle(`Fortnite Stats | ${res.data.epicUserHandle}`)
@@ -41,10 +42,10 @@ async function bot(client, message, command, args, cuser, cserver) {
           .setColor(15844367)
           .addBlankField(true)
 
-        for (var obj in res.data.lifeTimeStats){
-         var stat = res.data.lifeTimeStats[obj]
+        for (var obj in res.data.lifeTimeStats) {
+          var stat = res.data.lifeTimeStats[obj]
 
-         embed.addField(stat.key, stat.value);
+          embed.addField(stat.key, stat.value, true);
 
         }
         // TODO Implement formatting
@@ -53,11 +54,10 @@ async function bot(client, message, command, args, cuser, cserver) {
       });
 
 
-    }
-    else {
+    } else {
       message.channel.send("Please provide both platform and username");
     }
-  } else if (command === "pubg"){
+  } else if (command === "pubg") {
     if (args.length > 1) {
       var m = await message.channel.send("Watching replays...");
 
@@ -68,7 +68,6 @@ async function bot(client, message, command, args, cuser, cserver) {
       profile = input[1].trim();
 
       pubg.get(`/${profile}?region=${region}`).then((res) => {
-        console.log(res);
 
         var embed = new Discord.RichEmbed()
           .setTitle(`PUBG Stats | ${res.data.epicUserHandle}`)
@@ -76,8 +75,8 @@ async function bot(client, message, command, args, cuser, cserver) {
           .setAuthor(client.user.username + " - Stats", client.user.avatarURL)
           .setColor(15844367)
 
-        for (var obj in res.data.lifeTimeStats){
-          embed.addField(obj.key, obj.value);
+        for (var obj in res.data.lifeTimeStats) {
+          embed.addField(obj.key, obj.value, true);
         }
 
         // TODO Implement formatting
@@ -85,8 +84,7 @@ async function bot(client, message, command, args, cuser, cserver) {
 
       });
 
-    }
-    else {
+    } else {
       message.channel.send("Please provide both platform and username");
     }
   }
