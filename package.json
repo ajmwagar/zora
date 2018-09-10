@@ -23,6 +23,8 @@
     "icanhazdadjoke-client": "0.0.2",
     "long": "^4.0.0",
     "moment": "^2.22.2",
+    "mongodb": "^2.2.36",
+    "mongoose": "^5.2.13",
     "node-opus": "^0.3.0",
     "node-rest-client": "^3.1.0",
     "opusscript": "0.0.6",

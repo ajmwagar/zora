@@ -2,12 +2,14 @@ const Discord = require("discord.js");
 const fs = require('fs');
 const config = require("../config.json");
 
-async function bot(client, message, command, args, defaultConfig) {
+async function bot(client, message, command, args, defaultConfig, defaultprofile, cuser, cserver, UserM, ServerM) {
   if (command === "help") {
-    var helpprefix = config.serverconfigs[message.guild.id].prefix;
+    var helpprefix = cserver.prefix;
     // Help message
     // Lists of current commands
     message.reply("please check your direct messages.");
+
+    // Help message
     message.author.send({
       embed: {
         color: 12370112,
@@ -16,7 +18,7 @@ async function bot(client, message, command, args, defaultConfig) {
           icon_url: client.user.avatarURL
         },
         title: client.user.username + " - About",
-        description: "This bot was created by Avery & Nathan",
+        description: "This bot was created by Avery Wagar & Nathan Laha",
         fields: [{
           name: `Check out the Github, host your own, or invite one of ours! (try ${helpprefix}invite)`,
           value: "https://github.com/ajmwagar/discordbot"
@@ -77,12 +79,8 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Sets the bot prefix"
           },
           {
-            name: helpprefix + "credits",
-            value: "Visit the github repo!"
-          },
-          {
-            name: helpprefix + "invite",
-            value: "Invite our official bot to your server!"
+            name: helpprefix + "alexamode",
+            value: "Changes the prefix to Alexa <command>"
           }
         ],
         timestamp: new Date(),
@@ -99,23 +97,11 @@ async function bot(client, message, command, args, defaultConfig) {
           name: client.user.username,
           icon_url: client.user.avatarURL
         },
-        title: "Misc/Utility Commands for " + client.user.username,
+        title: "Utility/Joke Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
             name: helpprefix + "weather <city>",
             value: "Get the weather for a city"
-          },
-          {
-            name: helpprefix + "daily",
-            value: "Get 500 ZCoins every 24 hours"
-          },
-          {
-            name: helpprefix + "slots",
-            value: "Test your luck with 250 ZCoins!"
-          },
-          {
-            name: helpprefix + "profile",
-            value: "View your user profile (xp, zcoins, level)"
           },
           {
             name: helpprefix + "joke",
@@ -142,10 +128,6 @@ async function bot(client, message, command, args, defaultConfig) {
             value: "Does basic math operations. Gets pissed off if you divide by 0"
           },
           {
-            name: helpprefix + "alexamode",
-            value: "Changes the prefix to Alexa <command>"
-          },
-          {
             name: helpprefix + "dab",
             value: "Dabs on them haters"
           },
@@ -160,6 +142,84 @@ async function bot(client, message, command, args, defaultConfig) {
           {
             name: helpprefix + "bug <description>",
             value: "Report a bug"
+          },
+          {
+            name: helpprefix + "credits",
+            value: "Visit the github repo!"
+          },
+          {
+            name: helpprefix + "invite",
+            value: "Invite our official bot to your server!"
+          },
+          {
+            name: helpprefix + "support",
+            value: "Join our support server."
+          }
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 0x47d10c,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Money Commands for " + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [{
+            name: helpprefix + "daily",
+            value: "Get 500 ZCoins every 24 hours"
+          },
+          {
+            name: helpprefix + "slots",
+            value: "Test your luck with 250 ZCoins!"
+          },
+          {
+            name: helpprefix + "profile",
+            value: "View your user profile (xp, zcoins, level)"
+          },
+          {
+            name: helpprefix + "shop",
+            value: "View the shop"
+          },
+          {
+            name: helpprefix + "buy",
+            value: "Buy items from the shop"
+          },
+          {
+            name: helpprefix + "forbes",
+            value: "Checkout the richest people alive. Forbes."
+          },
+        ],
+        timestamp: new Date(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "© " + message.guild
+        }
+      }
+    });
+    message.author.send({
+      embed: {
+        color: 0xff5323,
+        author: {
+          name: client.user.username,
+          icon_url: client.user.avatarURL
+        },
+        title: "Game Commands for" + client.user.username,
+        description: "My prefix is " + helpprefix,
+        fields: [{
+          name: helpprefix + "fortnite <platform> <username>",
+            value: "Fortnite Stats"
+          },
+          {
+            name: helpprefix + "pubg <platform> <username>",
+            value: "PUBG Stats"
           }
         ],
         timestamp: new Date(),
@@ -274,9 +334,7 @@ async function bot(client, message, command, args, defaultConfig) {
       message.guild.memberCount
     } members!`
     );
-    config.serverconfigs[message.guild.id] = defaultConfig;
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-    message.channel.send(`Server Config Reloaded! My prefix is now "${config.serverconfigs[message.guild.id].prefix}"`);
+    message.channel.send(`Server Config Reloaded! My prefix is now "${cserver.prefix}"`);
   } else if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
@@ -358,17 +416,19 @@ async function bot(client, message, command, args, defaultConfig) {
       var setPrefix = args[0];
 
       if (setPrefix !== undefined || setPrefix !== "") {
-        config.serverconfigs[message.guild.id].prefix = setPrefix;
-        fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
-        message.channel.send({
-          embed: {
-            color: 3447003,
-            description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}`
-          }
+        ServerM.findById(message.guild.id, function (err, server) {
+          server.prefix = setPrefix;
+          server.save();
+          message.channel.send({
+            embed: {
+              color: 3447003,
+              description: `Bot prefix changed to ${server.prefix}`
+            }
+          });
         });
       }
     } else {
-      message.channel.send(`Please specify a prefix with ${config.serverconfigs[message.guild.id].prefix}prefix <new prefix>`);
+      message.channel.send(`Please specify a prefix with ${cserver.prefix}prefix <new prefix>`);
     }
 
 
@@ -378,12 +438,15 @@ async function bot(client, message, command, args, defaultConfig) {
       return message.reply("Sorry, you don't have permissions to use this!");
 
 
-    config.serverconfigs[message.guild.id].prefix = "Alexa ";
+    ServerM.findById(message.guild.id, function (err, server) {
+      server.prefix = "Alexa "
+      server.save();
+    });
 
     message.channel.send({
       embed: {
         color: 3447003,
-        description: `Bot prefix changed to ${config.serverconfigs[message.guild.id].prefix}, type Alexa <command>`
+        description: `Bot prefix changed to ${cserver.prefix}, type Alexa <command>`
       }
     });
   } else if (command === "addbw") {
@@ -393,7 +456,10 @@ async function bot(client, message, command, args, defaultConfig) {
 
     args.forEach((word) => {
       // Add word
-      config.serverconfigs[message.guild.id].automod.bannedwords.push(word);
+      ServerM.findById(message.guild.id, function (err, server) {
+        server.automod.bannedwords.push(word);
+        server.save();
+      });
 
       // Alert user
       let embed = new Discord.RichEmbed()
@@ -404,7 +470,6 @@ async function bot(client, message, command, args, defaultConfig) {
       message.channel.send({
         embed
       })
-      fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
     })
 
 
@@ -414,13 +479,17 @@ async function bot(client, message, command, args, defaultConfig) {
       return message.reply("Sorry, you don't have permissions to use this!");
 
     args.forEach((word) => {
-      let index = config.serverconfigs[message.guild.id].automod.bannedwords.indexOf(word)
+      let index = cserver.automod.bannedwords.indexOf(word)
 
 
       if (index > -1) {
 
         // Add word
-        config.serverconfigs[message.guild.id].automod.bannedwords.splice(index, 1);
+
+        ServerM.findById(message.guild.id, function (err, server) {
+          server.automod.bannedwords.splice(index, 1);
+          server.save();
+        });
 
         // Alert user
         let embed = new Discord.RichEmbed()
@@ -431,7 +500,6 @@ async function bot(client, message, command, args, defaultConfig) {
         message.channel.send({
           embed
         })
-        fs.writeFile('./config.json', JSON.stringify(config), (err) => {});
       }
     })
   } else if (command === "bws") {
@@ -443,13 +511,13 @@ async function bot(client, message, command, args, defaultConfig) {
       .setTitle("Banned Words")
       .setAuthor(client.user.username + "- AUTOMOD", client.user.avatarURL)
       .setColor(15844367)
-      .setDescription("Currently moderating " + config.serverconfigs[message.guild.id].automod.bannedwords.length + " words.")
+      .setDescription("Currently moderating " + cserver.automod.bannedwords.length + " words.")
 
     message.channel.send({
       embed
     })
 
-    config.serverconfigs[message.guild.id].automod.bannedwords.forEach((word) => {
+    cserver.automod.bannedwords.forEach((word) => {
       var embed = new Discord.RichEmbed().setTitle(word).setAuthor(client.user.username, client.user.avatarURL).setColor(3447003)
       message.channel.send({
         embed
@@ -483,16 +551,55 @@ async function bot(client, message, command, args, defaultConfig) {
 
     if (channel) {
 
-      config.serverconfigs[message.guild.id].modlogChannel = channel;
-
-      fs.writeFile("./config.json", JSON.stringify(config), (err) => {})
+      ServerM.findById(message.guild.id, function (err, server) {
+        server.modlogChannel = channel;
+        server.save();
+      });
 
       return message.reply("Set channel to #" + channel);
 
     }
 
+  } else if (command === "broadcast") {
+    if (!message.author.id == "205419165366878211") {
+      return message.reply("Sorry, you don't have permissions to use this!");
+    } else {
+      try {
+        client.guilds.forEach(guild => {
+          dchannel = getDefaultChannel(guild);
+          dchannel.send("IMPORTANT UPDATE: " + args.join(" "))
+        });
+      } catch (err) {
+        console.log("Could not send message");
+      }
+    }
   }
 }
+
+const getDefaultChannel = guild => {
+  // get "original" default channel
+  if (guild.channels.has(guild.id)) return guild.channels.get(guild.id);
+
+  // Check for a "general" channel, which is often default chat
+  if (guild.channels.exists("name", "general"))
+    return guild.channels.find("name", "general");
+  // Now we get into the heavy stuff: first channel in order where the bot can speak
+  // hold on to your hats!
+  return guild.channels
+    .filter(
+      c =>
+      c.type === "text" &&
+      c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
+    )
+    .sort(
+      (a, b) =>
+      a.position - b.position ||
+      Long.fromString(a.id)
+      .sub(Long.fromString(b.id))
+      .toNumber()
+    )
+    .first();
+};
 
 module.exports = {
   bot

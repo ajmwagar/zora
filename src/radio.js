@@ -17,7 +17,7 @@ let queue = {};
 var radio;
 let dispatcher;
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, cuser, cserver, UserM, ServerM) {
   const commands = {
     'play': async (message) => {
         if (queue[message.guild.id] === undefined || queue[message.guild.id].length === 0) {
@@ -91,7 +91,7 @@ async function bot(client, message, command, args) {
           let collector = message.channel.createCollector(m => m);
 
           collector.on('collect', m => {
-            if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'pause')) {
+            if (m.content.startsWith(cserver.prefix + 'pause')) {
               message.channel.send({
                 embed: {
                   color: 3447003,
@@ -100,7 +100,7 @@ async function bot(client, message, command, args) {
               }).then(() => {
                 dispatcher.pause();
               });
-            } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'resume')) {
+            } else if (m.content.startsWith(cserver.prefix + 'resume')) {
               message.channel.send({
                 embed: {
                   color: 3447003,
@@ -109,7 +109,7 @@ async function bot(client, message, command, args) {
               }).then(() => {
                 dispatcher.resume();
               });
-            } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'skip')) {
+            } else if (m.content.startsWith(cserver.prefix + 'skip')) {
               message.channel.send({
                 embed: {
                   color: 3447003,
@@ -118,7 +118,7 @@ async function bot(client, message, command, args) {
               }).then(() => {
                 dispatcher.end();
               });
-            } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'stop')) {
+            } else if (m.content.startsWith(cserver.prefix + 'stop')) {
               message.channel.send({
                 embed: {
                   color: 10181046,
@@ -138,15 +138,15 @@ async function bot(client, message, command, args) {
 
 
               });
-            } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'volume+')) {
+            } else if (m.content.startsWith(cserver.prefix + 'volume+')) {
               if (Math.round(dispatcher.volume * 50) >= 100) return message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
               dispatcher.setVolume(Math.min((dispatcher.volume * 50 + (2 * (m.content.split('+').length - 1))) / 50, 2));
               message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
-            } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'volume-')) {
+            } else if (m.content.startsWith(cserver.prefix + 'volume-')) {
               if (Math.round(dispatcher.volume * 50) <= 0) return message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
               dispatcher.setVolume(Math.max((dispatcher.volume * 50 - (2 * (m.content.split('-').length - 1))) / 50, 0));
               message.channel.send(`Volume: ${Math.round(dispatcher.volume*50)}%`);
-            } else if (m.content.startsWith(config.serverconfigs[message.guild.id].prefix + 'time')) {
+            } else if (m.content.startsWith(cserver.prefix + 'time')) {
               message.channel.send({
                 embed: {
                   color: 3447003,
@@ -198,7 +198,7 @@ async function bot(client, message, command, args) {
                 return await message.channel.send({
                   embed: {
                     color: 10181046,
-                    description: `You must add a YouTube video url, or id after ${config.serverconfigs[message.guild.id].prefix}add`
+                    description: `You must add a YouTube video url, or id after ${cserver.prefix}add`
                   }
                 });
               } else if (url.includes('youtube.com')) {
@@ -273,7 +273,7 @@ async function bot(client, message, command, args) {
                 return message.channel.send({
                   embed: {
                     color: 3447003,
-                    description: `Add some songs to the queue first with ${config.serverconfigs[message.guild.id].prefix}add`
+                    description: `Add some songs to the queue first with ${cserver.prefix}add`
                   }
                 });
               }
@@ -309,7 +309,7 @@ async function bot(client, message, command, args) {
             }
   };
 
-  if (commands.hasOwnProperty(message.content.toLowerCase().slice(config.serverconfigs[message.guild.id].prefix.length).split(' ')[0])) commands[message.content.toLowerCase().slice(config.serverconfigs[message.guild.id].prefix.length).split(' ')[0]](message);
+  if (commands.hasOwnProperty(message.content.toLowerCase().slice(cserver.prefix.length).split(' ')[0])) commands[message.content.toLowerCase().slice(cserver.prefix.length).split(' ')[0]](message);
 }
 
 

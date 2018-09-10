@@ -4,7 +4,7 @@ const querystring = require("querystring");
 
 const config = require("../config.json");
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, cuser, cserver, UserM, ServerM) {
     if (command === "yoda") {
 
         var nonYoda = args.join(" ");
