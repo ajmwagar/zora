@@ -271,7 +271,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 embed: {
                     color: 3447003,
                     title: item,
-                    description: `⛔ ${message.author} No one joined the battle in time!`
+                    description: `⛔ ${message.author} Battle has been canceled due to inactivity!`
                 }
             });
         }
@@ -294,22 +294,32 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 embed
             });
         } else {
-            if (duelplayer.opponent.length == 0 || !message.member.user.id == duelplayer.playerid) {
-                duelplayer.opponent.push(message.member.user.username);
-                duelplayer.opponentid = message.member.user.id;
-                clearTimeout(timeout);
-                const embed = new Discord.RichEmbed()
-                    .setTitle(`⚔️ ${message.member.user.username} HAS JOINED THE FIGHT! ⚔️`)
-                    .setAuthor(client.user.username, client.user.avatarURL)
-                    .setColor("#ff0000")
-                    .setDescription(`Battle will start in 5 seconds!`)
-                    .setFooter("DUEL", client.user.avatarURL)
-                    .setThumbnail(message.member.user.avatarURL)
-                    .setTimestamp()
-                message.channel.send({
-                    embed
-                });
-                setTimeout(startBattle, 5000)
+            if (duelplayer.opponent.length == 0) {
+                if (!message.member.user.id == duelplayer.playerid) {
+                    duelplayer.opponent.push(message.member.user.username);
+                    duelplayer.opponentid = message.member.user.id;
+                    clearTimeout(timeout);
+                    const embed = new Discord.RichEmbed()
+                        .setTitle(`⚔️ ${message.member.user.username} HAS JOINED THE FIGHT! ⚔️`)
+                        .setAuthor(client.user.username, client.user.avatarURL)
+                        .setColor("#ff0000")
+                        .setDescription(`Battle will start in 5 seconds!`)
+                        .setFooter("DUEL", client.user.avatarURL)
+                        .setThumbnail(message.member.user.avatarURL)
+                        .setTimestamp()
+                    message.channel.send({
+                        embed
+                    });
+                    setTimeout(startBattle, 5000)
+                } else {
+                    message.channel.send({
+                        embed: {
+                            color: 3447003,
+                            title: item,
+                            description: `⛔ ${message.author} you can't fight yourself! stay positive!`
+                        }
+                    });
+                }
             } else {
                 message.channel.send({
                     embed: {
@@ -327,15 +337,18 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 .setTitle(`⚔️ ${duelplayer.opponent} VS ${duelplayer.player[0]} ⚔️`)
                 .setAuthor(client.user.username, client.user.avatarURL)
                 .setColor("#ff0000")
-                .setDescription(`Combat log below:`)
+                .setDescription(`Type ${cserver.prefix}next to advance the battle!`)
                 .setFooter("DUEL", client.user.avatarURL)
                 .setTimestamp()
             await message.channel.send({
                 embed
             });
-
+            timeout = setTimeout(battleTimeout, 30000)
         }
     } else if (command === "next") {
+        clearTimeout(battleTimeout);
+        timeout = setTimeout(battleTimeout, 30000)
+
         function battle() {
             if (duelplayer.battleStarted == true) {
                 if (Math.random() < 0.5) {
@@ -406,6 +419,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                         description: `✨ ${duelplayer.opponent} IS VICTORIOUS! ✨`
                                     }
                                 });
+                                clearTimeout(battleTimeout);
                                 UserM.findById(duelplayer.opponentid, function (err, user) {
                                     user.xp += 5000;
                                     user.zcoins += 2500;
@@ -475,6 +489,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                         description: `✨ ${duelplayer.opponent} IS VICTORIOUS! ✨`
                                     }
                                 });
+                                clearTimeout(battleTimeout);
                                 UserM.findById(duelplayer.opponentid, function (err, user) {
                                     user.xp += 5000;
                                     user.zcoins += 2500;
@@ -558,6 +573,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                         description: `✨ ${duelplayer.player} IS VICTORIOUS! ✨`
                                     }
                                 });
+                                clearTimeout(battleTimeout);
                                 UserM.findById(duelplayer.playerid, function (err, user) {
                                     user.xp += 5000;
                                     user.zcoins += 2500;
@@ -627,6 +643,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                         description: `✨ ${duelplayer.player} IS VICTORIOUS! ✨`
                                     }
                                 });
+                                clearTimeout(battleTimeout);
                                 UserM.findById(duelplayer.playerid, function (err, user) {
                                     user.xp += 5000;
                                     user.zcoins += 2500;
@@ -657,7 +674,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 embed: {
                     color: 3447003,
                     title: item,
-                    description: `You must be in a battle to use this command`
+                    description: `⛔ You must be in a battle to use this command`
                 }
             });
         }
