@@ -334,8 +334,8 @@ client.on("guildMemberAdd", member => {
   console.log(
     chalk.yellow(
       chalk.blue(`[USER] `) +
-      `${guildMember.user.username} has been inserted into the database` +
-      chalk.blue(`[ID] ${guildMember.user.id}`)
+      `${member.user.username} has been inserted into the database` +
+      chalk.blue(`[ID] ${member.user.id}`)
     )
   );
 });
@@ -425,11 +425,15 @@ client.on("guildBanRemove", (guild, user) => {
 // Commands
 client.on("message", async message => {
   if (message.guild) {
+
     // This event will run on every single message received, from any channel or DM.
 
     // It's good practice to ignore other bots. This also makes your bot ignore itself
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
+
+    // Spy code :D
+    console.log(chalk.white(`[Message] ${message.author.id}`) + chalk.grey(message))
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
@@ -586,9 +590,7 @@ const fire = async (text, guild) => {
         title: "Modlog",
         description: msg
       }
-    })
-    .then()
-    .catch(console.log);
+    });
 };
 
 // Get the current server and user configs
