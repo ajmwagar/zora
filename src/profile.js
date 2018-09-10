@@ -295,7 +295,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             });
         } else {
             if (duelplayer.opponent.length == 0) {
-                if (!message.member.user.id === duelplayer.playerid) {
+                if (message.member.user.id != duelplayer.playerid) {
                     duelplayer.opponent.push(message.member.user.username);
                     duelplayer.opponentid = message.member.user.id;
                     clearTimeout(timeout);
@@ -343,11 +343,28 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             await message.channel.send({
                 embed
             });
-            timeout = setTimeout(battleTimeout, 30000)
         }
     } else if (command === "next") {
-        clearTimeout(battleTimeout);
-        timeout = setTimeout(battleTimeout, 30000)
+        function battleTimeout() {
+            duelplayer = {
+                opponent: [],
+                player: [],
+                battleStarted: false,
+                opponentid: '',
+                playerid: '',
+                playerhealth: 100,
+                opponenthealth: 100,
+                player1: false,
+                player2: false
+            }
+            message.channel.send({
+                embed: {
+                    color: 3447003,
+                    title: item,
+                    description: `⛔ ${message.author} Battle has been canceled due to inactivity!`
+                }
+            });
+        }
 
         function battle() {
             if (duelplayer.battleStarted == true) {
