@@ -7,7 +7,7 @@ const chalk = require("chalk");
 console.log(chalk.keyword('orange')(
     logo({
         name: 'ZORA',
-        font: 'doh',
+        font: 'Doh',
         lineChars: 15,
         padding: 5,
         margin: 2
