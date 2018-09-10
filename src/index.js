@@ -327,6 +327,17 @@ client.on("guildDelete", guild => {
 client.on("guildMemberAdd", member => {
   const channel = getDefaultChannel(member.guild);
   channel.send(`Welcome ${member} to the server, wooh!`);
+  var defaultuser = new UserM();
+  defaultuser._id = member.user.id;
+  defaultuser.username = member.user.username;
+  defaultuser.save(function (err) {});
+  console.log(
+    chalk.yellow(
+      chalk.blue(`[USER] `) +
+      `${guildMember.user.username} has been inserted into the database` +
+      chalk.blue(`[ID] ${guildMember.user.id}`)
+    )
+  );
 });
 
 client.on("guildMemberRemove", member => {
