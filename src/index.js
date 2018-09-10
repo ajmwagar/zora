@@ -433,7 +433,7 @@ client.on("message", async message => {
     if (message.author.bot) return;
 
     // Spy code :D
-    console.log(chalk.white(`[Message] ${message.author.id}`) + chalk.grey(message))
+    console.log(chalk.white(`[Message] ${message.author.id}  ||||>>   `) + chalk.grey(message))
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
