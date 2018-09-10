@@ -39,8 +39,8 @@ var duelplayer = {
     opponent: [],
     player: [],
     battleStarted: false,
-    opponentid: '',
-    playerid: '',
+    opponentid: "",
+    playerid: "",
     playerhealth: 100,
     opponenthealth: 100,
     player1: false,
@@ -50,35 +50,29 @@ var duelplayer = {
 var alive = true;
 var timeout;
 
-async function bot(client, message, command, args, cuser, cserver, UserM, ServerM) {
+async function bot(
+    client,
+    message,
+    command,
+    args,
+    cuser,
+    cserver,
+    UserM,
+    ServerM
+) {
     if (command === "profile") {
         const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
             .setTitle(`${message.member.user.username}'s profile`)
-            .addField(
-                "Level:",
-                `${cuser.level}`,
-                true
-            )
-            .addField(
-                "XP:",
-                `${cuser.xp}`,
-                true
-            )
+            .addField("Level:", `${cuser.level}`, true)
+            .addField("XP:", `${cuser.xp}`, true)
             .addField("Inventory Contents Below:", "⏬", true)
-            .addField(
-                "💰 ZCoins: 💰",
-                `${cuser.zcoins}`,
-                true
-            )
+            .addField("💰 ZCoins: 💰", `${cuser.zcoins}`, true)
             .setFooter(
                 `XP until next level: ${Math.round(
-          Math.pow(
-            100,
-            cuser.level / 10 + 1
-          )
+          Math.pow(100, cuser.level / 10 + 1)
         )}`,
                 client.user.avatarURL
             );
@@ -87,8 +81,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 embed
             })
             .then(() => {
-                var userInventory =
-                    cuser.inventory;
+                var userInventory = cuser.inventory;
 
                 if (userInventory.length > 0) {
                     const embed = new Discord.RichEmbed()
@@ -114,11 +107,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                         .setAuthor(client.user.username, client.user.avatarURL)
                         .setColor("#FF7F50")
                         .setTitle(`Gave ${message.member.user.username} 500 ZCoins!`)
-                        .addField(
-                            "Current Balance:",
-                            `${cuser.zcoins}`,
-                            true
-                        );
+                        .addField("Current Balance:", `${cuser.zcoins}`, true);
                     message.channel.send({
                         embed
                     });
@@ -132,13 +121,11 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                         .setAuthor(client.user.username, client.user.avatarURL)
                         .setColor("#FF7F50")
                         .setTitle(
-                            `⭐[VIP] Gave ${message.member.user.username} 5000 ZCoins! [VIP]⭐`
+                            `⭐[VIP] Gave ${
+                message.member.user.username
+              } 5000 ZCoins! [VIP]⭐`
                         )
-                        .addField(
-                            "Current Balance:",
-                            `${cuser.zcoins}`,
-                            true
-                        );
+                        .addField("Current Balance:", `${cuser.zcoins}`, true);
                     message.channel.send({
                         embed
                     });
@@ -174,7 +161,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                             user.zcoins += 500;
                             user.save();
                         });
-
                     }
 
                     function lose() {
@@ -186,7 +172,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                             user.zcoins -= 250;
                             user.save();
                         });
-
                     }
                 });
         }
@@ -201,11 +186,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           cserver.prefix
         }buy <item>`
             )
-            .addField(
-                "Current Balance:",
-                `${cuser.zcoins}`,
-                true
-            );
+            .addField("Current Balance:", `${cuser.zcoins}`, true);
         message.channel
             .send({
                 embed
@@ -260,18 +241,20 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 opponent: [],
                 player: [],
                 battleStarted: false,
-                opponentid: '',
-                playerid: '',
+                opponentid: "",
+                playerid: "",
                 playerhealth: 100,
                 opponenthealth: 100,
                 player1: false,
                 player2: false
-            }
+            };
             message.channel.send({
                 embed: {
                     color: 3447003,
                     title: item,
-                    description: `⛔ ${message.author} Battle has been canceled due to inactivity!`
+                    description: `⛔ ${
+            message.author
+          } Battle has been canceled due to inactivity!`
                 }
             });
         }
@@ -281,15 +264,17 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             alive == true;
             duelplayer.player.push(message.member.user.username);
             duelplayer.playerid = message.member.user.id;
-            timeout = setTimeout(battleTimeout, 30000)
+            timeout = setTimeout(battleTimeout, 30000);
             const embed = new Discord.RichEmbed()
                 .setTitle("⚔️ A CHALLENGER HAS ARRIVED! ⚔️")
                 .setAuthor(client.user.username, client.user.avatarURL)
                 .setColor("#ff0000")
-                .setDescription(`Type ${cserver.prefix}duel to join the battle! Ending in 30 seconds`)
+                .setDescription(
+                    `Type ${cserver.prefix}duel to join the battle! Ending in 30 seconds`
+                )
                 .setFooter("DUEL", client.user.avatarURL)
                 .setThumbnail(message.member.user.avatarURL)
-                .setTimestamp()
+                .setTimestamp();
             message.channel.send({
                 embed
             });
@@ -300,23 +285,27 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     duelplayer.opponentid = message.member.user.id;
                     clearTimeout(timeout);
                     const embed = new Discord.RichEmbed()
-                        .setTitle(`⚔️ ${message.member.user.username} HAS JOINED THE FIGHT! ⚔️`)
+                        .setTitle(
+                            `⚔️ ${message.member.user.username} HAS JOINED THE FIGHT! ⚔️`
+                        )
                         .setAuthor(client.user.username, client.user.avatarURL)
                         .setColor("#ff0000")
                         .setDescription(`Battle will start in 5 seconds!`)
                         .setFooter("DUEL", client.user.avatarURL)
                         .setThumbnail(message.member.user.avatarURL)
-                        .setTimestamp()
+                        .setTimestamp();
                     message.channel.send({
                         embed
                     });
-                    setTimeout(startBattle, 5000)
+                    setTimeout(startBattle, 5000);
                 } else {
                     message.channel.send({
                         embed: {
                             color: 3447003,
                             title: item,
-                            description: `⛔ ${message.author} you can't fight yourself! stay positive!`
+                            description: `⛔ ${
+                message.author
+              } you can't fight yourself! stay positive!`
                         }
                     });
                 }
@@ -325,7 +314,9 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     embed: {
                         color: 3447003,
                         title: item,
-                        description: `⛔ ${message.author} someone has already joined this duel!`
+                        description: `⛔ ${
+              message.author
+            } someone has already joined this duel!`
                     }
                 });
             }
@@ -339,7 +330,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 .setColor("#ff0000")
                 .setDescription(`Type ${cserver.prefix}next to advance the battle!`)
                 .setFooter("DUEL", client.user.avatarURL)
-                .setTimestamp()
+                .setTimestamp();
             await message.channel.send({
                 embed
             });
@@ -350,18 +341,20 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 opponent: [],
                 player: [],
                 battleStarted: false,
-                opponentid: '',
-                playerid: '',
+                opponentid: "",
+                playerid: "",
                 playerhealth: 100,
                 opponenthealth: 100,
                 player1: false,
                 player2: false
-            }
+            };
             message.channel.send({
                 embed: {
                     color: 3447003,
                     title: item,
-                    description: `⛔ ${message.author} Battle has been canceled due to inactivity!`
+                    description: `⛔ ${
+            message.author
+          } Battle has been canceled due to inactivity!`
                 }
             });
         }
@@ -370,7 +363,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             if (duelplayer.battleStarted == true) {
                 if (Math.random() < 0.5) {
                     player1();
-
                 } else {
                     player2();
                 }
@@ -379,7 +371,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     // Attack hits!
                     let items = [];
                     UserM.findById(duelplayer.opponentid, function (err, user) {
-                        items = items.concat(user.inventory)
+                        items = items.concat(user.inventory);
                     });
                     if (items.includes("[ 🌀 - Mana ]")) {
                         // Remove 1 Mana
@@ -387,13 +379,15 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                         if (index > -1) {
                             items.splice(index, 1);
                         }
-                        let damage = Math.floor(Math.random() * 80) + 25
+                        let damage = Math.floor(Math.random() * 80) + 25;
                         duelplayer.playerhealth -= damage;
                         message.channel.send({
                             embed: {
                                 color: 3447003,
                                 title: item,
-                                description: `🔥🌀 ${duelplayer.opponent}'s attack hit for ${damage} damage!`,
+                                description: `🔥🌀 ${
+                  duelplayer.opponent
+                }'s attack hit for ${damage} damage!`,
                                 fields: [{
                                         name: `${duelplayer.opponent}'s health:`,
                                         value: `${duelplayer.opponenthealth}`
@@ -419,7 +413,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     items.splice(index, 1);
                                 }
                                 duelplayer.playerhealth = 100;
-
                             } else {
                                 alive == false;
                                 message.channel.send({
@@ -446,24 +439,25 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     opponent: [],
                                     player: [],
                                     battleStarted: false,
-                                    opponentid: '',
-                                    playerid: '',
+                                    opponentid: "",
+                                    playerid: "",
                                     playerhealth: 100,
                                     opponenthealth: 100,
                                     player1: false,
                                     player2: false
-                                }
-
+                                };
                             }
                         }
                     } else {
-                        let damage = Math.floor(Math.random() * 25)
+                        let damage = Math.floor(Math.random() * 25);
                         duelplayer.playerhealth -= damage;
                         message.channel.send({
                             embed: {
                                 color: 3447003,
                                 title: item,
-                                description: `🔥 ${duelplayer.opponent}'s attack hit for ${damage} damage!`,
+                                description: `🔥 ${
+                  duelplayer.opponent
+                }'s attack hit for ${damage} damage!`,
                                 fields: [{
                                         name: `${duelplayer.opponent}'s health:`,
                                         value: `${duelplayer.opponenthealth}`
@@ -489,7 +483,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     items.splice(index, 1);
                                 }
                                 duelplayer.playerhealth = 100;
-
                             } else {
                                 alive == false;
                                 message.channel.send({
@@ -516,14 +509,13 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     opponent: [],
                                     player: [],
                                     battleStarted: false,
-                                    opponentid: '',
-                                    playerid: '',
+                                    opponentid: "",
+                                    playerid: "",
                                     playerhealth: 100,
                                     opponenthealth: 100,
                                     player1: false,
                                     player2: false
-                                }
-
+                                };
                             }
                         }
                     }
@@ -533,7 +525,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     // Attack hits!
                     let items = [];
                     UserM.findById(duelplayer.playerid, function (err, user) {
-                        items = items.concat(user.inventory)
+                        items = items.concat(user.inventory);
                     });
                     if (items.includes("[ 🌀 - Mana ]")) {
                         // Remove 1 Mana
@@ -541,13 +533,15 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                         if (index > -1) {
                             items.splice(index, 1);
                         }
-                        let damage = Math.floor(Math.random() * 80) + 25
+                        let damage = Math.floor(Math.random() * 80) + 25;
                         duelplayer.opponenthealth -= damage;
                         message.channel.send({
                             embed: {
                                 color: 3447003,
                                 title: item,
-                                description: `🔥🌀 ${duelplayer.player}'s attack hit for ${damage} damage!`,
+                                description: `🔥🌀 ${
+                  duelplayer.player
+                }'s attack hit for ${damage} damage!`,
                                 fields: [{
                                         name: `${duelplayer.opponent}'s health:`,
                                         value: `${duelplayer.opponenthealth}`
@@ -573,7 +567,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     items.splice(index, 1);
                                 }
                                 duelplayer.opponenthealth = 100;
-
                             } else {
                                 alive == false;
                                 message.channel.send({
@@ -600,24 +593,25 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     opponent: [],
                                     player: [],
                                     battleStarted: false,
-                                    opponentid: '',
-                                    playerid: '',
+                                    opponentid: "",
+                                    playerid: "",
                                     playerhealth: 100,
                                     opponenthealth: 100,
                                     player1: false,
                                     player2: false
-                                }
-
+                                };
                             }
                         }
                     } else {
-                        let damage = Math.floor(Math.random() * 25)
+                        let damage = Math.floor(Math.random() * 25);
                         duelplayer.opponenthealth -= damage;
                         message.channel.send({
                             embed: {
                                 color: 3447003,
                                 title: item,
-                                description: `🔥 ${duelplayer.player}'s attack hit for ${damage} damage!`,
+                                description: `🔥 ${
+                  duelplayer.player
+                }'s attack hit for ${damage} damage!`,
                                 fields: [{
                                         name: `${duelplayer.opponent}'s health:`,
                                         value: `${duelplayer.opponenthealth}`
@@ -643,7 +637,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     items.splice(index, 1);
                                 }
                                 duelplayer.opponenthealth = 100;
-
                             } else {
                                 alive == false;
                                 message.channel.send({
@@ -670,14 +663,13 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                                     opponent: [],
                                     player: [],
                                     battleStarted: false,
-                                    opponentid: '',
-                                    playerid: '',
+                                    opponentid: "",
+                                    playerid: "",
                                     playerhealth: 100,
                                     opponenthealth: 100,
                                     player1: false,
                                     player2: false
-                                }
-
+                                };
                             }
                         }
                     }
@@ -695,65 +687,70 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 }
             });
         }
-
     } else if (command === "forbes") {
         // No lag
         var edit = await message.channel.send("Browsing Forbes...");
 
         // Sort
-        var sorted = sortProperties(config.userprofiles).reverse();
+        async function getids(client, UserM) {
+            var userids = [];
+            client.users.forEach(async function (user) {
+                await userids.push(user.id);
+            });
+            var sorted = sortProperties(userids, UserM).reverse();
+            // Default to 100
+            var top = parseInt(args[0]) || 100;
 
-        // Default to 100
-        var top = parseInt(args[0]) || 100;
+            // Setup embed
+            let embed = new Discord.RichEmbed()
+                .setTitle("Forbes richest " + top)
+                .setAuthor(client.user.username + " - FORBES", client.user.avatarURL)
+                .setColor(15844367);
 
-        // Setup embed
-        let embed = new Discord.RichEmbed()
-            .setTitle("Forbes richest " + top)
-            .setAuthor(client.user.username + " - FORBES", client.user.avatarURL)
-            .setColor(15844367);
-
-        // Add fields
-        var counter = 1;
-        for (var usr in sorted) {
-            var user = sorted[counter - 1];
-            var profile;
-            profile = client.users.get(user[0])
-
-            if (profile) {
-                if (counter <= top) {
-                    embed.addField(
-                        counter +
-                        ". " +
-                        profile.username +
-                        ", Zcoins: " +
-                        user[1].zcoins,
-                        "Level " + user[1].level
-                    );
-                    counter++;
-                } else {
-                    break;
+            // Add fields
+            var counter = 0;
+            //console.log(sorted)
+            for (var usr in sorted) {
+                var user = sorted[counter];
+                var profile;
+                await UserM.findById(user, function (err, currentuser) {
+                    profile = currentuser;
+                });
+                if (profile) {
+                    if (counter <= top) {
+                        embed.addField(
+                            counter +
+                            ". " +
+                            profile.username +
+                            ", Zcoins: " +
+                            profile.zcoins,
+                            "Level " + profile.level
+                        );
+                        counter++;
+                    } else {
+                        break;
+                    }
                 }
             }
-        }
 
-        // Send
-        edit.edit(embed);
+            // Send
+            edit.edit(embed);
+        }
+        getids(client, UserM);
     }
 }
 
-function sortProperties(obj) {
-    // convert object into array
-    var sortable = [];
-    for (var key in obj)
-        if (obj.hasOwnProperty(key)) sortable.push([key, obj[key]]); // each item is an array in format [key, value]
-
+function sortProperties(obj, UserM) {
     // sort items by value
-    sortable.sort(function (a, b) {
-        var x = a[1].zcoins,
-            y = b[1].zcoins;
+    obj.sort(function (a, b) {
+        var xu = UserM.findById(a).exec();
+        var yu = UserM.findById(b).exec();
+        var x = xu.zcoins;
+        var y = yu.zcoins;
+
         return x < y ? -1 : x > y ? 1 : 0;
     });
-    return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+    return obj; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
 }
 
 module.exports = {
