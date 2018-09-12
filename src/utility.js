@@ -37,22 +37,36 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     } else {
       message.channel.send(`🖥️ WTF you tryin' to do M8! >:( 🖥️`);
     }
-  } else if (command === "bug") {
+  } else if (command === "bug2") {
     var description = args.join(" ");
     if (description) {
-
-      var defaultConfig = {
-        description: "",
-      };
-      if (!bugs.servers.hasOwnProperty(message.guild.id))
-        bugs.servers[message.guild.id] = {
-          users: {}
+      client.guilds.get('485567430014533653').channels.get('486605010403328030').send({
+        embed: {
+          color: 2067276,
+          author: {
+            name: client.user.username,
+            icon_url: client.user.avatarURL
+          },
+          title: `🐛 ${message.member.user.username} has reported a bug! 🐛`,
+          description: `**Description:** ${description}`,
+          fields: [{
+              name: "Guild Name:",
+              value: message.guild.name
+            },
+            {
+              name: "Size:",
+              value: message.guild.memberCount + " members"
+            },
+            {
+              name: "Guild ID:",
+              value: message.guild.id
+            }, {
+              name: "User ID:",
+              value: message.member.user.id
+            }
+          ]
         }
-      bugs.servers[message.guild.id].users[message.author.id] = description;
-
-      fs.writeFileSync("./bugs.json", JSON.stringify(bugs));
-
-      bugs.servers[message.guild.id] = description;
+      });
       message.channel.send(`Thank you for your contribution! The issue will be fixed soon!`);
     } else {
       message.channel.send(`Please add a description of the problem!`);

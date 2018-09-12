@@ -339,7 +339,7 @@ client.on("guildMemberRemove", member => {
 client.on("messageDelete", msg => {
   // Get the modlog channel
   let modlog = "";
-  ServerM.findById(channel.guild.id, function (err, server) {
+  ServerM.findById(msg.channel.guild.id, function (err, server) {
     modlog = server.modlogChannel;
   });
 
@@ -583,7 +583,7 @@ const fire = async (text, guild) => {
 };
 
 // Get the current server and user configs
-const getUserConfig= (id) => {
+const getUserConfig = (id) => {
   return ServerM.findById(id).exec();
 }
 const getConfig = (id) => {
