@@ -254,8 +254,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         // Default to 100
         var top = parseInt(args[0]) || 25;
 
-        console.log(sorted);
-
         // Setup embed
         let embed = new Discord.RichEmbed()
             .setTitle("💰 Forbes richest " + top + " 💰")
