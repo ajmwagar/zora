@@ -267,7 +267,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         for (var usr in sorted) {
             var profile = sorted[counter - 1];
             if (profile) {
-                if (counter <= top) {
+                if (counter <= top && counter <= 25) {
                     embed.addField(
                         counter +
                         ". " +
