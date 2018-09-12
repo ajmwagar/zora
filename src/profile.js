@@ -242,11 +242,19 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         // No lag
         var edit = await message.channel.send("Browsing Forbes...");
 
-        // Sort
-        var sorted = sortProperties(config.userprofiles).reverse();
+        // Get from database and sort!
+        const getSort = () => {
+            return UserM.find({}).sort({
+                zcoins: -1
+            }).exec()
+        }
+
+        var sorted = await getSort();
 
         // Default to 100
         var top = parseInt(args[0]) || 100;
+
+        console.log(sorted);
 
         // Setup embed
         let embed = new Discord.RichEmbed()
@@ -257,10 +265,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         // Add fields
         var counter = 1;
         for (var usr in sorted) {
-            var user = sorted[counter - 1];
-            var profile;
-            profile = client.users.get(user[0])
-
+            var profile = sorted[counter - 1];
             if (profile) {
                 if (counter <= top) {
                     embed.addField(
@@ -268,8 +273,8 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                         ". " +
                         profile.username +
                         ", Zcoins: " +
-                        user[1].zcoins,
-                        "Level " + user[1].level
+                        profile.zcoins,
+                        "Level " + profile.level
                     );
                     counter++;
                 } else {
