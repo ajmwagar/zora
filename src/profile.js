@@ -240,7 +240,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         }
     } else if (command === "forbes") {
         // No lag
-        var edit = await message.channel.send("Browsing Forbes...");
+        var edit = await message.channel.send("Browsing Forbes... (please be patient, this might take a while!)");
 
         // Get from database and sort!
         const getSort = () => {
