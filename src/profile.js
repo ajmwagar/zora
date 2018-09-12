@@ -252,13 +252,13 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         var sorted = await getSort();
 
         // Default to 100
-        var top = parseInt(args[0]) || 100;
+        var top = parseInt(args[0]) || 25;
 
         console.log(sorted);
 
         // Setup embed
         let embed = new Discord.RichEmbed()
-            .setTitle("Forbes richest " + top)
+            .setTitle("💰 Forbes richest " + top + " 💰")
             .setAuthor(client.user.username + " - FORBES", client.user.avatarURL)
             .setColor(15844367);
 
@@ -268,14 +268,35 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             var profile = sorted[counter - 1];
             if (profile) {
                 if (counter <= top && counter <= 25) {
-                    embed.addField(
-                        counter +
-                        ". " +
-                        profile.username +
-                        ", Zcoins: " +
-                        profile.zcoins,
-                        "Level " + profile.level
-                    );
+                    if (counter === 1) {
+                        embed.addField(
+                            counter +
+                            ". 🥇 " +
+                            profile.username + " 🥇",
+                            "Level " + profile.level + "   |   Zcoins: " + profile.zcoins
+                        );
+                    } else if (counter === 2) {
+                        embed.addField(
+                            counter +
+                            ". 🥈 " +
+                            profile.username + " 🥈",
+                            "Level " + profile.level + "   |   Zcoins: " + profile.zcoins
+                        );
+                    } else if (counter === 3) {
+                        embed.addField(
+                            counter +
+                            ". 🥉 " +
+                            profile.username + " 🥉",
+                            "Level " + profile.level + "   |   Zcoins: " + profile.zcoins
+                        );
+                    } else {
+                        embed.addField(
+                            counter +
+                            ". " +
+                            profile.username,
+                            "Level " + profile.level + "   |   Zcoins: " + profile.zcoins
+                        );
+                    }
                     counter++;
                 } else {
                     break;
