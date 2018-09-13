@@ -31,6 +31,11 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           .setAuthor(client.user.username + " - Wolfram", client.user.avatarURL)
           .setColor(15158332)
 
+        if (res.data.queryresult.success == true) {
+          embed.setTitle(`Wolfram Alpha | STATUS: Error`)
+          embed.setDescription(`Something went wrong! Please check to make sure you are entering a valid search!`);
+        }
+
         for (var obj in res.data.queryresult.pods) {
 
           var pod = res.data.queryresult.pods[obj]
@@ -38,7 +43,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           var plaintexts = [];
 
           // If the response has a graph, show it!
-          if (pod.title == 'Plots') {
+          if (pod.title == 'Plots' || pod.title == 'Plot') {
             var subpod = res.data.queryresult.pods[obj].subpods[0]
             if (subpod.img.src) {
               embed.setImage(subpod.img.src);
