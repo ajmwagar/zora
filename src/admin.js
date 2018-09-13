@@ -140,6 +140,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
             value: "Gets and compares currency prices"
           },
           {
+            name: helpprefix + "wolfram <search>",
+            value: "Searches Wolfram Alpha"
+          },
+          {
             name: helpprefix + "bug <description>",
             value: "Report a bug"
           },
@@ -214,7 +218,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
         title: "Game Commands for" + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
-          name: helpprefix + "fortnite <platform> <username>",
+            name: helpprefix + "fortnite <platform> <username>",
             value: "Fortnite Stats"
           },
           {
