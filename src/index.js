@@ -421,6 +421,9 @@ client.on("message", async message => {
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
 
+    // Spy code :D
+    console.log(chalk.white(`[Message] ${message.author.id}  ||||>>   `) + chalk.grey(message))
+
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
 
