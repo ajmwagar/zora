@@ -214,7 +214,7 @@ async function bot(
                 UserM.findById(message.author.id, function (err, user) {
                     user.zcoins -= shopItems[item].Price;
                     user.inventory.push(
-                        "[ " + shopItems[item].Icon + " - " + shopItems[item].Name + " ]"
+                        "[" + shopItems[item].Name + "]"
                     );
                     user.save();
                 });
