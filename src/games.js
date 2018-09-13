@@ -2,19 +2,19 @@ const Discord = require("discord.js");
 
 const config = require("../config.json");
 
-// TRN-Api-Key: e4499a16-fa6a-4ba7-8c87-590c622475ca
+// TRN-ApiKey: e4499a16-fa6a-4ba7-8c87-590c622475ca
 const axios = require('axios');
 
 const pubg = axios.create({
-  baseURL: 'api.pubgtracker.com/v2/',
-  timeout: 1000,
+  baseURL: 'https://api.pubgtracker.com/v2/profile/pc/',
+  timeout: 100000,
   headers: {
     'TRN-Api-Key': 'e4499a16-fa6a-4ba7-8c87-590c622475ca'
   }
 });
 const fortnite = axios.create({
-  baseURL: 'api.fortnitetracker.com/v1/',
-  timeout: 1000,
+  baseURL: 'https://api.fortnitetracker.com/v1/',
+  timeout: 100000,
   headers: {
     'TRN-Api-Key': 'e4499a16-fa6a-4ba7-8c87-590c622475ca'
   }
@@ -24,37 +24,67 @@ const fortnite = axios.create({
 async function bot(client, message, command, args, cuser, cserver) {
   if (command === "fortnite") {
     if (args) {
+      var m = await message.channel.send("Watching replays...");
+
       var input = args;
       var platform, profile;
 
-      platform = input.shift().trim();
+      platform = input[0].trim();
       profile = input[1].trim();
 
       fortnite.get(`/profile/${platform}/${profile}`).then((res) => {
-        console.log(res);
 
+        var embed = new Discord.RichEmbed()
+          .setTitle(`Fortnite Stats | ${res.data.epicUserHandle}`)
+          .setThumbnail("http://www.stickpng.com/assets/images/5b43b818e99939b4572e32ab.png")
+          .setDescription("Platform: " + res.data.platformNameLong)
+          .setAuthor(client.user.username + " - Stats", client.user.avatarURL)
+          .setColor(15844367)
+
+        for (var obj in res.data.lifeTimeStats) {
+          var stat = res.data.lifeTimeStats[obj]
+
+          embed.addField(stat.key, stat.value, true);
+
+        }
         // TODO Implement formatting
-        message.channel.send(res.data);
+        m.edit(embed);
 
       });
 
+
+    } else {
+      message.channel.send("Please provide both platform and username");
     }
   } else if (command === "pubg") {
-    if (args) {
-      var input = args;
-      var platform, profile;
+    if (args.length > 1) {
+      var m = await message.channel.send("Watching replays...");
 
-      platform = input.shift().trim();
+      var input = args;
+      var region, profile;
+
+      region = input[0].trim();
       profile = input[1].trim();
 
-      pubg.get(`/profile/${platform}/${profile}`).then((res) => {
-        console.log(res);
+      pubg.get(`/${profile}?region=${region}`).then((res) => {
+
+        var embed = new Discord.RichEmbed()
+          .setTitle(`PUBG Stats | ${res.data.epicUserHandle}`)
+          .setDescription("Region: " + region)
+          .setAuthor(client.user.username + " - Stats", client.user.avatarURL)
+          .setColor(15844367)
+
+        for (var obj in res.data.lifeTimeStats) {
+          embed.addField(obj.key, obj.value, true);
+        }
 
         // TODO Implement formatting
-        message.channel.send(res.data);
+        m.edit(embed);
 
       });
 
+    } else {
+      message.channel.send("Please provide both platform and username");
     }
   }
 }

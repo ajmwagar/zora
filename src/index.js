@@ -85,6 +85,7 @@ const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
 const profile = require("./profile");
+const wolfram = require("./wolfram");
 const modlog = require("./events/modlog");
 
 // URL that points to MongoDB database
@@ -520,6 +521,11 @@ client.on("message", async message => {
         // Profile
 
         profile.bot(client, message, command, args, user, cserver, UserM, ServerM);
+
+        // Wolfram Alpha
+
+        wolfram.bot(client, message, command, args, user, cserver, UserM, ServerM);
+
       });
 
       // Jokes
