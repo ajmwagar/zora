@@ -30,7 +30,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           .setDescription("Your result is shown in the fields below:")
           .setAuthor(client.user.username + " - Wolfram", client.user.avatarURL)
           .setColor(15158332)
-          .setURL(`https://www.wolframalpha.com/input/?i=${inputRaw}`)
 
         if (!res.data.queryresult.success === true) {
           embed.setTitle(`Wolfram Alpha | STATUS: Error`)
@@ -44,7 +43,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           var plaintexts = [];
 
           // If the response has a graph, show it!
-          if (pod.title == 'Plotter' || pod.title == 'Result' || pod.title == 'Visual representation' || pod.title == 'Example Plot') {
+          if (pod.title == 'Plotter' || pod.title == 'Result' || pod.title == 'Visual representation' || pod.title == 'Example plot') {
             var subpod = res.data.queryresult.pods[obj].subpods[0]
             if (subpod.img.src) {
               embed.setImage(subpod.img.src);
