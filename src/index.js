@@ -92,10 +92,13 @@ const modlog = require("./events/modlog");
 var url = "mongodb://localhost:27017/zora";
 
 // Connect/Create MongoDB database
-mongoose.connect(url, {
-  user: config.databaseuser,
-  pass: config.databasepass
-});
+mongoose.connect(
+  url,
+  {
+    user: config.databaseuser,
+    pass: config.databasepass
+  }
+);
 
 // Default server configuration (also used with .clearcfg)
 var defaultConfig = new Schema({
@@ -163,21 +166,22 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 
 client.on("ready", () => {
   // Set activity
-  setInterval(function () {
-    client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size} users`);
+  setInterval(function() {
+    client.user.setActivity(
+      `on ${client.guilds.size} servers | ${client.users.size} users`
+    );
   }, 10000);
-
 
   console.log(chalk.bgGreen("Client Ready!"));
   BotUsers = client.users;
 
   // Write users into database
-  BotUsers.forEach(function (user) {
+  BotUsers.forEach(function(user) {
     if (user instanceof Discord.User) {
       var defaultuser = new UserM();
       defaultuser._id = user.id;
       defaultuser.username = user.username;
-      defaultuser.save(function (err) {});
+      defaultuser.save(function(err) {});
       /*console.log(
         chalk.yellow(
           chalk.blue(`[USER] `) +
@@ -189,14 +193,14 @@ client.on("ready", () => {
   });
 
   // Write servers into database
-  client.guilds.forEach(function (guild) {
+  client.guilds.forEach(function(guild) {
     var defaultserver = new ServerM();
     defaultserver._id = guild.id;
-    defaultserver.save(function (err) {});
+    defaultserver.save(function(err) {});
     console.log(
       chalk.yellow(
         chalk.red(`[SERVER] `) +
-        `${guild.id} has been inserted into the database`
+          `${guild.id} has been inserted into the database`
       )
     );
   });
@@ -207,10 +211,10 @@ client.on("ready", () => {
     console.log(
       chalk.bgGreen(
         "Shard #" +
-        client.shard.id +
-        " active with " +
-        client.guilds.size +
-        " guilds"
+          client.shard.id +
+          " active with " +
+          client.guilds.size +
+          " guilds"
       )
     );
   } else {
@@ -227,7 +231,7 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
 
-  fs.exists("bugs.json", function (exists) {
+  fs.exists("bugs.json", function(exists) {
     if (!exists) {
       var fileContent = {
         servers: {}
@@ -251,27 +255,26 @@ client.on("guildCreate", guild => {
     } members!`
   );
 
-
   // Add this new guild to database
   var defaultserver = new defaultServer();
   defaultserver._id = guild.id;
-  defaultserver.save(function (err) {});
+  defaultserver.save(function(err) {});
   console.log(
     chalk.yellow(
       chalk.red(`[SERVER] `) + `${guild.id} has been inserted into the database`
     )
   );
-  guild.members.forEach(function (guildMember) {
+  guild.members.forEach(function(guildMember) {
     if (guildMember.user instanceof Discord.User) {
       var defaultuser = new UserM();
       defaultuser._id = guildMember.user.id;
       defaultuser.username = guildMember.user.username;
-      defaultuser.save(function (err) {});
+      defaultuser.save(function(err) {});
       console.log(
         chalk.yellow(
           chalk.blue(`[USER] `) +
-          `${guildMember.user.username} has been inserted into the database` +
-          chalk.blue(`[ID] ${guildMember.user.id}`)
+            `${guildMember.user.username} has been inserted into the database` +
+            chalk.blue(`[ID] ${guildMember.user.id}`)
         )
       );
     }
@@ -279,7 +282,7 @@ client.on("guildCreate", guild => {
 
   // Get the new server's prefix
   let newprefix = "";
-  ServerM.findById(guild.id, function (err, server) {
+  ServerM.findById(guild.id, function(err, server) {
     newprefix = server.prefix;
   });
 
@@ -287,12 +290,12 @@ client.on("guildCreate", guild => {
   const channel = getDefaultChannel(guild);
   channel.send(
     "Thanks for adding me!\n\nMy prefix is `" +
-    newprefix +
-    "`\nYou can see a list of commands with `" +
-    newprefix +
-    "help`\nOr you can change my prefix with `" +
-    newprefix +
-    "prefix`\n\nEnjoy!"
+      newprefix +
+      "`\nYou can see a list of commands with `" +
+      newprefix +
+      "help`\nOr you can change my prefix with `" +
+      newprefix +
+      "prefix`\n\nEnjoy!"
   );
 });
 
@@ -300,7 +303,7 @@ client.on("channelCreate", channel => {
   // Get the modlog channel
   if (channel.type == "dm") return;
   let modlog = "";
-  ServerM.findById(channel.guild.id, function (err, server) {
+  ServerM.findById(channel.guild.id, function(err, server) {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
@@ -311,7 +314,7 @@ client.on("channelDelete", channel => {
   // Get the modlog channel
   if (channel.type == "dm") return;
   let modlog = "";
-  ServerM.findById(channel.guild.id, function (err, server) {
+  ServerM.findById(channel.guild.id, function(err, server) {
     modlog = server.modlogChannel;
   });
   if (channel.name && channel.name.includes(modlog)) return;
@@ -340,7 +343,7 @@ client.on("guildMemberRemove", member => {
 client.on("messageDelete", msg => {
   // Get the modlog channel
   let modlog = "";
-  ServerM.findById(msg.channel.guild.id, function (err, server) {
+  ServerM.findById(msg.channel.guild.id, function(err, server) {
     modlog = server.modlogChannel;
   });
 
@@ -422,7 +425,10 @@ client.on("message", async message => {
     if (message.author.bot) return;
 
     // Spy code :D
-    console.log(chalk.white(`[Message] ${message.author.id}  ||||>>   `) + chalk.grey(message))
+    console.log(
+      chalk.white(`[Message] ${message.author.id}  ||||>>   `) +
+        chalk.grey(message)
+    );
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
@@ -430,19 +436,19 @@ client.on("message", async message => {
     const cserver = await getConfig(message.guild.id);
     const cuser = await getUserConfig(message.author.id);
 
-
     // TODO Automod filter
     if (message.content.indexOf(cserver.prefix) !== 0) {
       automod.censor(message, cserver);
     } else {
       // XP and leveling
-      UserM.findById(message.author.id, function (err, user) {
+      UserM.findById(message.author.id, function(err, user) {
         user.xp += 100;
         user.save();
       });
       // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-      UserM.findById(message.author.id, function (err, user) {
-        if (user.xp < Math.round(Math.pow(100, user.level / 10 + 1))) {} else {
+      UserM.findById(message.author.id, function(err, user) {
+        if (user.xp < Math.round(Math.pow(100, user.level / 10 + 1))) {
+        } else {
           user.xp = 0;
           user.level += 1;
           user.save();
@@ -481,21 +487,58 @@ client.on("message", async message => {
       // cserver refrences the current server config object
 
       // Admin
-      UserM.findById(message.author.id, function (err, user) {
-
-        admin.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
+      UserM.findById(message.author.id, function(err, user) {
+        admin.bot(
+          client,
+          message,
+          command,
+          args,
+          defaultConfig,
+          defaultprofile,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Weather
 
-        weather.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        weather.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Memes
 
-        memes.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        memes.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Music
 
-        radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        radio.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Yodaspeak
 
@@ -503,32 +546,94 @@ client.on("message", async message => {
 
         // Game stats
 
-        games.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        games.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Stack Overflow
 
-        overflow.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        overflow.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Utility
 
-        utility.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        utility.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Translate
 
-        translate.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        translate.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Crypto
 
-        crypto.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        crypto.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Profile
 
-        profile.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        profile.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
 
         // Wolfram Alpha
 
-        wolfram.bot(client, message, command, args, user, cserver, UserM, ServerM);
-
+        wolfram.bot(
+          client,
+          message,
+          command,
+          args,
+          user,
+          cserver,
+          UserM,
+          ServerM
+        );
       });
 
       // Jokes
@@ -559,8 +664,7 @@ client.on("message", async message => {
 const fire = async (text, guild) => {
   var cserver = await getConfig(guild.id);
 
-  if (guild)
-    if (!guild.channels) return;
+  if (guild) if (!guild.channels) return;
 
   let channel = guild.channels.find(
     c => cserver && c.name && c.name.includes(cserver.modlogChannel)
@@ -588,16 +692,16 @@ const fire = async (text, guild) => {
       }
     })
     .then()
-    .catch(console.log);
+    .catch();
 };
 
 // Get the current server and user configs
-const getUserConfig = (id) => {
+const getUserConfig = id => {
   return ServerM.findById(id).exec();
-}
-const getConfig = (id) => {
-  return ServerM.findById(id).exec()
-}
+};
+const getConfig = id => {
+  return ServerM.findById(id).exec();
+};
 
 const getDefaultChannel = guild => {
   // get "original" default channel
@@ -611,15 +715,15 @@ const getDefaultChannel = guild => {
   return guild.channels
     .filter(
       c =>
-      c.type === "text" &&
-      c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
+        c.type === "text" &&
+        c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
     )
     .sort(
       (a, b) =>
-      a.position - b.position ||
-      Long.fromString(a.id)
-      .sub(Long.fromString(b.id))
-      .toNumber()
+        a.position - b.position ||
+        Long.fromString(a.id)
+          .sub(Long.fromString(b.id))
+          .toNumber()
     )
     .first();
 };
