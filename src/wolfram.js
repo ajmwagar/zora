@@ -43,7 +43,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           var plaintexts = [];
 
           // If the response has a graph, show it!
-          if (pod.title == 'Plotter' || pod.scanner == 'Tide' || pod.scanner == 'Data') {
+          if (pod.title == 'Plotter' || pod.title == 'Result' || pod.title == 'Visual representation') {
             var subpod = res.data.queryresult.pods[obj].subpods[0]
             if (subpod.img.src) {
               embed.setImage(subpod.img.src);
