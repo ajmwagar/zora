@@ -15,7 +15,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       return message.reply("You must provide an input search!");
     } else {
       var InputEncode = querystring.stringify(inputObj);
-      const m = await message.channel.send("Searching WolframAlpha!");
+      const m = await message.channel.send("Searching WolframAlpha... (please be patient, this might take a while!)");
       const wolframAPI = axios.create({
         // Get data from wolfram API
         baseURL: "https://api.wolframalpha.com/v2/query?" + InputEncode + "&appid=" + config.wolfram + "&output=json",
