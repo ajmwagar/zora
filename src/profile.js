@@ -86,7 +86,8 @@ async function bot(
                 if (userInventory.length > 0) {
                     const embed = new Discord.RichEmbed()
                         .setColor("#FF7F50")
-                        .setTitle(userInventory.join(" "));
+                        .setTitle(`${message.member.user.username}'s inventory:`)
+                        .setDescription(userInventory.join("\n"));
                     message.channel.send({
                         embed
                     });
@@ -213,9 +214,7 @@ async function bot(
             if (cuser.zcoins >= shopItems[item].Price) {
                 UserM.findById(message.author.id, function (err, user) {
                     user.zcoins -= shopItems[item].Price;
-                    user.inventory.push(
-                        "[" + shopItems[item].Name + "]"
-                    );
+                    user.inventory.push(shopItems[item].Name);
                     user.save();
                 });
                 message.channel.send({
@@ -360,6 +359,9 @@ async function bot(
         }
 
         function battle() {
+            if (duelplayer.playerhealth <= 0 || duelplayer.opponenthealth <= 0) {
+                duelplayer.battleStarted = false;
+            }
             if (duelplayer.battleStarted == true) {
                 if (Math.random() < 0.5) {
                     player1();
@@ -369,15 +371,18 @@ async function bot(
 
                 function player1() {
                     // Attack hits!
-                    let items = [];
+                    var items = [];
                     UserM.findById(duelplayer.opponentid, function (err, user) {
                         items = items.concat(user.inventory);
                     });
-                    if (items.includes("[Mana]")) {
+                    if (items.includes("Mana")) {
                         // Remove 1 Mana
-                        var index = items.indexOf("[Mana]");
+                        var index = items.indexOf("Mana");
                         if (index > -1) {
-                            items.splice(index, 1);
+                            UserM.findById(message.author.id, function (err, user) {
+                                user.inventory.splice(index, 1);
+                                user.save();
+                            });
                         }
                         let damage = Math.floor(Math.random() * 80) + 25;
                         duelplayer.playerhealth -= damage;
@@ -406,11 +411,14 @@ async function bot(
                         duelplayer.battleStarted = true;
 
                         if (duelplayer.playerhealth <= 0) {
-                            if (items.includes("[Heart]")) {
+                            if (items.includes("Heart")) {
                                 // Remove 1 Mana
-                                var index = items.indexOf("[Heart]");
+                                var index = items.indexOf("Heart");
                                 if (index > -1) {
-                                    items.splice(index, 1);
+                                    UserM.findById(message.author.id, function (err, user) {
+                                        user.inventory.splice(index, 1);
+                                        user.save();
+                                    });
                                 }
                                 duelplayer.playerhealth = 100;
                             } else {
@@ -476,11 +484,14 @@ async function bot(
                         duelplayer.battleStarted = true;
 
                         if (duelplayer.playerhealth <= 0) {
-                            if (items.includes("[Heart]")) {
+                            if (items.includes("Heart")) {
                                 // Remove 1 Mana
-                                var index = items.indexOf("[Heart]");
+                                var index = items.indexOf("Heart");
                                 if (index > -1) {
-                                    items.splice(index, 1);
+                                    UserM.findById(message.author.id, function (err, user) {
+                                        user.inventory.splice(index, 1);
+                                        user.save();
+                                    });
                                 }
                                 duelplayer.playerhealth = 100;
                             } else {
@@ -523,15 +534,18 @@ async function bot(
 
                 function player2() {
                     // Attack hits!
-                    let items = [];
+                    var items = [];
                     UserM.findById(duelplayer.playerid, function (err, user) {
                         items = items.concat(user.inventory);
                     });
-                    if (items.includes("[Mana]")) {
+                    if (items.includes("Mana")) {
                         // Remove 1 Mana
-                        var index = items.indexOf("[Mana]");
+                        var index = items.indexOf("Mana");
                         if (index > -1) {
-                            items.splice(index, 1);
+                            UserM.findById(message.author.id, function (err, user) {
+                                user.inventory.splice(index, 1);
+                                user.save();
+                            });
                         }
                         let damage = Math.floor(Math.random() * 80) + 25;
                         duelplayer.opponenthealth -= damage;
@@ -560,11 +574,14 @@ async function bot(
                         duelplayer.battleStarted = true;
 
                         if (duelplayer.opponenthealth <= 0) {
-                            if (items.includes("[Heart]")) {
+                            if (items.includes("Heart")) {
                                 // Remove 1 Mana
-                                var index = items.indexOf("[Heart]");
+                                var index = items.indexOf("Heart");
                                 if (index > -1) {
-                                    items.splice(index, 1);
+                                    UserM.findById(message.author.id, function (err, user) {
+                                        user.inventory.splice(index, 1);
+                                        user.save();
+                                    });
                                 }
                                 duelplayer.opponenthealth = 100;
                             } else {
@@ -630,11 +647,14 @@ async function bot(
                         duelplayer.battleStarted = true;
 
                         if (duelplayer.opponenthealth <= 0) {
-                            if (items.includes("[Heart]")) {
+                            if (items.includes("Heart")) {
                                 // Remove 1 Mana
-                                var index = items.indexOf("[Heart]");
+                                var index = items.indexOf("Heart");
                                 if (index > -1) {
-                                    items.splice(index, 1);
+                                    UserM.findById(message.author.id, function (err, user) {
+                                        user.inventory.splice(index, 1);
+                                        user.save();
+                                    });
                                 }
                                 duelplayer.opponenthealth = 100;
                             } else {
@@ -677,7 +697,9 @@ async function bot(
             }
         }
         if (duelplayer.battleStarted == true) {
-            battle();
+            while (duelplayer.battleStarted == true) {
+                battle();
+            }
         } else {
             message.channel.send({
                 embed: {
