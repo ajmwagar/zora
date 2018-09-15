@@ -43,7 +43,6 @@ function censor(message, cserver) {
   text = text.replace(/#/g, 'h');
   text = text.replace(/@/g, 'a');
   text = text.replace(/©/g, 'c');
-  console.log(text);
   cserver.automod.bannedwords.forEach((word) => {
     if (text.toLowerCase().includes(word.toString().toLowerCase())) {
       message.reply("Watch your mouth.\nYour message has been removed for profanity.")

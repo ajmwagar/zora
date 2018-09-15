@@ -567,9 +567,9 @@ const fire = async (text, guild) => {
   );
 
   if (!channel) {
-    console.log(cserver);
-    console.log(channel);
-    console.log("Channel not found");
+    //console.log(cserver);
+    //console.log(channel);
+    console.log(chalk.yellow("Channel not found"));
     return;
   }
 
