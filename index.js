@@ -34,7 +34,7 @@ const fs = require('fs');
 const hbs = require('express-handlebars')
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'static')))
 
 // Register Handlebars instance as view engine
 app.engine('hbs', hbs({
