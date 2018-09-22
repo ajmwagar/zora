@@ -90,9 +90,10 @@ class WebSocket {
         });
 
         this.server = this.app.listen(port, () => {
-            console.log(chalk.bgGreen("Websocket API set up at port " + this.server.address().port))
+            console.log(chalk.bgGreen("HTTP server set up at port " + this.server.address().port))
         })
         https.createServer(options, this.app).listen(443);
+        console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
         passport.use(new OAuth2Strategy({
                 authorizationURL: AUTH_URL,
