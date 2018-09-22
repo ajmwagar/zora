@@ -9,7 +9,6 @@ const URL = require('url');
 const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
 const fs = require('fs');
-const database = require('../src/index.js');
 const axios = require('axios');
 const database = require('../src/index.js');
 const mongoose = require('mongoose'),
