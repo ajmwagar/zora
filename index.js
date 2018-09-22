@@ -29,8 +29,9 @@ Manager.spawn(1); // This example will spawn 2 shards (5,000 guilds);
 
 const express = require('express');
 const path = require('path');
-
+const https = require('https');
 const app = express();
+const config = require("../config.json");
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
@@ -38,9 +39,18 @@ app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(50451, () => {
-    console.info('Running on port 50451');
+// SSL Certs
+// TODO move into config.json
+const options = {
+    cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    key: fs.readFileSync('./sslcert/privkey.pem')
+};
+
+app.listen(80, () => {
+    console.info('Running on port 80');
 });
+https.createServer(options, app).listen(443);
+console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
 // Routes
 app.use('/api/discord', require('./api/discord'));

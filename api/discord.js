@@ -5,15 +5,16 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const btoa = require('btoa');
+const config = require("../config.json");
 const {
   catchAsync
 } = require('../utils');
 
 const router = express.Router();
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const redirect = encodeURIComponent('http://localhost:50451/api/discord/callback');
+const CLIENT_ID = config.ws.clientid;
+const CLIENT_SECRET = config.ws.clientsecret;
+const redirect = encodeURIComponent('https://dta.dekutree.org/api/discord/callback');
 
 router.get('/login', (req, res) => {
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code`);
