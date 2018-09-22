@@ -121,7 +121,7 @@ class WebSocket {
                                 console.log(guild)
                             }
                         }
-                        return;
+                        return cb();
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -148,7 +148,7 @@ class WebSocket {
         this.app.get('/auth/discord/callback',
             passport.authenticate('discord', {
                 successRedirect: '/dashboard',
-                failureRedirect: '/auth/discord'
+                failureRedirect: '/dashboard'
             }),
             function (req, res) {
                 // Successful authentication, redirect home.
