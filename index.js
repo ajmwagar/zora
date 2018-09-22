@@ -35,6 +35,10 @@ const app = express();
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
+app.get('/', (req, res) => {
+    res.status(200).sendFile('index.html');
+});
+
 // SSL Certs
 // TODO move into config.json
 const options = {
