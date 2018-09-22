@@ -140,11 +140,11 @@ class WebSocket {
                             .then(function (response) {
                                 console.log(response.data.username)
                                 ousername = response.data.username
-                                return cb();
                             })
                             .catch(function (error) {
                                 console.log(error);
                             })
+                        return cb();
                     })
                     .catch(function (error) {
                         console.log(error);
