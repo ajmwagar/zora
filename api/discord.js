@@ -158,7 +158,11 @@ router.post('/setServer', async function (req, res) {
   var token2 = req.query.token
   var serverid = req.body.serverid
   var prefix = req.body.prefix
-  var severs = req.body.servers
+  var servers = req.body.servers
+  var serversids = [];
+  for (var id in servers) {
+    serversids.push(id);
+  }
 
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
@@ -172,7 +176,7 @@ router.post('/setServer', async function (req, res) {
     .then(async function (response) {
       for (var oguild in response2.data) {
         if (response2.data[oguild].owner == true) {
-          if (servers.includes(response2.data[oguild])) {
+          if (servers.includes(response2.data[oguild].id)) {
             cdserver = await getServerConfig(serverid);
             cdserver.prefix = prefix;
             await setServerConfig(serverid, cdserver)
