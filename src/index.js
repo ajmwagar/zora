@@ -3,7 +3,6 @@ var start = Date.now();
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
-const WS = require('../ws/ws')
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
