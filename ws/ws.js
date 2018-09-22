@@ -97,7 +97,8 @@ class WebSocket {
                         }
                     })
                     .then(function (response) {
-                        console.log(response);
+                        console.log(response.data.id);
+
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -145,12 +146,8 @@ class WebSocket {
         this.app.get('/auth/discord/callback',
             passport.authenticate('discord', {
                 failureRedirect: '/auth/discord'
-            }),
-            function (req, res) {
-                console.log('got callback')
-                // Successful authentication, redirect home.
-                res.redirect('/');
-            });
+            }));
+        res.redirect('/');
 
         this.app.post('/sendMessage', (req, res) => {
             var _token = req.body.token
