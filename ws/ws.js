@@ -168,7 +168,6 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
-            _token = req.query.token;
             res.render('dashboard', {
                 username: ousername,
                 token: _token,
@@ -178,14 +177,14 @@ class WebSocket {
         })
 
         this.app.post('/setServer', async function (req, res) {
-            var token = req.body.token
+            var token2 = req.body.token
             var serverid = req.body.serverid
             var prefix = req.body.prefix
 
-            if (!token || !serverid)
+            if (!token2 || !serverid)
                 return res.sendStatus(400);
 
-            if (!token == _token)
+            if (!token2 == _token)
                 return res.sendStatus(401)
 
             cdserver = await database.getServerConfig(serverid);
