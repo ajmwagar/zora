@@ -10,15 +10,14 @@
                 </div>
                 <div class="seven columns" style="text-align: left;">
                     <p style="padding-top: 32px;">
-                        Welcome to the dashboard! Here you can easily conifgure Zora bot for your server. As well
+                        Welcome {{ username }} the dashboard! Here you can easily conifgure Zora bot for your server.
+                        As well
                         as view helpful statistics!<br>
                         <h2 class="heading1">Select a server:</h2>
                         <p>server: <select name="server" id="server" class="serverSelect">
-                                {{#select CurrentSort}}
                                 {{#each servers}}
                                 <option>{{this}}</option>
                                 {{/each}}
-                                {{/select}}
                             </select>
                         </p>
                         <hr>

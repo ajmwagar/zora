@@ -33,6 +33,7 @@ const TOKEN_URL = config.ws.tokenurl;
 
 var _token;
 var oservers = [];
+var ousername = '';
 
 class WebSocket {
 
@@ -61,10 +62,8 @@ class WebSocket {
                 servers: function () {
                     return 'Cannot get severs!';
                 },
-                select: function (selected, options) {
-                    return options.fn(this).replace(
-                        new RegExp(' value=\"' + selected + '\"'),
-                        '$& selected="selected"');
+                username: function () {
+                    return 'Cannot get username!';
                 }
             }
         }))
@@ -133,7 +132,19 @@ class WebSocket {
                                 oservers.push(guild.name);
                             }
                         }
-                        return cb();
+                        axios.get('https://discordapp.com/api/users/@me', {
+                                headers: {
+                                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                                    Authorization: 'Bearer ' + _token
+                                }
+                            })
+                            .then(function (response) {
+                                ousername = response.data.name
+                                return cb();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -169,7 +180,8 @@ class WebSocket {
 
         this.app.get('/dashboard', (req, res) => {
             res.render('dashboard', {
-                servers: oservers
+                servers: oservers,
+                username: ousername
             });
         })
     }
