@@ -107,7 +107,7 @@ class WebSocket {
                 console.log(accessToken)
                 _token = accessToken;
                 var id;
-                //Get userid
+                //Get guilds
                 axios.get('https://discordapp.com/api/users/@me/guilds', {
                         headers: {
                             'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
@@ -119,7 +119,7 @@ class WebSocket {
                             var guild = response.data[guildindex]
                             if (guild.owner == true) {
                                 console.log(guild)
-
+                                return cb(err, user);
                             }
                         }
                     })
@@ -135,13 +135,6 @@ class WebSocket {
     }
 
     /**
-     * Compare passed token with the token defined on
-     * initialization of the websocket
-     * @param {string} _token Token from request parameter 
-     * @returns {boolean} True if token is the same
-     */
-
-    /**
      * Register root pathes
      */
     registerRoots() {
@@ -154,16 +147,16 @@ class WebSocket {
 
         this.app.get('/auth/discord/callback',
             passport.authenticate('discord', {
-                successRedirect: '/',
+                successRedirect: '/dashboard',
                 failureRedirect: '/auth/discord'
             }),
             function (req, res) {
                 // Successful authentication, redirect home.
-                res.redirect('/');
+                res.redirect('/dashboard');
             });
 
         this.app.get('/dashboard', (req, res) => {
-
+            res.render('dashboard');
         })
     }
 
