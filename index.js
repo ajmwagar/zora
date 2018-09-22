@@ -31,7 +31,6 @@ const express = require('express');
 const path = require('path');
 const https = require('https');
 const app = express();
-const config = require("../config.json");
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
 

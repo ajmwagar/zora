@@ -1,7 +1,3 @@
-/**
- * Created by orel- on 15/May/17.
- */
-
 const express = require('express');
 const fetch = require('node-fetch');
 const btoa = require('btoa');
