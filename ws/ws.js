@@ -128,7 +128,6 @@ class WebSocket {
                         for (var guildindex in response.data) {
                             var guild = response.data[guildindex]
                             if (guild.owner == true) {
-                                console.log(guild)
                                 oservers.push(guild.name);
                             }
                         }
@@ -139,7 +138,8 @@ class WebSocket {
                                 }
                             })
                             .then(function (response) {
-                                ousername = response.data.name
+                                console.log(guild)
+                                ousername = response.data.username
                                 return cb();
                             })
                             .catch(function (error) {
