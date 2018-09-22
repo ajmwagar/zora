@@ -15,7 +15,7 @@
                         well as view helpful statistics!<br>
                         <hr>
                         <h3>Dashboard:</h3>
-                        <form action="api/discord/setServer?token={{token}}" method="POST" target="dummyframe">
+                        <form action="/api/discord/setServer?token={{token}}" method="POST" target="dummyframe">
                             <p>Server:</p> <select name="serverid" class="serverSelect">
                                 {{#each servers}}
                                 <option class="Serveritem" value="{{this.id}}">{{this.name}}</option>
