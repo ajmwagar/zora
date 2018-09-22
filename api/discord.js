@@ -75,7 +75,7 @@ router.post('/setServer', async function (req, res) {
         Authorization: 'Bearer ' + _token
       }
     })
-    .then(function (response) {
+    .then(async function (response) {
       cdserver = await database.getServerConfig(serverid);
       cdserver.prefix = prefix;
       await database.setServerConfig(serverid, cdserver)
