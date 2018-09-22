@@ -69,7 +69,7 @@ class WebSocket {
                     return new Handlebars.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
                 },
                 servers: function () {
-                    return 'Cannot get servers!;
+                    return 'Cannot get servers!';
                 }
             }
         }))
