@@ -119,7 +119,7 @@ class WebSocket {
                             var guild = response.data[guildindex]
                             if (guild.owner == true) {
                                 console.log(guild)
-                                return cb(err, user);
+                                return cb();
                             }
                         }
                     })
