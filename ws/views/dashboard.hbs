@@ -15,7 +15,7 @@
                         <h2 class="heading1">Select a server:</h2>
                         <p>server: <select name="server" id="server" class="serverSelect">
                                 {{#each servers}}
-                                <option>{{this}}</option>
+                                {{option id name ../statusId}}
                                 {{/each}}
                             </select>
                         </p>

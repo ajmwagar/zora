@@ -63,6 +63,10 @@ class WebSocket {
                 }
             }
         }))
+        hbs.registerHelper('option', function (value, label, selectedValue) {
+            var selectedProperty = value == selectedValue ? 'selected="selected"' : '';
+            return new Handlebars.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
+        });
         // Set folder views/ as location for views files
         this.app.set('views', path.join(__dirname, 'views'))
         // Set hbs as view engine
