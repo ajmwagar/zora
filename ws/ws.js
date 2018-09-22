@@ -122,16 +122,11 @@ class WebSocket {
                             })
                             .then(function (response) {
                                 id = response.data.id;
-                                mongoose.connection.once('open', function () {
-                                    var serverm = new ServerM();
-                                    for (var guild in guilds) {
-                                        if (guild.owner == true) {
-                                            serverm.findById(id, function (err, user) {
-                                                console.log(server.prefix);
-                                            });
-                                        }
+                                for (var guild in guilds) {
+                                    if (guild.owner == true) {
+                                        console.log(guild.name)
                                     }
-                                });
+                                }
                             })
                             .catch(function (error) {
                                 console.log(error);
