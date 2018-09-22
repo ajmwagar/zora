@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const btoa = require('btoa');
 const axios = require('axios');
 const config = require("../config.json");
-const database = require('../src/index.js');
+//const database = require('../src/index.js');
 const {
   catchAsync
 } = require('../utils');
