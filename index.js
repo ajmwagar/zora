@@ -42,9 +42,6 @@ const options = {
     key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
-app.listen(80, () => {
-    console.log(chalk.bgGreen("HTTP server set up at port 80"));
-});
 https.createServer(options, app).listen(443);
 console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
