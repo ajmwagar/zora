@@ -11,22 +11,10 @@
                 <iframe style="display: none" name="dummyframe" id="dummyframe"></iframe>
                 <div class="seven columns" style="text-align: left;">
                     <p style="padding-top: 32px;">
-                        Welcome {{username}} the dashboard! Here you can easily conifgure Zora bot for your server.
-                        As well
-                        as view helpful statistics!<br>
+                        Welcome {{username}} the dashboard! Here you can easily configure Zora bot for your server. As
+                        well as view helpful statistics!<br>
                         <hr>
-                        {{#if cdserver}}
-                        <h2>Dashboard for {{cdserver.id}}</h2>
-                        <form action="/updateConfig" method="POST" target="dummyframe">
-                            {{!-- Pass token back to authenticate web request --}}
-                            <input type="hidden" name="token" value="{{ token }}" />
-                            <input type="hidden" name="serverid" value="{{ cdserver.id }}" />
-                            Prefix: <input type="text" name="prefix"><br>
-                            Modlog Channel: <input type="text" name="modlog"><br>
-                            <input type="submit" class="sp-btn" value="Submit">
-                        </form>
-                        {{else}}
-                        <h3>Please Select a Server:</h3>
+                        <h3>Dashboard:</h3>
                         <form action="/setServer" method="POST" target="dummyframe">
                             {{!-- Pass token back to authenticate web request --}}
                             <input type="hidden" name="token" value="{{ token }}" />
@@ -34,11 +22,11 @@
                                 {{#each servers}}
                                 <option class="Serveritem" value="{{this.id}}">{{this.name}}</option>
                                 {{/each}}
+                                Prefix: <input type="text" name="prefix"><br>
+                                Modlog Channel: <input type="text" name="modlog"><br>
                             </select>
                             <input type="submit" class="sp-btn" value="Submit">
                         </form>
-                        {{/if}}
-
                 </div>
             </div>
         </div>

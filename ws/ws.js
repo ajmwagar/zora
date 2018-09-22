@@ -180,6 +180,7 @@ class WebSocket {
         this.app.post('/setServer', async function (req, res) {
             var token = req.body.token
             var serverid = req.body.serverid
+            var prefix = req.body.prefix
 
             if (!token || !serverid)
                 return res.sendStatus(400);
@@ -189,22 +190,8 @@ class WebSocket {
 
             cdserver = await database.getServerConfig(serverid);
             console.log(cdserver);
-            res.redirect('dashboard');
-        })
-
-        this.app.post('/updateConfig', (req, res) => {
-            var token = req.body.token
-            var prefix = req.body.prefix
-            var serverid = req.body.serverid
-
-            if (!token || !prefix || !serverid)
-                return res.sendStatus(400);
-
-            if (!token == _token)
-                return res.sendStatus(401)
-
             cdserver.prefix = prefix;
-            database.setServerConfig(serverid, cdserver)
+            await database.setServerConfig(serverid, cdserver)
             res.redirect(200, 'dashboard');
         })
     }
