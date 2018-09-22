@@ -169,8 +169,17 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 async function getServerConfig(id) {
-  return await ServerM.findById(id, function (err, server) {
-    return server;
+  var outserver;
+  await ServerM.findById(id, function (err, server) {
+    outserver = server;
+  });
+  return outserver;
+}
+
+async function setServerConfig(id, newconfig) {
+  await ServerM.findById(id, function (err, server) {
+    server = newconfig;
+    server.save();
   });
 }
 
@@ -644,3 +653,4 @@ module.exports.defaultConfig = defaultConfig;
 module.exports.defaultprofile = defaultprofile;
 
 module.exports.getServerConfig = getServerConfig;
+module.exports.setServerConfig = setServerConfig;

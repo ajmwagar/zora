@@ -16,7 +16,15 @@
                         as view helpful statistics!<br>
                         <hr>
                         {{#if cdserver}}
-                        <h2>Dashboard for {{cdserver.name}}</h2>
+                        <h2>Dashboard for {{cdserver.id}}</h2>
+                        <form action="/updateConfig" method="POST" target="dummyframe">
+                            {{!-- Pass token back to authenticate web request --}}
+                            <input type="hidden" name="token" value="{{ token }}" />
+                            <input type="hidden" name="serverid" value="{{ cdserver.id }}" />
+                            Prefix: <input type="text" name="prefix"><br>
+                            Modlog Channel: <input type="text" name="modlog"><br>
+                            <input type="submit" class="button" value="Submit">
+                        </form>
                         {{else}}
                         <h3>Please Select a Server:</h3>
                         <form action="/setServer" method="POST" target="dummyframe">
@@ -27,7 +35,8 @@
                                 <option value="{{this.id}}">{{this.name}}</option>
                                 {{/each}}
                             </select>
-                            <input type="submit" class="button" value="Confirm">
+                            <br>
+                            <input type="submit" class="button" value="Submit">
                         </form>
                         {{/if}}
 

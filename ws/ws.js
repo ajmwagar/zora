@@ -195,7 +195,22 @@ class WebSocket {
                 return res.sendStatus(401)
 
             cdserver = database.getServerConfig(serverid);
-            console.log(cdserver.name);
+            res.redirect(200, 'dashboard');
+        })
+
+        this.app.post('/updateConfig', (req, res) => {
+            var token = req.body.token
+            var prefix = req.body.prefix
+            var serverid = req.body.serverid
+
+            if (!token || !prefix || !serverid)
+                return res.sendStatus(400);
+
+            if (!this.checkToken(token))
+                return res.sendStatus(401)
+
+            cdserver.prefix = prefix;
+            database.setServerConfig(serverid, cdserver)
             res.redirect(200, 'dashboard');
         })
     }
