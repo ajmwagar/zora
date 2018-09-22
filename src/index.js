@@ -648,4 +648,6 @@ const getDefaultChannel = guild => {
 client.login(config.token);
 
 module.exports.ServerM = ServerM;
-module.exports.UserM = UserM;
+module.exports.UserM = UserM
+module.exports.defaultConfig = defaultConfig;
+module.exports.defaultprofile = defaultprofile;

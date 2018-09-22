@@ -72,6 +72,9 @@ class WebSocket {
         this.registerRoots()
 
         // Start websocket on port defined in constructors arguments
+
+        // SSL Certs
+        // TODO move into config.json
         const options = {
             cert: fs.readFileSync('./sslcert/fullchain.pem'),
             key: fs.readFileSync('./sslcert/privkey.pem')
@@ -111,7 +114,6 @@ class WebSocket {
                     })
                     .then(function (response) {
                         var guilds = response.data.guilds;
-                        console.log(response.data)
                         axios.get('https://discordapp.com/api/users/@me', {
                                 headers: {
                                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
@@ -120,11 +122,13 @@ class WebSocket {
                             })
                             .then(function (response) {
                                 id = response.data.id;
-                                console.log(response.data)
-                                ServerM.findById(id, function (err, server) {
+                                mongoose.connection.once('open', function () {
+                                    var serverm = new ServerM();
                                     for (var guild in guilds) {
                                         if (guild.owner == true) {
-                                            console.log(server)
+                                            serverm.findById(id, function (err, user) {
+                                                console.log(server.prefix);
+                                            });
                                         }
                                     }
                                 });
