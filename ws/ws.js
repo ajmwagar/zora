@@ -116,6 +116,9 @@ class WebSocket {
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
+                oservers.length = 0;
+                ousername = '';
+                cdserver = null;
                 _token = accessToken;
                 axios.get('https://discordapp.com/api/users/@me', {
                         headers: {
@@ -124,7 +127,7 @@ class WebSocket {
                         }
                     })
                     .then(function (response) {
-                        ousername = response.data.username
+                        ousername = response.data.username;
                         axios.get('https://discordapp.com/api/users/@me/guilds', {
                                 headers: {
                                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
