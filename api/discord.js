@@ -5,6 +5,7 @@ const axios = require('axios');
 const config = require("../config.json");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const FlakeId = require('flakeid');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -163,7 +164,14 @@ router.post('/setServer', async function (req, res) {
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
 
-  axios.get(`https://discordapp.com/api/guilds/` + serverid, {
+  //initiate flake
+  var flake = new FlakeId({
+    timeOffset: (2013 - 1970) * 31536000 * 1000 //optional, define a offset time
+  });
+
+  var serverflake = flake.gen()
+
+  axios.get(`https://discordapp.com/api/guilds/` + serverflake, {
       headers: {
         'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
         Authorization: 'Bearer ' + token2
