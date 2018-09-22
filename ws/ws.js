@@ -163,11 +163,7 @@ class WebSocket {
 
         this.app.get('/dashboard', (req, res) => {
             res.render('dashboard', {
-                helpers: {
-                    servers: function () {
-                        return oservers;
-                    }
-                }
+                servers: oservers
             });
         })
     }
