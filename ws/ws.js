@@ -188,7 +188,7 @@ class WebSocket {
                     },
                     option: function (value, label, selectedValue) {
                         var selectedProperty = value == selectedValue ? 'selected="selected"' : '';
-                        return new Handlebars.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
+                        return new hbs.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
                     },
                     servers: function () {
                         return oserversName;
