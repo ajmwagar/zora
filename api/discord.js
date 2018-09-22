@@ -16,6 +16,12 @@ router.get('/login', (req, res) => {
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code`);
 });
 
+router.get('/dashboard', (req, res) => {
+  res.render('dashboard', {
+
+  })
+});
+
 router.get('/callback', catchAsync(async (req, res) => {
   if (!req.query.code) throw new Error('NoCodeProvided');
   const code = req.query.code;
@@ -27,7 +33,7 @@ router.get('/callback', catchAsync(async (req, res) => {
     },
   });
   const json = await response.json();
-  res.redirect(`/?token=${json.access_token}`);
+  res.redirect(`/dashboard?token=${json.access_token}`);
 }));
 
 module.exports = router;
