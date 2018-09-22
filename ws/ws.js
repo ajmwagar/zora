@@ -55,7 +55,7 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-        app.use(cookieSession({
+        this.app.use(cookieSession({
             name: 'session',
             keys: [ /* secret keys */ ],
 
