@@ -63,7 +63,7 @@ class WebSocket {
                 }
             }
         }))
-        hbs.registerHelper('option', function (value, label, selectedValue) {
+        this.hbs.registerHelper('option', function (value, label, selectedValue) {
             var selectedProperty = value == selectedValue ? 'selected="selected"' : '';
             return new Handlebars.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
         });
