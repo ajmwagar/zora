@@ -6,6 +6,10 @@ const config = require("../config.json");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
+
+// URL that points to MongoDB database
+var url = "mongodb://localhost:27017/zora";
+
 mongoose.connect(url, {
   user: config.databaseuser,
   pass: config.databasepass
