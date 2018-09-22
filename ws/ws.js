@@ -124,7 +124,7 @@ class WebSocket {
                                 id = response.data.id;
                                 for (var guild in guilds) {
                                     if (guild.owner == true) {
-                                        console.log(guild.name)
+                                        console.log(guild)
                                     }
                                 }
                             })
