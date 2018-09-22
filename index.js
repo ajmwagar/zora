@@ -31,10 +31,6 @@ const https = require('https');
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, 'ws/public/index.html'));
-});
-
 // SSL Certs
 // TODO move into config.json
 const options = {
