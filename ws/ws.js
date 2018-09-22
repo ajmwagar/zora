@@ -113,24 +113,7 @@ class WebSocket {
                         }
                     })
                     .then(function (response) {
-                        var guilds = response.data.guilds;
-                        axios.get('https://discordapp.com/api/users/@me', {
-                                headers: {
-                                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                                    Authorization: 'Bearer ' + _token
-                                }
-                            })
-                            .then(function (response) {
-                                id = response.data.id;
-                                for (var guild in guilds) {
-                                    if (guild.owner == true) {
-                                        console.log(guild)
-                                    }
-                                }
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
+                        console.log(response)
                     })
                     .catch(function (error) {
                         console.log(error);
