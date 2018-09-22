@@ -55,13 +55,7 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-        this.app.use(cookieSession({
-            name: 'session',
-            keys: [ /* secret keys */ ],
 
-            // Cookie Options
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours
-        }))
         // Register Handlebars instance as view engine
         this.app.engine('hbs', hbs({
             extname: 'hbs', // Extension (*.hbs Files)
