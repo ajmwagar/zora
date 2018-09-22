@@ -52,10 +52,6 @@ class WebSocket {
         this.app.use(passport.initialize());
         this.app.use(passport.session());
 
-        passport.serializeUser(function (user, done) {
-            done(null, user.id);
-        });
-
         // Register Handlebars instance as view engine
         this.app.engine('hbs', hbs({
             extname: 'hbs', // Extension (*.hbs Files)
@@ -104,7 +100,7 @@ class WebSocket {
                 clientID: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
                 scope: 'identify guilds',
-                callbackURL: "https://dta.dekutree.org/auth/discord/callback"
+                callbackURL: "https://dta.dekutree.org/auth/discord/callback?next=/"
             },
             function (accessToken, refreshToken, profile, cb) {
                 console.log(accessToken)
