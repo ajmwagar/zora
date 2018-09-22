@@ -83,7 +83,7 @@ class WebSocket {
                 tokenURL: TOKEN_URL,
                 clientID: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
-                scope: 'identify',
+                scope: 'identify guilds',
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
@@ -98,6 +98,7 @@ class WebSocket {
                     })
                     .then(function (response) {
                         console.log(response.data.id);
+                        console.log(response.data.guilds)
 
                     })
                     .catch(function (error) {
