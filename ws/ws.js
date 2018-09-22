@@ -124,7 +124,7 @@ class WebSocket {
                             var guild = response.data[guildindex]
                             if (guild.owner == true) {
                                 console.log(guild)
-                                oservers.push(guild);
+                                oservers.push(guild.name);
                             }
                         }
                         return cb();
@@ -165,13 +165,7 @@ class WebSocket {
             res.render('dashboard', {
                 helpers: {
                     servers: function () {
-                        var output;
-                        if (oservers) {
-                            for (var cserver in oservers) {
-                                output = oservers[cserver].name
-                            }
-                            return output;
-                        }
+                        return oservers;
                     }
                 }
             });
