@@ -157,7 +157,7 @@ class WebSocket {
         this.app.get('/auth/discord',
             passport.authenticate('discord'));
 
-        this.app.get('/auth/discord/callback',
+        this.app.post('/auth/discord/callback',
             passport.authenticate('discord', {
                 successRedirect: '/',
                 failureRedirect: '/auth/discord'
