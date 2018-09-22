@@ -52,7 +52,7 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-        var hbs = exphbs.create({
+        var hbs = hbs.create({
             // Specify helpers which are only registered on this instance.
             helpers: {
                 servers: function () {
