@@ -11,12 +11,34 @@ body {
     background-image: url("images/bg.jpg");
     background-repeat: no-repeat;
     background-color: #c55b2a;
-    font-family: 'Archivo Narrow',
-        sans-serif;
+
+}
+
+.dashboard {
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+}
+
+.container {
+    height: 100vh;
 }
 
 h1 {
     font-family: 'Oswald', sans-serif;
+}
+
+.heading1 {
+    font-family: 'Oswald',
+        sans-serif;
+}
+
+.heading2 {
+    font-family: 'Oswald',
+        sans-serif;
 }
 
 h2 {
