@@ -32,7 +32,7 @@ const AUTH_URL = config.ws.authurl;
 const TOKEN_URL = config.ws.tokenurl;
 
 var _token;
-var oservers;
+var oservers = [];
 
 class WebSocket {
 
