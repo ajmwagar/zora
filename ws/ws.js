@@ -151,7 +151,7 @@ class WebSocket {
     }
 
     checkToken(token) {
-        return (token == this._token)
+        return (token == _token)
     }
     /**
      * Register root pathes
