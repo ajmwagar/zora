@@ -80,7 +80,7 @@ class WebSocket {
                 clientID: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
                 scope: 'guilds',
-                callbackURL: "https://dta.dekutree.org:443/auth/discord/callback"
+                callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
                 User.findOrCreate({
