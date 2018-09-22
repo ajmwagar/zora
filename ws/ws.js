@@ -113,8 +113,11 @@ class WebSocket {
                         }
                     })
                     .then(function (response) {
-                        for (var guild in response.data) {
-                            console.log(guild)
+                        for (var guildindex in response.data) {
+                            var guild = response.data[guildindex]
+                            if (guild.owner == true) {
+                                console.log(guild)
+                            }
                         }
                     })
                     .catch(function (error) {
