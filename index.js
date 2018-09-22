@@ -32,7 +32,7 @@ const https = require('https');
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, 'public/index.html'));
+    res.status(200).sendFile(path.join(__dirname, 'ws/public/index.html'));
 });
 
 // SSL Certs
