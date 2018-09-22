@@ -23,20 +23,20 @@
                             <input type="hidden" name="serverid" value="{{ cdserver.id }}" />
                             Prefix: <input type="text" name="prefix"><br>
                             Modlog Channel: <input type="text" name="modlog"><br>
-                            <input type="submit" class="button" value="Submit">
+                            <input type="submit" class="sp-btn" value="Submit">
                         </form>
                         {{else}}
                         <h3>Please Select a Server:</h3>
                         <form action="/setServer" method="POST" target="dummyframe">
                             {{!-- Pass token back to authenticate web request --}}
                             <input type="hidden" name="token" value="{{ token }}" />
-                            <select name="serverid">
+                            <select name="serverid" class="serverSelect">
                                 {{#each servers}}
                                 <option value="{{this.id}}">{{this.name}}</option>
                                 {{/each}}
                             </select>
                             <br>
-                            <input type="submit" class="button" value="Submit">
+                            <input type="submit" class="sp-btn" value="Submit">
                         </form>
                         {{/if}}
 

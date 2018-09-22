@@ -196,7 +196,7 @@ class WebSocket {
 
             cdserver = await database.getServerConfig(serverid);
             console.log(cdserver);
-            res.redirect(200, 'dashboard');
+            res.redirect('dashboard');
         })
 
         this.app.post('/updateConfig', (req, res) => {
