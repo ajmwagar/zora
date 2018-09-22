@@ -42,7 +42,7 @@ app.engine('hbs', hbs({
 app.set('views', path.join(__dirname, 'views'))
 // Set hbs as view engine
 app.set('view engine', 'hbs')
-app.use(express.static(path.join(__dirname, 'public')))
+app.use('/static', express.static(path.join(__dirname, 'public')))
 
 // Register bodyParser as parser for Post requests body in JSON-format
 app.use(bodyParser.urlencoded({
@@ -64,7 +64,7 @@ https.createServer(options, app).listen(443);
 console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
 // Routes
-app.use('/', require('./ws/ws'));
+app.use('/auth', require('./ws/ws'));
 
 app.use((err, req, res, next) => {
     switch (err.message) {
