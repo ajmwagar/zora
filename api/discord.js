@@ -3,10 +3,98 @@ const fetch = require('node-fetch');
 const btoa = require('btoa');
 const axios = require('axios');
 const config = require("../config.json");
-//const database = require('../src/index.js');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
+mongoose.connect(url, {
+  user: config.databaseuser,
+  pass: config.databasepass
+});
 const {
   catchAsync
 } = require('../utils');
+
+// Default server configuration (also used with .clearcfg)
+var defaultConfig = new Schema({
+  name: {
+    type: String,
+    default: ''
+  },
+  _id: Schema.Types.Decimal128,
+  prefix: {
+    type: String,
+    default: "+"
+  },
+  modlogChannel: {
+    type: String,
+    default: "modlog"
+  },
+  welcomes: {
+    type: Boolean,
+    default: false
+  },
+  reddit: {
+    subreddits: [],
+    posts: {
+      type: String,
+      default: 3
+    },
+    channel: {
+      type: String,
+      default: "memes"
+    },
+    interval: {
+      type: Number,
+      default: 1
+    }
+  },
+  automod: {
+    bannedwords: []
+  }
+});
+
+// Default user profile config
+var defaultprofile = new Schema({
+  level: {
+    type: Number,
+    default: "1"
+  },
+  username: String,
+  xp: {
+    type: Number,
+    default: "0"
+  },
+  zcoins: {
+    type: Number,
+    default: "100"
+  },
+  VIP: {
+    type: Boolean,
+    default: false
+  },
+  inventory: [],
+  _id: Schema.Types.Decimal128
+});
+
+// Define models
+const UserM = mongoose.model("Users", defaultprofile);
+const ServerM = mongoose.model("Servers", defaultConfig);
+
+async function getServerConfig(id) {
+  var outserver;
+  await ServerM.findById(id, function (err, server) {
+    outserver = server;
+  });
+  return outserver;
+}
+
+async function setServerConfig(id, newconfig) {
+  await ServerM.findById(id, function (err, server) {
+    server = newconfig;
+    server.save();
+  });
+  return;
+}
 
 const router = express.Router();
 
@@ -76,9 +164,9 @@ router.post('/setServer', async function (req, res) {
       }
     })
     .then(async function (response) {
-      cdserver = await database.getServerConfig(serverid);
+      cdserver = await getServerConfig(serverid);
       cdserver.prefix = prefix;
-      await database.setServerConfig(serverid, cdserver)
+      await setServerConfig(serverid, cdserver)
       res.redirect(200, 'dashboard');
     })
     .catch(function (error) {
