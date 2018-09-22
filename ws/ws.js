@@ -60,14 +60,6 @@ class WebSocket {
             extname: 'hbs', // Extension (*.hbs Files)
             defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
             layoutsDir: __dirname + '/layouts', // Layouts directory -> layouts/
-            helpers: {
-                username: function () {
-                    return 'Cannot get username!';
-                },
-                servers: function () {
-                    return 'Cannot get servers!';
-                }
-            }
         }))
 
         // Set folder views/ as location for views files
@@ -176,6 +168,7 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
+            console.log(ousername)
             res.render('dashboard', {
                 username: ousername,
                 token: _token,
