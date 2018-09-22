@@ -11,6 +11,7 @@ const passport = require('passport');
 const fs = require('fs');
 const axios = require('axios');
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const {
     catchAsync
