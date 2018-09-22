@@ -157,13 +157,9 @@ class WebSocket {
                 display: 'popup'
             }));
 
-        this.app.get('/auth/discord/callback',
-            passport.authenticate('discord', {}),
-            function (req, res) {
-                // Successful authentication, redirect home.
-
-                res.send('Callback!');
-            });
+        this.app.get('/auth/discord/callback', (req, res) => {
+            res.send('callback!')
+        });
 
         this.app.get('/dashboard', (req, res) => {
             res.render('dashboard', {
