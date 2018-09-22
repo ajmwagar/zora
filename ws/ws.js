@@ -98,7 +98,7 @@ class WebSocket {
                     })
                     .then(function (response) {
                         console.log(response.data.id);
-                        console.log(response.data.guilds)
+                        console.log(response.data)
 
                     })
                     .catch(function (error) {
