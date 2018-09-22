@@ -8,6 +8,7 @@
                     <button class="sp-btn" onclick="window.open('https://discordapp.com/api/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot')">
                         Invite Me!</button>
                 </div>
+                <iframe style="display: none" name="dummyframe" id="dummyframe"></iframe>
                 <div class="seven columns" style="text-align: left;">
                     <p style="padding-top: 32px;">
                         Welcome {{username}} the dashboard! Here you can easily conifgure Zora bot for your server.
@@ -15,11 +16,16 @@
                         as view helpful statistics!<br>
                         <hr>
                         <h3>Please Select a Server:</h3>
-                        <select>
-                            {{#each servers}}
-                            <option>{{this}}</option>
-                            {{/each}}
-                        </select>
+                        <form action="/setServer" method="POST" target="dummyframe">
+                            {{!-- Pass token back to authenticate web request --}}
+                            <input type="hidden" name="token" value="{{ token }}" />
+                            <select name="serverid">
+                                {{#each servers}}
+                                <option value="{{this.id}}">{{this.name}}</option>
+                                {{/each}}
+                            </select>
+                            <input type="submit" class="button" value="Confirm">
+                        </form>
                 </div>
             </div>
         </div>

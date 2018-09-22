@@ -35,7 +35,6 @@ const TOKEN_URL = config.ws.tokenurl;
 var _token;
 var oservers = [];
 var ousername = '';
-var oserversName = [];
 
 class WebSocket {
 
@@ -133,9 +132,8 @@ class WebSocket {
                             })
                             .then(function (response2) {
                                 for (var oguild in response2.data) {
-                                    if (response2.data[oguild].owner == true || oservers.includes(response2.data[oguild].id)) {
-                                        oserversName.push(response2.data[oguild].name);
-                                        oservers.push(response2.data[oguild].id);
+                                    if (response2.data[oguild].owner == true) {
+                                        oservers.push(response2.data[oguild]);
                                     }
                                 }
                                 return cb();
@@ -152,6 +150,9 @@ class WebSocket {
         console.log(chalk.bgGreen("Discord OAUTH2 Online!"));
     }
 
+    checkToken(token) {
+        return (token == this._token)
+    }
     /**
      * Register root pathes
      */
@@ -174,16 +175,25 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
-            res.render('dashboard', {
-                helpers: {
-                    username: function () {
-                        return ousername;
-                    },
-                    servers: function () {
-                        return oservers;
-                    }
-                }
-            });
+            res.render('index', {
+                username: ousername,
+                token: _token,
+                servers: oservers
+            })
+        })
+
+        this.app.post('/setServer', (req, res) => {
+            var token = req.body.token
+            var serverid = req.body.serverid
+
+            if (!token || !servername)
+                return res.sendStatus(400);
+
+            if (!this.checkToken(token))
+                return res.sendStatus(401)
+
+            console.log('SEVER SELECTED:' + serverid)
+            res.sendStatus(200);
         })
     }
 

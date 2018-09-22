@@ -26,6 +26,7 @@
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
+    "express-vue": "^5.7.1",
     "get-json": "^1.0.0",
     "https": "^1.0.0",
     "icanhazdadjoke-client": "0.0.2",
