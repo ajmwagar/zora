@@ -65,7 +65,7 @@ console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
 // Routes
 app.use('/auth', require('./ws/ws'));
-router.get('/', (req, res) => {
+app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '/ws/public/index.html'));
 });
 
