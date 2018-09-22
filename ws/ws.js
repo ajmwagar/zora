@@ -143,11 +143,13 @@ class WebSocket {
         this.app.get('/auth/discord',
             passport.authenticate('discord'));
 
-        this.app.get('/auth/discord/callback',
+        this.app.get('/auth/discord/callback', (req, res) => {
             passport.authenticate('discord', {
                 failureRedirect: '/auth/discord'
-            }));
-        res.redirect('/');
+            })
+            res.redirect('/');
+        });
+
 
         this.app.post('/sendMessage', (req, res) => {
             var _token = req.body.token
