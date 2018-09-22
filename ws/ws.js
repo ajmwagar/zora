@@ -83,11 +83,7 @@ class WebSocket {
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
-                User.findOrCreate({
-                    exampleId: profile.id
-                }, function (err, user) {
-                    return cb(err, user);
-                });
+                console.log(profile)
             }
         ));
         console.log(chalk.bgGreen("Discord OAUTH2 Online!"));
