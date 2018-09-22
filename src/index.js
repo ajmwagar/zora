@@ -104,7 +104,7 @@ mongoose.connect(url, {
 var defaultConfig = new Schema({
   name: {
     type: String,
-    default: config.name
+    default: ''
   },
   _id: Schema.Types.Decimal128,
   prefix: {
@@ -205,6 +205,7 @@ client.on("ready", () => {
   client.guilds.forEach(function (guild) {
     var defaultserver = new ServerM();
     defaultserver._id = guild.id;
+    defaultserver.name = guild.name;
     defaultserver.save(function (err) {});
     console.log(
       chalk.yellow(
@@ -251,6 +252,7 @@ client.on("guildCreate", guild => {
   // Add this new guild to database
   var defaultserver = new defaultServer();
   defaultserver._id = guild.id;
+  defaultserver.name = guild.name
   defaultserver.save(function (err) {});
   console.log(
     chalk.yellow(

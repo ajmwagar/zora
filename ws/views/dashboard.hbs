@@ -15,6 +15,9 @@
                         As well
                         as view helpful statistics!<br>
                         <hr>
+                        {{#if cdserver}}
+                        <h2>Dashboard for {{cdserver.name}}</h2>
+                        {{else}}
                         <h3>Please Select a Server:</h3>
                         <form action="/setServer" method="POST" target="dummyframe">
                             {{!-- Pass token back to authenticate web request --}}
@@ -26,6 +29,8 @@
                             </select>
                             <input type="submit" class="button" value="Confirm">
                         </form>
+                        {{/if}}
+
                 </div>
             </div>
         </div>

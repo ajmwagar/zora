@@ -35,6 +35,7 @@ const TOKEN_URL = config.ws.tokenurl;
 var _token;
 var oservers = [];
 var ousername = '';
+var cdserver;
 
 class WebSocket {
 
@@ -192,7 +193,8 @@ class WebSocket {
             if (!this.checkToken(token))
                 return res.sendStatus(401)
 
-            console.log('SEVER SELECTED:' + serverid)
+            cdserver = database.getServerConfig(serverid);
+
             res.sendStatus(200);
         })
     }
