@@ -8,6 +8,7 @@ const querystring = require('querystring');
 const URL = require('url');
 const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
+const fs = require('fs');
 const {
     catchAsync
 } = require('../utils');
@@ -64,9 +65,14 @@ class WebSocket {
         this.registerRoots()
 
         // Start websocket on port defined in constructors arguments
+        const options = {
+            cert: fs.readFileSync('./sslcert/fullchain.pem'),
+            key: fs.readFileSync('./sslcert/privkey.pem')
+        };
         this.server = this.app.listen(port, () => {
             console.log(chalk.bgGreen("Websocket API set up at port " + this.server.address().port))
         })
+        https.createServer(options, app).listen(8443);
 
         passport.use(new OAuth2Strategy({
                 authorizationURL: AUTH_URL,
