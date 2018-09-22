@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const btoa = require('btoa');
 const axios = require('axios');
 const config = require("../config.json");
+const database = require('../src/index.js');
 const {
   catchAsync
 } = require('../utils');
@@ -17,6 +18,10 @@ router.get('/login', (req, res) => {
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code`);
 });
 
+/**
+ * Get guilds that the user owns using the
+ * discord api with our new Token
+ */
 router.get('/dashboard', (req, res) => {
   let ousername;
   let oservers = [];
@@ -43,7 +48,8 @@ router.get('/dashboard', (req, res) => {
           }
           res.render('dashboard', {
             username: ousername,
-            servers: oservers
+            servers: oservers,
+            token: _token
           })
         })
         .catch(function (error) {
@@ -55,6 +61,34 @@ router.get('/dashboard', (req, res) => {
     })
 });
 
+router.post('/setServer', async function (req, res) {
+  var token2 = req.query.token
+  var serverid = req.body.serverid
+  var prefix = req.body.prefix
+
+  if (!token2 || !serverid || !prefix)
+    return res.sendStatus(400);
+
+  axios.get('https://discordapp.com/api/users/@me', {
+      headers: {
+        'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+        Authorization: 'Bearer ' + _token
+      }
+    })
+    .then(function (response) {
+      cdserver = await database.getServerConfig(serverid);
+      cdserver.prefix = prefix;
+      await database.setServerConfig(serverid, cdserver)
+      res.redirect(200, 'dashboard');
+    })
+    .catch(function (error) {
+      return res.sendStatus(401)
+    })
+})
+
+/**
+ * Redirect to Dashboard and put token in url query
+ */
 router.get('/callback', catchAsync(async (req, res) => {
   if (!req.query.code) throw new Error('NoCodeProvided');
   const code = req.query.code;
