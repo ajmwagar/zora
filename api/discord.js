@@ -47,11 +47,11 @@ router.get('/dashboard', (req, res) => {
           })
         })
         .catch(function (error) {
-          res.redirect('api/discord/login');
+          res.redirect('/login');
         })
     })
     .catch(function (error) {
-      res.redirect('api/discord/login');
+      res.redirect('/login');
     })
 });
 
