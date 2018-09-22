@@ -121,7 +121,7 @@ class WebSocket {
                                 console.log(guild)
                             }
                         }
-                        return cb();
+                        return;
                     })
                     .catch(function (error) {
                         console.log(error);
