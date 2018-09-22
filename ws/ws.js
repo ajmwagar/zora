@@ -151,11 +151,11 @@ class WebSocket {
             })
         })
 
-        server.serializeClient(function (client, done) {
+        passport.serializeClient(function (client, done) {
             return done(null, client.id);
         });
 
-        server.deserializeClient(function (id, done) {
+        passport.deserializeClient(function (id, done) {
             Clients.findOne(id, function (err, client) {
                 if (err) {
                     return done(err);
