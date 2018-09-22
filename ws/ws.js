@@ -165,7 +165,11 @@ class WebSocket {
             res.render('dashboard', {
                 helpers: {
                     servers: function () {
+                        var output;
                         if (oservers) {
+                            for (var cserver in oservers) {
+                                output = oservers[cserver].name
+                            }
                             return oservers;
                         }
                     }
