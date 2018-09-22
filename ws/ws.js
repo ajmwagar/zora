@@ -195,8 +195,7 @@ class WebSocket {
                 return res.sendStatus(401)
 
             cdserver = database.getServerConfig(serverid);
-
-            res.sendStatus(200);
+            res.redirect('dashboard', 200);
         })
     }
 
