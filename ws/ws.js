@@ -90,7 +90,7 @@ class WebSocket {
                 console.log(accessToken)
                 _token = accessToken;
                 //Get userid
-                axios.post('https://discordapp.com/api/users/@me', {}, {
+                axios.get('https://discordapp.com/api/users/@me', {
                         headers: {
                             'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
                             Authorization: 'Bearer ' + _token
