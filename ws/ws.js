@@ -154,9 +154,6 @@ class WebSocket {
         console.log(chalk.bgGreen("Discord OAUTH2 Online!"));
     }
 
-    checkToken(token) {
-        return (token == _token)
-    }
     /**
      * Register root pathes
      */
@@ -188,16 +185,13 @@ class WebSocket {
         })
 
         this.app.post('/setServer', async function (req, res) {
-            checkToken(token) {
-                return (token == _token)
-            }
             var token = req.body.token
             var serverid = req.body.serverid
 
             if (!token || !serverid)
                 return res.sendStatus(400);
 
-            if (!checkToken(token))
+            if (!token == _token)
                 return res.sendStatus(401)
 
             cdserver = await database.getServerConfig(serverid);
@@ -206,9 +200,6 @@ class WebSocket {
         })
 
         this.app.post('/updateConfig', (req, res) => {
-            checkToken(token) {
-                return (token == _token)
-            }
             var token = req.body.token
             var prefix = req.body.prefix
             var serverid = req.body.serverid
@@ -216,7 +207,7 @@ class WebSocket {
             if (!token || !prefix || !serverid)
                 return res.sendStatus(400);
 
-            if (!checkToken(token))
+            if (!token == _token)
                 return res.sendStatus(401)
 
             cdserver.prefix = prefix;
