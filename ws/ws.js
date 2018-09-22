@@ -117,6 +117,7 @@ class WebSocket {
                             var guild = response.data[guildindex]
                             if (guild.owner == true) {
                                 console.log(guild)
+
                             }
                         }
                     })
@@ -167,6 +168,7 @@ class WebSocket {
 
         this.app.get('/auth/discord/callback',
             passport.authenticate('discord', {
+                successRedirect: '/',
                 failureRedirect: '/auth/discord'
             }),
             function (req, res) {
