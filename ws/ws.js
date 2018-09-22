@@ -131,6 +131,7 @@ class WebSocket {
                                 oservers.push(guild.name);
                             }
                         }
+                    }).then(function () {
                         axios.get('https://discordapp.com/api/users/@me', {
                                 headers: {
                                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
@@ -140,11 +141,11 @@ class WebSocket {
                             .then(function (response) {
                                 console.log(response.data.username)
                                 ousername = response.data.username
+                                return cb();
                             })
                             .catch(function (error) {
                                 console.log(error);
                             })
-                        return cb();
                     })
                     .catch(function (error) {
                         console.log(error);
