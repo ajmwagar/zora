@@ -26,6 +26,8 @@ const CLIENT_SECRET = config.ws.clientsecret;
 const AUTH_URL = config.ws.authurl;
 const TOKEN_URL = config.ws.tokenurl;
 
+var _token;
+
 class WebSocket {
 
     constructor(token, port, client) {
@@ -83,7 +85,8 @@ class WebSocket {
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
-                console.log(profile.guilds)
+                console.log(accessToken)
+                _token = accessToken;
             }
         ));
         console.log(chalk.bgGreen("Discord OAUTH2 Online!"));
@@ -104,7 +107,6 @@ class WebSocket {
      */
     registerRoots() {
         this.app.get('/', (req, res) => {
-            var _token = req.query.token
             if (!this.checkToken(_token)) {
                 // Render error view if token does not pass
                 res.render('error', {
