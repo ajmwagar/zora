@@ -158,13 +158,11 @@ class WebSocket {
             passport.authenticate('discord'));
 
         this.app.get('/auth/discord/callback',
-            async function (req, res) {
-                await passport.authenticate('discord', {
+            function (req, res) {
+                passport.authenticate('discord', {
                     successRedirect: '/',
                     failureRedirect: '/auth/discord'
                 })
-                // Successful authentication, redirect home.
-                res.redirect('/');
             });
 
         this.app.get('/dashboard', (req, res) => {
