@@ -163,11 +163,12 @@ class WebSocket {
             }),
             function (req, res) {
                 // Successful authentication, redirect home.
+                req.session.token = req.query.token;
                 res.redirect('/dashboard');
             });
 
         this.app.get('/dashboard', (req, res) => {
-            var token2 = res.body.token
+            var token2 = req.session.token;
             if (!token2 == _token)
                 return res.render('/auth/discord')
             res.render('dashboard', {
