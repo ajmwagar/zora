@@ -16,6 +16,9 @@ router.get('/auth/discord', (req, res) => {
     res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code&scope=guilds`);
 });
 
+router.get('/auth/discord', (req, res) => {
+    res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code&scope=guilds`);
+});
 
 router.get('/auth/discord/callback', catchAsync(async (req, res) => {
     if (!req.query.code) throw new Error('NoCodeProvided');

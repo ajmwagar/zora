@@ -28,8 +28,27 @@ const path = require('path');
 const app = express();
 const fs = require('fs');
 const https = require('https');
+const hbs = require('express-handlebars');
+const bodyParser = require("body-parser");
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+// Register Handlebars instance as view engine
+app.engine('hbs', hbs({
+    extname: 'hbs', // Extension (*.hbs Files)
+    defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
+    layoutsDir: __dirname + '/layouts', // Layouts directory -> layouts/
+}))
+
+// Set folder views/ as location for views files
+app.set('views', path.join(__dirname, 'views'))
+// Set hbs as view engine
+app.set('view engine', 'hbs')
+app.use(express.static(path.join(__dirname, 'public')))
+
+// Register bodyParser as parser for Post requests body in JSON-format
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
 
 // SSL Certs
 // TODO move into config.json
