@@ -9,6 +9,8 @@ const URL = require('url');
 const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
 const fs = require('fs');
+const axios = require('axios');
+
 const {
     catchAsync
 } = require('../utils');
@@ -81,12 +83,25 @@ class WebSocket {
                 tokenURL: TOKEN_URL,
                 clientID: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
-                scope: 'guilds',
+                scope: 'identify',
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
                 console.log(accessToken)
                 _token = accessToken;
+                //Get userid
+                axios.post('https://discordapp.com/api/users/@me', {
+                        Authorization: 'Bearer ' + _token
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+
+                res.redirect('/');
+
             }
         ));
         console.log(chalk.bgGreen("Discord OAUTH2 Online!"));
@@ -98,41 +113,16 @@ class WebSocket {
      * @param {string} _token Token from request parameter 
      * @returns {boolean} True if token is the same
      */
-    checkToken(_token) {
-        return (_token == this.token)
-    }
 
     /**
      * Register root pathes
      */
     registerRoots() {
         this.app.get('/', (req, res) => {
-            if (!this.checkToken(_token)) {
-                // Render error view if token does not pass
-                res.render('error', {
-                    title: "ERROR"
-                })
-                return
-            }
-
-            // Collect all text channels and put them into an
-            // array as object { id, name }
-            var chans = []
-            this.client.guilds.first().channels
-                .filter(c => c.type == 'text')
-                .forEach(c => {
-                    chans.push({
-                        id: c.id,
-                        name: c.name
-                    })
-                })
-
             // Render index view and pass title, token
             // and channels array
             res.render('index', {
-                title: "ZoraBOT Web Interface",
-                token: _token,
-                chans
+                title: "ZoraBOT Web Interface"
             })
         })
 
@@ -168,9 +158,6 @@ class WebSocket {
 
             if (!_token || !channelid || !text)
                 return res.sendStatus(400);
-
-            if (!this.checkToken(_token))
-                return res.sendStatus(401)
 
             var chan = this.client.guilds.first().channels.get(channelid)
 
