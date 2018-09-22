@@ -4,6 +4,7 @@ const btoa = require('btoa');
 const axios = require('axios');
 const config = require("../config.json");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -138,7 +139,6 @@ router.get('/dashboard', (req, res) => {
               oservers.push(response2.data[oguild]);
             }
           }
-          console.log(oservers)
           res.render('dashboard', {
             username: ousername,
             servers: oservers,

@@ -18,7 +18,7 @@
                         <form action="/api/discord/setServer?token={{token}}" method="POST" target="dummyframe">
                             <p>Server:</p> <select name="serverid" class="serverSelect">
                                 {{#each servers}}
-                                <option class="Serveritem" value="{{this.id}}">{{this.name}}</option>
+                                <option class="Serveritem" value="{{this.id}}">{{this.name}} - {{this.id}}</option>
                                 {{/each}}
                             </select>
                             <br><br>

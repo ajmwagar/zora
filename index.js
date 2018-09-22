@@ -33,8 +33,15 @@ const https = require('https');
 const fs = require('fs');
 const hbs = require('express-handlebars')
 const app = express();
+const bodyParser = require("body-parser");
 
 app.use(express.static(path.join(__dirname, 'static')))
+
+// Register bodyParser as parser for Post requests body in JSON-format
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
 
 // Register Handlebars instance as view engine
 app.engine('hbs', hbs({
