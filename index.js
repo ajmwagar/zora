@@ -30,6 +30,7 @@ Manager.spawn(1); // This example will spawn 2 shards (5,000 guilds);
 const express = require('express');
 const path = require('path');
 const https = require('https');
+const fs = require('fs');
 const app = express();
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
