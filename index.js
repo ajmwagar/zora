@@ -36,7 +36,7 @@ const app = express();
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
 app.get('/', (req, res) => {
-    res.status(200).sendFile('index.html');
+    res.status(200).sendFile(path.join(__dirname, './static/index.html'));
 });
 
 // SSL Certs
