@@ -42,7 +42,7 @@ app.engine('hbs', hbs({
 app.set('views', path.join(__dirname, 'views'))
 // Set hbs as view engine
 app.set('view engine', 'hbs')
-app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use('/public', express.static(path.join(__dirname, '/ws/public')))
 
 // Register bodyParser as parser for Post requests body in JSON-format
 app.use(bodyParser.urlencoded({
