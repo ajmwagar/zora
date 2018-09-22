@@ -108,7 +108,7 @@ const CLIENT_SECRET = config.ws.clientsecret;
 const redirect = encodeURIComponent('https://dta.dekutree.org/api/discord/callback');
 
 router.get('/login', (req, res) => {
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code`);
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify%20guilds&response_type=code`);
 });
 
 /**
@@ -158,21 +158,24 @@ router.post('/setServer', async function (req, res) {
   var token2 = req.query.token
   var serverid = req.body.serverid
   var prefix = req.body.prefix
+  var servers = req.body.servers;
 
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
 
-  axios.get('https://discordapp.com/api/users/@me', {
+  axios.get(`https://discordapp.com/api/guilds/${serverid}`, {
       headers: {
         'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
         Authorization: 'Bearer ' + token2
       }
     })
     .then(async function (response) {
-      cdserver = await getServerConfig(serverid);
-      cdserver.prefix = prefix;
-      await setServerConfig(serverid, cdserver)
-      res.redirect(200, 'dashboard');
+      if (servers.includes(response.data.id)) {
+        cdserver = await getServerConfig(serverid);
+        cdserver.prefix = prefix;
+        await setServerConfig(serverid, cdserver)
+        res.redirect(200, 'dashboard');
+      }
     })
     .catch(function (error) {
       return res.sendStatus(401)
