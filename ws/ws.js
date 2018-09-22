@@ -175,7 +175,7 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
-            res.render('index', {
+            res.render('dashboard', {
                 username: ousername,
                 token: _token,
                 servers: oservers
