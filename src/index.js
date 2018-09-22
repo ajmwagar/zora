@@ -14,7 +14,7 @@ const client = new Discord.Client();
 const config = require("../config.json");
 // const profiles = require("../profiles.json");
 
-var ws = new WS(config.ws.token, config.ws.port, client)
+var ws = new WS(config.ws.port, client)
 
 const DBL = require("dblapi.js");
 

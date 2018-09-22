@@ -39,8 +39,7 @@ var cdserver;
 
 class WebSocket {
 
-    constructor(token, port, client) {
-        this.token = token
+    constructor(port, client) {
         this.port = port
         this.client = client
         this.app = express()
@@ -168,6 +167,9 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
+            var token2 = res.body.token
+            if (!token2 == _token)
+                return res.render('/auth/discord')
             res.render('dashboard', {
                 username: ousername,
                 token: _token,
