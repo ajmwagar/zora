@@ -194,7 +194,7 @@ class WebSocket {
             if (!token || !serverid)
                 return res.sendStatus(400);
 
-            if (!this.checkToken(token))
+            if (!checkToken(token))
                 return res.sendStatus(401)
 
             cdserver = await database.getServerConfig(serverid);
@@ -210,7 +210,7 @@ class WebSocket {
             if (!token || !prefix || !serverid)
                 return res.sendStatus(400);
 
-            if (!this.checkToken(token))
+            if (!checkToken(token))
                 return res.sendStatus(401)
 
             cdserver.prefix = prefix;
