@@ -59,9 +59,6 @@ class WebSocket {
             defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
             layoutsDir: __dirname + '/layouts', // Layouts directory -> layouts/
             helpers: {
-                servers: function () {
-                    return 'Cannot get severs!';
-                },
                 username: function () {
                     return 'Cannot get username!';
                 }
@@ -114,44 +111,20 @@ class WebSocket {
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
-                console.log(accessToken)
                 _token = accessToken;
-                var id;
-                //Get guilds
-                axios.get('https://discordapp.com/api/users/@me/guilds', {
+                axios.get('https://discordapp.com/api/users/@me', {
                         headers: {
                             'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
                             Authorization: 'Bearer ' + _token
                         }
                     })
                     .then(function (response) {
-                        for (var guildindex in response.data) {
-                            var guild = response.data[guildindex]
-                            if (guild.owner == true) {
-                                oservers.push(guild.name);
-                            }
-                        }
-                    }).then(function () {
-                        axios.get('https://discordapp.com/api/users/@me', {
-                                headers: {
-                                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                                    Authorization: 'Bearer ' + _token
-                                }
-                            })
-                            .then(function (response) {
-                                console.log(response.data.username)
-                                ousername = response.data.username
-                                return cb();
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
+                        ousername = response.data.username
+                        return cb();
                     })
                     .catch(function (error) {
                         console.log(error);
                     })
-
-
 
             }
         ));
@@ -182,9 +155,6 @@ class WebSocket {
         this.app.get('/dashboard', (req, res) => {
             res.render('dashboard', {
                 helpers: {
-                    servers: function () {
-                        return oservers;
-                    },
                     username: function () {
                         return ousername;
                     }
