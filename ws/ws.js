@@ -10,8 +10,9 @@ const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
 const fs = require('fs');
 const axios = require('axios');
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+    UserM = require('../src/index.js').UserM,
+    ServerM = require('../src/index.js').ServerM;
 
 const {
     catchAsync
@@ -83,9 +84,6 @@ class WebSocket {
             user: config.databaseuser,
             pass: config.databasepass
         });
-        // Define models
-        const UserM = mongoose.model("Users");
-        const ServerM = mongoose.model("Servers");
 
         this.server = this.app.listen(port, () => {
             console.log(chalk.bgGreen("Websocket API set up at port " + this.server.address().port))
