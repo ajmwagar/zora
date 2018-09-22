@@ -168,7 +168,7 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
-            console.log(ousername)
+            _token = req.query.token;
             res.render('dashboard', {
                 username: ousername,
                 token: _token,
@@ -189,7 +189,6 @@ class WebSocket {
                 return res.sendStatus(401)
 
             cdserver = await database.getServerConfig(serverid);
-            console.log(cdserver);
             cdserver.prefix = prefix;
             await database.setServerConfig(serverid, cdserver)
             res.redirect(200, 'dashboard');
