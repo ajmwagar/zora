@@ -1,1 +1,28 @@
-Welcome to the dashboard!! Owned Servers: {{ servers }}
+<div id="dashboard">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Main landing Page content starts here!-->
+    <div class="content">
+        <div class="container slide-in-elliptic-top-fwd">
+            <div class="row">
+                <div class="five columns centertext">
+                    <h1>Dashboard</h1>
+                    <button class="sp-btn" onclick="window.open('https://discordapp.com/api/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot')">
+                        Invite Me!</button>
+                </div>
+                <div class="seven columns" style="text-align: left;">
+                    <p style="padding-top: 32px;">
+                        Welcome to the dashboard! Here you can easily conifgure Zora bot for your server. As well
+                        as view helpful statistics!<br>
+                        <h2>Select a server:</h2>
+                        <p>server: <select name="server" id="server">
+                                {{#each servers}}
+                                <option>{{this}}</option>
+                                {{/each}}
+                            </select>
+                        </p>
+                        <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
