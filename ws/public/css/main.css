@@ -355,16 +355,17 @@ div {
 
 .serverSelect {
     background-color: #dbdbdb;
-    height: 29px;
+    height: 49px;
     overflow: hidden;
     width: 240px;
     border: 1px solid #ff7300;
     border-radius: 2px;
+    font-size: 16px;
 }
 
 .Serveritem {
     padding-left: 25px;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .mainfooter {
