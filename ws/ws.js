@@ -9,6 +9,7 @@ const URL = require('url');
 const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
 const fs = require('fs');
+const database = require('../src/index.js');
 const axios = require('axios');
 const database = require('../src/index.js');
 const mongoose = require('mongoose'),
@@ -35,6 +36,7 @@ const TOKEN_URL = config.ws.tokenurl;
 var _token;
 var oservers = [];
 var ousername = '';
+var oserversName = [];
 
 class WebSocket {
 
@@ -62,6 +64,13 @@ class WebSocket {
             helpers: {
                 username: function () {
                     return 'Cannot get username!';
+                },
+                option: function (value, label, selectedValue) {
+                    var selectedProperty = value == selectedValue ? 'selected="selected"' : '';
+                    return new Handlebars.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
+                },
+                servers: function () {
+                    return 'Cannot get servers!;
                 }
             }
         }))
@@ -129,10 +138,12 @@ class WebSocket {
                             })
                             .then(function (response2) {
                                 for (var oguild in response2.data) {
-                                    if (response2.data[oguild].owner == true) {
-                                        oservers.push(response2.data[oguild]);
+                                    if (response2.data[oguild].owner == true || oservers.includes(response2.data[oguild].id)) {
+                                        oserversName.push(response2.data[oguild].name);
+                                        oservers.push(response2.data[oguild].id);
                                     }
                                     console.log(oservers)
+
                                 }
                                 return cb();
                             })
@@ -174,6 +185,13 @@ class WebSocket {
                 helpers: {
                     username: function () {
                         return ousername;
+                    },
+                    option: function (value, label, selectedValue) {
+                        var selectedProperty = value == selectedValue ? 'selected="selected"' : '';
+                        return new Handlebars.SafeString('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>");
+                    },
+                    servers: function () {
+                        return oserversName;
                     }
                 }
             });
