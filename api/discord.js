@@ -5,7 +5,6 @@ const axios = require('axios');
 const config = require("../config.json");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const FlakeId = require('flakeid');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -159,30 +158,27 @@ router.post('/setServer', async function (req, res) {
   var token2 = req.query.token
   var serverid = req.body.serverid
   var prefix = req.body.prefix
-  var servers = req.body.servers;
+  var severs = req.body.servers
 
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
 
-  //initiate flake
-  var flake = new FlakeId({
-    timeOffset: (2013 - 1970) * 31536000 * 1000 //optional, define a offset time
-  });
-
-  var serverflake = flake.gen()
-
-  axios.get(`https://discordapp.com/api/guilds/` + serverflake, {
+  axios.get('https://discordapp.com/api/users/@me/guilds', {
       headers: {
         'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
         Authorization: 'Bearer ' + token2
       }
     })
     .then(async function (response) {
-      if (servers.includes(response.data.id)) {
-        cdserver = await getServerConfig(serverid);
-        cdserver.prefix = prefix;
-        await setServerConfig(serverid, cdserver)
-        res.redirect(200, 'dashboard');
+      for (var oguild in response2.data) {
+        if (response2.data[oguild].owner == true) {
+          if (servers.includes(response2.data[oguild])) {
+            cdserver = await getServerConfig(serverid);
+            cdserver.prefix = prefix;
+            await setServerConfig(serverid, cdserver)
+            res.redirect(200, 'dashboard');
+          }
+        }
       }
     })
     .catch(function (error) {
