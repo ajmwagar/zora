@@ -3,6 +3,7 @@ var start = Date.now();
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const WS = require('../ws/ws')
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
@@ -12,6 +13,8 @@ const client = new Discord.Client();
 
 const config = require("../config.json");
 // const profiles = require("../profiles.json");
+
+var ws = new WS(config.ws.token, config.ws.port, client)
 
 const DBL = require("dblapi.js");
 
@@ -111,6 +114,10 @@ var defaultConfig = new Schema({
   modlogChannel: {
     type: String,
     default: "modlog"
+  },
+  welcomes: {
+    type: Boolean,
+    default: false
   },
   reddit: {
     subreddits: [],
@@ -326,14 +333,26 @@ client.on("guildDelete", guild => {
 
 // This is called as, for instance:
 client.on("guildMemberAdd", member => {
-  const channel = getDefaultChannel(member.guild);
-  channel.send(`Welcome ${member} to the server, wooh!`);
+  let welcomestate = false;
+  ServerM.findById(member.guild.id, function (err, server) {
+    welcomestate = server.welcomes;
+  });
+  if (welcomestate == true) {
+    const channel = getDefaultChannel(member.guild);
+    channel.send(`Welcome ${member} to the server, wooh!`);
+  }
 });
 
 client.on("guildMemberRemove", member => {
-  const channel = getDefaultChannel(member.guild);
-  if (channel.send) {
-    channel.send(`Farewell, ${member} will be missed!`);
+  let welcomestate = false;
+  ServerM.findById(member.guild.id, function (err, server) {
+    welcomestate = server.welcomes;
+  });
+  if (welcomestate == true) {
+    const channel = getDefaultChannel(member.guild);
+    if (channel.send) {
+      channel.send(`Farewell, ${member} will be missed!`);
+    }
   }
 });
 
