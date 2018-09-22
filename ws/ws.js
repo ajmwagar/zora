@@ -113,7 +113,9 @@ class WebSocket {
                         }
                     })
                     .then(function (response) {
-                        console.log(response)
+                        for (var guild in response.data) {
+                            console.log(guild)
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);
