@@ -29,6 +29,7 @@ const AUTH_URL = config.ws.authurl;
 const TOKEN_URL = config.ws.tokenurl;
 
 var _token;
+var cres;
 
 class WebSocket {
 
@@ -98,6 +99,7 @@ class WebSocket {
                     })
                     .then(function (response) {
                         console.log(response.data.id);
+                        cres.redirect('/');
 
                     })
                     .catch(function (error) {
@@ -146,29 +148,13 @@ class WebSocket {
         this.app.get('/auth/discord/callback', (req, res) => {
             passport.authenticate('discord', {
                 failureRedirect: '/auth/discord'
-            }).then(() => {
-                res.redirect('/');
             });
+            cres = res;
         });
 
 
-        this.app.post('/sendMessage', (req, res) => {
-            var _token = req.body.token
-            var channelid = req.body.channelid
-            var text = req.body.text
+        this.app.get('/dashboard', (req, res) => {
 
-            if (!_token || !channelid || !text)
-                return res.sendStatus(400);
-
-            var chan = this.client.guilds.first().channels.get(channelid)
-
-            // catch post request and if token passes,
-            // send message into selected channel
-            if (chan) {
-                chan.send(text)
-                res.sendStatus(200)
-            } else
-                res.sendStatus(406)
         })
     }
 
