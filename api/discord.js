@@ -165,7 +165,7 @@ router.post('/setServer', async function (req, res) {
   axios.get('https://discordapp.com/api/users/@me', {
       headers: {
         'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-        Authorization: 'Bearer ' + _token
+        Authorization: 'Bearer ' + token2
       }
     })
     .then(async function (response) {
