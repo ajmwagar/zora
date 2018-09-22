@@ -144,14 +144,6 @@ class WebSocket {
      * Register root pathes
      */
     registerRoots() {
-        this.app.get('/', (req, res) => {
-            // Render index view and pass title, token
-            // and channels array
-            res.render('index', {
-                title: "ZoraBOT Web Interface"
-            })
-        })
-
         this.app.get('/health-check', (req, res) => res.sendStatus(200));
 
         this.app.get('/auth/discord',
