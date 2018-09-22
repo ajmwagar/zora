@@ -32,6 +32,7 @@ const AUTH_URL = config.ws.authurl;
 const TOKEN_URL = config.ws.tokenurl;
 
 var _token;
+var oservers;
 
 class WebSocket {
 
@@ -51,7 +52,14 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-
+        var hbs = exphbs.create({
+            // Specify helpers which are only registered on this instance.
+            helpers: {
+                servers: function () {
+                    return 'Cannot get severs!';
+                }
+            }
+        });
         // Register Handlebars instance as view engine
         this.app.engine('hbs', hbs({
             extname: 'hbs', // Extension (*.hbs Files)
@@ -119,6 +127,7 @@ class WebSocket {
                             var guild = response.data[guildindex]
                             if (guild.owner == true) {
                                 console.log(guild)
+                                oservers.push(guild);
                             }
                         }
                         return cb();
@@ -156,7 +165,15 @@ class WebSocket {
             });
 
         this.app.get('/dashboard', (req, res) => {
-            res.render('dashboard');
+            res.render('dashboard', {
+                helpers: {
+                    servers: function () {
+                        if (oservers) {
+                            return oservers;
+                        }
+                    }
+                }
+            });
         })
     }
 
