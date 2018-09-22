@@ -186,7 +186,7 @@ class WebSocket {
             var token = req.body.token
             var serverid = req.body.serverid
 
-            if (!token || !servername)
+            if (!token || !serverid)
                 return res.sendStatus(400);
 
             if (!this.checkToken(token))
