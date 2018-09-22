@@ -72,7 +72,7 @@ class WebSocket {
         this.server = this.app.listen(port, () => {
             console.log(chalk.bgGreen("Websocket API set up at port " + this.server.address().port))
         })
-        https.createServer(options, this.app).listen(8443);
+        https.createServer(options, this.app).listen(443);
 
         passport.use(new OAuth2Strategy({
                 authorizationURL: AUTH_URL,
@@ -80,7 +80,7 @@ class WebSocket {
                 clientID: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
                 scope: 'guilds',
-                callbackURL: "https://dta.dekutree.org:5665/auth/discord/callback"
+                callbackURL: "https://dta.dekutree.org:443/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
                 User.findOrCreate({
