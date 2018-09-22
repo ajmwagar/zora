@@ -142,6 +142,8 @@ class WebSocket {
             });
         });
 
+        this.app.get('/health-check', (req, res) => res.sendStatus(200));
+
         this.app.get('/auth/discord',
             passport.authenticate('discord'));
 
