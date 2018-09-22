@@ -180,8 +180,14 @@ class WebSocket {
 
         this.app.get('/dashboard', (req, res) => {
             res.render('dashboard', {
-                servers: oservers,
-                username: ousername
+                helpers: {
+                    servers: function () {
+                        return oservers;
+                    },
+                    username: function () {
+                        return ousername;
+                    }
+                }
             });
         })
     }
