@@ -151,15 +151,18 @@ class WebSocket {
             })
         })
 
-        passport.serializeUser(function (user, done) {
-            done(null, user.id);
+        server.serializeClient(function (client, done) {
+            return done(null, client.id);
         });
 
-        passport.deserializeUser(function (id, done) {
-            User.findById(id, function (err, user) {
-                done(err, user);
+        server.deserializeClient(function (id, done) {
+            Clients.findOne(id, function (err, client) {
+                if (err) {
+                    return done(err);
+                }
+                return done(null, client);
             });
-        });
+        })
 
         this.app.get('/health-check', (req, res) => res.sendStatus(200));
 
