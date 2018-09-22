@@ -18,14 +18,14 @@
                         <form action="/setServer" method="POST" target="dummyframe">
                             {{!-- Pass token back to authenticate web request --}}
                             <input type="hidden" name="token" value="{{ token }}" />
-                            <select name="serverid" class="serverSelect">
+                            <p>Server:</p> <select name="serverid" class="serverSelect">
                                 {{#each servers}}
                                 <option class="Serveritem" value="{{this.id}}">{{this.name}}</option>
                                 {{/each}}
-                                <br><br>
-                                <p>Prefix:</p> <input type="text" name="prefix"><br><br>
-                                <p>Modlog Channel:</p> <input type="text" name="modlog"><br><br>
                             </select>
+                            <br><br>
+                            <p>Prefix:</p> <input type="text" name="prefix"><br><br>
+                            <p>Modlog Channel:</p> <input type="text" name="modlog"><br><br>
                             <input type="submit" class="sp-btn" value="Submit">
                         </form>
                 </div>

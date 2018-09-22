@@ -353,6 +353,22 @@ div {
     }
 }
 
+input[type="submit"] {
+    background-color: #d6b4a4;
+    color: #722424;
+    font-size: 35px;
+    padding-top: 5px;
+    padding-bottom: 60px;
+    padding-left: 35px;
+    padding-right: 35px;
+    border: none;
+    font-family: 'Archivo Narrow',
+        sans-serif;
+    transition: 0.2s;
+    border-radius: 2px;
+    box-shadow: 0px 10px 0px #c55b2a;
+}
+
 .serverSelect {
     background-color: #dbdbdb;
     height: 49px;
