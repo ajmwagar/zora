@@ -180,6 +180,7 @@ class WebSocket {
                         return ousername;
                     },
                     servers: function () {
+                        console.log(oserversName)
                         return oserversName;
                     }
                 }
