@@ -155,14 +155,18 @@ class WebSocket {
         this.app.get('/health-check', (req, res) => res.sendStatus(200));
 
         this.app.get('/auth/discord',
-            passport.authenticate('discord'));
+            passport.authenticate('discord', {
+                display: 'popup'
+            }));
 
         this.app.get('/auth/discord/callback',
+            passport.authenticate('discord', {
+                successRedirect: '/',
+                failureRedirect: '/auth/discord'
+            }),
             function (req, res) {
-                passport.authenticate('discord', {
-                    successRedirect: '/',
-                    failureRedirect: '/auth/discord'
-                })
+                // Successful authentication, redirect home.
+                res.redirect('/');
             });
 
         this.app.get('/dashboard', (req, res) => {
