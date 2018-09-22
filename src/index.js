@@ -181,6 +181,7 @@ async function setServerConfig(id, newconfig) {
     server = newconfig;
     server.save();
   });
+  return;
 }
 
 client.on("ready", () => {

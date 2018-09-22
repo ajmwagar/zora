@@ -184,7 +184,7 @@ class WebSocket {
             })
         })
 
-        this.app.post('/setServer', (req, res) => {
+        this.app.post('/setServer', async function (req, res) {
             var token = req.body.token
             var serverid = req.body.serverid
 
@@ -194,7 +194,7 @@ class WebSocket {
             if (!this.checkToken(token))
                 return res.sendStatus(401)
 
-            cdserver = database.getServerConfig(serverid);
+            cdserver = await database.getServerConfig(serverid);
             console.log(cdserver);
             res.redirect(200, 'dashboard');
         })
