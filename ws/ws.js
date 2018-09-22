@@ -29,7 +29,6 @@ const AUTH_URL = config.ws.authurl;
 const TOKEN_URL = config.ws.tokenurl;
 
 var _token;
-var cres;
 
 class WebSocket {
 
@@ -99,7 +98,6 @@ class WebSocket {
                     })
                     .then(function (response) {
                         console.log(response.data.id);
-                        cres.redirect('/');
 
                     })
                     .catch(function (error) {
@@ -145,12 +143,14 @@ class WebSocket {
         this.app.get('/auth/discord',
             passport.authenticate('discord'));
 
-        this.app.get('/auth/discord/callback', (req, res) => {
+        this.app.get('/auth/discord/callback',
             passport.authenticate('discord', {
                 failureRedirect: '/auth/discord'
+            }),
+            function (req, res) {
+                // Successful authentication, redirect home.
+                res.redirect('/');
             });
-            cres = res;
-        });
 
 
         this.app.get('/dashboard', (req, res) => {
