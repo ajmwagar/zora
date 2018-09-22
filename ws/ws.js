@@ -83,72 +83,9 @@ class WebSocket {
             user: config.databaseuser,
             pass: config.databasepass
         });
-
-        // Default server configuration (also used with .clearcfg)
-        var defaultConfig = new Schema({
-            name: {
-                type: String,
-                default: config.name
-            },
-            _id: Schema.Types.Decimal128,
-            prefix: {
-                type: String,
-                default: "+"
-            },
-            modlogChannel: {
-                type: String,
-                default: "modlog"
-            },
-            welcomes: {
-                type: Boolean,
-                default: false
-            },
-            reddit: {
-                subreddits: [],
-                posts: {
-                    type: String,
-                    default: 3
-                },
-                channel: {
-                    type: String,
-                    default: "memes"
-                },
-                interval: {
-                    type: Number,
-                    default: 1
-                }
-            },
-            automod: {
-                bannedwords: []
-            }
-        });
-
-        // Default user profile config
-        var defaultprofile = new Schema({
-            level: {
-                type: Number,
-                default: "1"
-            },
-            username: String,
-            xp: {
-                type: Number,
-                default: "0"
-            },
-            zcoins: {
-                type: Number,
-                default: "100"
-            },
-            VIP: {
-                type: Boolean,
-                default: false
-            },
-            inventory: [],
-            _id: Schema.Types.Decimal128
-        });
-
         // Define models
-        const UserM = mongoose.model("Users", defaultprofile);
-        const ServerM = mongoose.model("Servers", defaultConfig);
+        const UserM = mongoose.model("Users");
+        const ServerM = mongoose.model("Servers");
 
         this.server = this.app.listen(port, () => {
             console.log(chalk.bgGreen("Websocket API set up at port " + this.server.address().port))
