@@ -90,8 +90,10 @@ class WebSocket {
                 console.log(accessToken)
                 _token = accessToken;
                 //Get userid
-                axios.post('https://discordapp.com/api/users/@me', {
-                        Authorization: 'Bearer ' + _token
+                axios.post('https://discordapp.com/api/users/@me', {}, {
+                        headers: {
+                            Authorization: 'Bearer ' + _token
+                        }
                     })
                     .then(function (response) {
                         console.log(response);
@@ -99,8 +101,6 @@ class WebSocket {
                     .catch(function (error) {
                         console.log(error);
                     })
-
-                res.redirect('/');
 
             }
         ));
