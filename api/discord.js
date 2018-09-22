@@ -1,6 +1,7 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const btoa = require('btoa');
+const axios = require('axios');
 const config = require("../config.json");
 const {
   catchAsync
@@ -17,9 +18,41 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/dashboard', (req, res) => {
-  res.render('dashboard', {
-
-  })
+  let ousername;
+  let oservers;
+  let _token = req.query.token;
+  axios.get('https://discordapp.com/api/users/@me', {
+      headers: {
+        'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+        Authorization: 'Bearer ' + _token
+      }
+    })
+    .then(function (response) {
+      ousername = response.data.username;
+      axios.get('https://discordapp.com/api/users/@me/guilds', {
+          headers: {
+            'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+            Authorization: 'Bearer ' + _token
+          }
+        })
+        .then(function (response2) {
+          for (var oguild in response2.data) {
+            if (response2.data[oguild].owner == true) {
+              oservers.push(response2.data[oguild]);
+            }
+          }
+          res.render('dashboard', {
+            username: ousername,
+            servers: oservers
+          })
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
 });
 
 router.get('/callback', catchAsync(async (req, res) => {
@@ -33,7 +66,7 @@ router.get('/callback', catchAsync(async (req, res) => {
     },
   });
   const json = await response.json();
-  res.redirect(`/dashboard?token=${json.access_token}`);
+  res.redirect(`/api/discord/dashboard?token=${json.access_token}`);
 }));
 
 module.exports = router;
