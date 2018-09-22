@@ -52,19 +52,16 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-        var hbs = hbs.create({
-            // Specify helpers which are only registered on this instance.
+        // Register Handlebars instance as view engine
+        this.app.engine('hbs', hbs({
+            extname: 'hbs', // Extension (*.hbs Files)
+            defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
+            layoutsDir: __dirname + '/layouts', // Layouts directory -> layouts/
             helpers: {
                 servers: function () {
                     return 'Cannot get severs!';
                 }
             }
-        });
-        // Register Handlebars instance as view engine
-        this.app.engine('hbs', hbs({
-            extname: 'hbs', // Extension (*.hbs Files)
-            defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
-            layoutsDir: __dirname + '/layouts' // Layouts directory -> layouts/
         }))
         // Set folder views/ as location for views files
         this.app.set('views', path.join(__dirname, 'views'))
