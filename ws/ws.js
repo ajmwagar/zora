@@ -60,10 +60,6 @@ class WebSocket {
             helpers: {
                 servers: function () {
                     return 'Cannot get severs!';
-                },
-                option: function (value, label, selectedValue) {
-                    var selectedProperty = value == selectedValue ? 'selected="selected"' : '';
-                    return ('<option value="' + value + '"' + selectedProperty + '>' + label + "</option>")
                 }
             }
         }))
