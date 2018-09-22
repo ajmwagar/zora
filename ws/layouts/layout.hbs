@@ -5,34 +5,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
-    <link rel="stylesheet" type="text/css" href="/css/main.css" />
-    <link rel="stylesheet" type="text/css" href="/css/skeleton.css" />
-    <link rel="stylesheet" type="text/css" href="/css/normalize.css" />
 </head>
 
 <body>
     {{{ body }}}
-    <script>
-        // paralax background
-        (function () {
-            var parallax = document.querySelectorAll("body"),
-                speed = 0.5;
-            [].slice.call(parallax).forEach(function (el, i) {
-                var windowYOffset = window.pageYOffset,
-                    elBackgrounPos = "50% " + windowYOffset * speed + "px";
-
-                el.style.backgroundPosition = elBackgrounPos;
-            });
-            window.onscroll = function () {
-                [].slice.call(parallax).forEach(function (el, i) {
-                    var windowYOffset = window.pageYOffset,
-                        elBackgrounPos = "50% " + windowYOffset * speed + "px";
-
-                    el.style.backgroundPosition = elBackgrounPos;
-                });
-            };
-        })();
-    </script>
 </body>
 
 </html>
