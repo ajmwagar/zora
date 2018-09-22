@@ -138,7 +138,7 @@ class WebSocket {
                                 }
                             })
                             .then(function (response) {
-                                console.log(guild)
+                                console.log(response.data.username)
                                 ousername = response.data.username
                                 return cb();
                             })
