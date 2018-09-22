@@ -138,6 +138,7 @@ router.get('/dashboard', (req, res) => {
               oservers.push(response2.data[oguild]);
             }
           }
+          console.log(oservers)
           res.render('dashboard', {
             username: ousername,
             servers: oservers,
