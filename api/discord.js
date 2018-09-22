@@ -170,6 +170,8 @@ router.post('/setServer', async function (req, res) {
       }
     })
     .then(async function (response) {
+      console.log(response)
+      console.log(servers)
       if (servers.includes(response.data.id)) {
         cdserver = await getServerConfig(serverid);
         cdserver.prefix = prefix;
