@@ -1,185 +1,33 @@
-const express = require('express')
-const hbs = require('express-handlebars')
-const bodyParser = require("body-parser");
-const path = require('path')
-const chalk = require('chalk')
-const https = require('https');
-const querystring = require('querystring');
-const URL = require('url');
-const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
-const passport = require('passport');
-const fs = require('fs');
-const axios = require('axios');
-const database = require('../src/index.js');
-const cookieSession = require('cookie-session')
-const mongoose = require('mongoose'),
-    UserM = require('../src/index.js').UserM,
-    ServerM = require('../src/index.js').ServerM;
-
+const express = require('express');
+const fetch = require('node-fetch');
+const btoa = require('btoa');
+const config = require("../config.json");
 const {
     catchAsync
 } = require('../utils');
-const config = require("../config.json");
 
-/**
- * Websocket class.
- * @param {string}         token  Token to authenticate at the web interface
- * @param {number}         port   Port to access web interface
- * @param {discord.Client} client Discord client instance to access the discord bot
- */
+const router = express.Router();
 
 const CLIENT_ID = config.ws.clientid;
 const CLIENT_SECRET = config.ws.clientsecret;
-const AUTH_URL = config.ws.authurl;
-const TOKEN_URL = config.ws.tokenurl;
+const redirect = encodeURIComponent('https://localhost/auth/discord/callback');
 
-var _token;
-var oservers = [];
-var ousername = '';
-var cdserver;
+router.get('/auth/discord', (req, res) => {
+    res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&scope=identify&response_type=code&scope=guilds`);
+});
 
-class WebSocket {
+router.get('/auth/discord/callback', catchAsync(async (req, res) => {
+    if (!req.query.code) throw new Error('NoCodeProvided');
+    const code = req.query.code;
+    const creds = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
+    const response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${creds}`,
+        },
+    });
+    const json = await response.json();
+    res.redirect(`/?token=${json.access_token}`);
+}));
 
-    constructor(port, client) {
-        this.port = port
-        this.client = client
-        this.app = express()
-        this.app.use(require('cookie-parser')());
-        this.app.use(require('body-parser').urlencoded({
-            extended: true
-        }));
-        this.app.use(require('express-session')({
-            secret: 'zorabot2345555',
-            resave: true,
-            saveUninitialized: true
-        }));
-        this.app.use(passport.initialize());
-        this.app.use(passport.session());
-
-        // Register Handlebars instance as view engine
-        this.app.engine('hbs', hbs({
-            extname: 'hbs', // Extension (*.hbs Files)
-            defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
-            layoutsDir: __dirname + '/layouts', // Layouts directory -> layouts/
-        }))
-
-        // Set folder views/ as location for views files
-        this.app.set('views', path.join(__dirname, 'views'))
-        // Set hbs as view engine
-        this.app.set('view engine', 'hbs')
-        // Set public/ as public files root
-        this.app.use(express.static(path.join(__dirname, 'public')))
-        // Register bodyParser as parser for Post requests body in JSON-format
-        this.app.use(bodyParser.urlencoded({
-            extended: false
-        }));
-        this.app.use(bodyParser.json());
-
-        this.registerRoots()
-
-        // Start websocket on port defined in constructors arguments
-
-        // SSL Certs
-        // TODO move into config.json
-        const options = {
-            cert: fs.readFileSync('./sslcert/fullchain.pem'),
-            key: fs.readFileSync('./sslcert/privkey.pem')
-        };
-        // URL that points to MongoDB database
-        var url = "mongodb://localhost:27017/zora";
-
-        // Connect/Create MongoDB database
-        mongoose.connect(url, {
-            user: config.databaseuser,
-            pass: config.databasepass
-        });
-
-        this.server = this.app.listen(port, () => {
-            console.log(chalk.bgGreen("HTTP server set up at port " + this.server.address().port))
-        })
-        https.createServer(options, this.app).listen(443);
-        console.log(chalk.bgGreen("HTTPS server set up at port 443"))
-
-        passport.use(new OAuth2Strategy({
-                authorizationURL: AUTH_URL,
-                tokenURL: TOKEN_URL,
-                clientID: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                scope: 'identify guilds',
-                callbackURL: "https://dta.dekutree.org/auth/discord/callback"
-            },
-            function (accessToken, refreshToken, profile, cb) {
-                oservers.length = 0;
-                ousername = '';
-                cdserver = null;
-                _token = accessToken;
-                axios.get('https://discordapp.com/api/users/@me', {
-                        headers: {
-                            'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                            Authorization: 'Bearer ' + _token
-                        }
-                    })
-                    .then(function (response) {
-                        ousername = response.data.username;
-                        axios.get('https://discordapp.com/api/users/@me/guilds', {
-                                headers: {
-                                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                                    Authorization: 'Bearer ' + _token
-                                }
-                            })
-                            .then(function (response2) {
-                                for (var oguild in response2.data) {
-                                    if (response2.data[oguild].owner == true) {
-                                        oservers.push(response2.data[oguild]);
-                                    }
-                                }
-                                return cb();
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    })
-            }
-        ));
-        console.log(chalk.bgGreen("Discord OAUTH2 Online!"));
-    }
-
-    /**
-     * Register root pathes
-     */
-    registerRoots() {
-        this.app.get('/health-check', (req, res) => res.sendStatus(200));
-
-        this.app.get('/auth/discord',
-            passport.authenticate('discord', {
-                display: 'popup'
-            }));
-
-        this.app.get('/auth/discord/callback', passport.authenticate('discord'), (req, res) => {
-            res.render('dashboard', {
-                username: ousername,
-                servers: oservers,
-                cdserver: cdserver
-            })
-        });
-
-        this.app.post('/setServer', async function (req, res) {
-            var serverid = req.body.serverid
-            var prefix = req.body.prefix
-
-            if (!serverid)
-                return res.sendStatus(400);
-
-            cdserver = await database.getServerConfig(serverid);
-            cdserver.prefix = prefix;
-            await database.setServerConfig(serverid, cdserver)
-            res.redirect(200, 'dashboard');
-        })
-    }
-
-}
-
-module.exports = WebSocket
+module.exports = router;
