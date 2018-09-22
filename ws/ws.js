@@ -179,7 +179,8 @@ class WebSocket {
             res.render('dashboard', {
                 username: ousername,
                 token: _token,
-                servers: oservers
+                servers: oservers,
+                cdserver: cdserver
             })
         })
 
