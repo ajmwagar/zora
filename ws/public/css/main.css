@@ -5,7 +5,8 @@
     font-style: normal;
 }
 
-@import url('https://fonts.googleapis.com/css?family=Archivo+Narrow|Oswald');
+@import url('https://fonts.googleapis.com/css?family=Oswald');
+@import url('https://fonts.googleapis.com/css?family=Archivo+Narrow');
 
 body {
     background-image: url("images/bg.jpg");
