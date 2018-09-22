@@ -11,6 +11,7 @@ const passport = require('passport');
 const fs = require('fs');
 const axios = require('axios');
 const database = require('../src/index.js');
+const cookieSession = require('cookie-session')
 const mongoose = require('mongoose'),
     UserM = require('../src/index.js').UserM,
     ServerM = require('../src/index.js').ServerM;
@@ -157,20 +158,14 @@ class WebSocket {
             }));
 
         this.app.get('/auth/discord/callback',
-            passport.authenticate('discord', {
-                successRedirect: '/dashboard',
-                failureRedirect: '/dashboard'
-            }),
+            passport.authenticate('discord', {}),
             function (req, res) {
                 // Successful authentication, redirect home.
-                req.session.token = req.query.token;
-                res.redirect('/dashboard');
+
+                res.send('Callback!');
             });
 
         this.app.get('/dashboard', (req, res) => {
-            var token2 = req.session.token;
-            if (!token2 == _token)
-                return res.render('/auth/discord')
             res.render('dashboard', {
                 username: ousername,
                 token: _token,
