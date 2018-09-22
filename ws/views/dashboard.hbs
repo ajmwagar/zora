@@ -16,8 +16,6 @@
                         <hr>
                         <h3>Dashboard:</h3>
                         <form action="/setServer" method="POST" target="dummyframe">
-                            {{!-- Pass token back to authenticate web request --}}
-                            <input type="hidden" name="token" value="{{ token }}" />
                             <p>Server:</p> <select name="serverid" class="serverSelect">
                                 {{#each servers}}
                                 <option class="Serveritem" value="{{this.id}}">{{this.name}}</option>

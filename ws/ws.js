@@ -55,6 +55,13 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
+        app.use(cookieSession({
+            name: 'session',
+            keys: [ /* secret keys */ ],
+
+            // Cookie Options
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        }))
         // Register Handlebars instance as view engine
         this.app.engine('hbs', hbs({
             extname: 'hbs', // Extension (*.hbs Files)
@@ -108,7 +115,6 @@ class WebSocket {
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
-                console.log(profile)
                 oservers.length = 0;
                 ousername = '';
                 cdserver = null;
@@ -159,28 +165,19 @@ class WebSocket {
             }));
 
         this.app.get('/auth/discord/callback', passport.authenticate('discord'), (req, res) => {
-            res.send('callback!')
-        });
-
-        this.app.get('/dashboard', (req, res) => {
             res.render('dashboard', {
                 username: ousername,
-                token: _token,
                 servers: oservers,
                 cdserver: cdserver
             })
-        })
+        });
 
         this.app.post('/setServer', async function (req, res) {
-            var token2 = req.body.token
             var serverid = req.body.serverid
             var prefix = req.body.prefix
 
-            if (!token2 || !serverid)
+            if (!serverid)
                 return res.sendStatus(400);
-
-            if (!token2 == _token)
-                return res.sendStatus(401)
 
             cdserver = await database.getServerConfig(serverid);
             cdserver.prefix = prefix;
