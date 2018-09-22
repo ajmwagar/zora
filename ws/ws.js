@@ -10,6 +10,7 @@ const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
 const fs = require('fs');
 const axios = require('axios');
+const mongoose = require("mongoose");
 
 const {
     catchAsync
@@ -73,6 +74,81 @@ class WebSocket {
             cert: fs.readFileSync('./sslcert/fullchain.pem'),
             key: fs.readFileSync('./sslcert/privkey.pem')
         };
+        // URL that points to MongoDB database
+        var url = "mongodb://localhost:27017/zora";
+
+        // Connect/Create MongoDB database
+        mongoose.connect(url, {
+            user: config.databaseuser,
+            pass: config.databasepass
+        });
+
+        // Default server configuration (also used with .clearcfg)
+        var defaultConfig = new Schema({
+            name: {
+                type: String,
+                default: config.name
+            },
+            _id: Schema.Types.Decimal128,
+            prefix: {
+                type: String,
+                default: "+"
+            },
+            modlogChannel: {
+                type: String,
+                default: "modlog"
+            },
+            welcomes: {
+                type: Boolean,
+                default: false
+            },
+            reddit: {
+                subreddits: [],
+                posts: {
+                    type: String,
+                    default: 3
+                },
+                channel: {
+                    type: String,
+                    default: "memes"
+                },
+                interval: {
+                    type: Number,
+                    default: 1
+                }
+            },
+            automod: {
+                bannedwords: []
+            }
+        });
+
+        // Default user profile config
+        var defaultprofile = new Schema({
+            level: {
+                type: Number,
+                default: "1"
+            },
+            username: String,
+            xp: {
+                type: Number,
+                default: "0"
+            },
+            zcoins: {
+                type: Number,
+                default: "100"
+            },
+            VIP: {
+                type: Boolean,
+                default: false
+            },
+            inventory: [],
+            _id: Schema.Types.Decimal128
+        });
+
+        // Define models
+        const UserM = mongoose.model("Users", defaultprofile);
+        const ServerM = mongoose.model("Servers", defaultConfig);
+
         this.server = this.app.listen(port, () => {
             console.log(chalk.bgGreen("Websocket API set up at port " + this.server.address().port))
         })
@@ -89,21 +165,43 @@ class WebSocket {
             function (accessToken, refreshToken, profile, cb) {
                 console.log(accessToken)
                 _token = accessToken;
+                var id;
                 //Get userid
-                axios.get('https://discordapp.com/api/users/@me', {
+                axios.get('https://discordapp.com/api/users/@me/guilds', {
                         headers: {
                             'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
                             Authorization: 'Bearer ' + _token
                         }
                     })
                     .then(function (response) {
-                        console.log(response.data.id);
+                        var guilds = response.data.guilds;
                         console.log(response.data)
-
+                        axios.get('https://discordapp.com/api/users/@me', {
+                                headers: {
+                                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                                    Authorization: 'Bearer ' + _token
+                                }
+                            })
+                            .then(function (response) {
+                                id = response.data.id;
+                                console.log(response.data)
+                                ServerM.findById(id, function (err, server) {
+                                    for (var guild in guilds) {
+                                        if (guild.owner == true) {
+                                            console.log(server)
+                                        }
+                                    }
+                                });
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
                     })
                     .catch(function (error) {
                         console.log(error);
                     })
+
+
 
             }
         ));
