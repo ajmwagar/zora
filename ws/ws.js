@@ -108,6 +108,7 @@ class WebSocket {
                 callbackURL: "https://dta.dekutree.org/auth/discord/callback"
             },
             function (accessToken, refreshToken, profile, cb) {
+                console.log(profile)
                 oservers.length = 0;
                 ousername = '';
                 cdserver = null;
@@ -157,7 +158,7 @@ class WebSocket {
                 display: 'popup'
             }));
 
-        this.app.get('/auth/discord/callback', (req, res) => {
+        this.app.get('/auth/discord/callback', passport.authenticate('discord'), (req, res) => {
             res.send('callback!')
         });
 
