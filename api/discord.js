@@ -163,15 +163,13 @@ router.post('/setServer', async function (req, res) {
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
 
-  axios.get(`https://discordapp.com/api/guilds/${serverid}`, {
+  axios.get(`https://discordapp.com/api/guilds/` + serverid, {
       headers: {
         'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
         Authorization: 'Bearer ' + token2
       }
     })
     .then(async function (response) {
-      console.log(response)
-      console.log(servers)
       if (servers.includes(response.data.id)) {
         cdserver = await getServerConfig(serverid);
         cdserver.prefix = prefix;
