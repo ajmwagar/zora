@@ -170,7 +170,7 @@ class WebSocket {
                             for (var cserver in oservers) {
                                 output = oservers[cserver].name
                             }
-                            return oservers;
+                            return output;
                         }
                     }
                 }
