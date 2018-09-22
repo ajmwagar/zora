@@ -10,6 +10,7 @@ const OAuth2Strategy = require('passport-discord-oauth2').Strategy;
 const passport = require('passport');
 const fs = require('fs');
 const axios = require('axios');
+const database = require('../src/index.js');
 const mongoose = require('mongoose'),
     UserM = require('../src/index.js').UserM,
     ServerM = require('../src/index.js').ServerM;
@@ -120,12 +121,26 @@ class WebSocket {
                     })
                     .then(function (response) {
                         ousername = response.data.username
-                        return cb();
+                        axios.get('https://discordapp.com/api/users/@me/guilds', {
+                                headers: {
+                                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                                    Authorization: 'Bearer ' + _token
+                                }
+                            })
+                            .then(function (response2) {
+                                for (var oguild in response2.data) {
+                                    oservers.push(response2.data[oguild]);
+                                    console.log(response2.data[oguild].id)
+                                }
+                                return cb();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
                     })
                     .catch(function (error) {
                         console.log(error);
                     })
-
             }
         ));
         console.log(chalk.bgGreen("Discord OAUTH2 Online!"));

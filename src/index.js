@@ -168,6 +168,12 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
+async function getServerConfig(id) {
+  return await ServerM.findById(id, function (err, server) {
+    return server;
+  });
+}
+
 client.on("ready", () => {
   // Set activity
   setInterval(function () {
@@ -231,23 +237,6 @@ client.on("ready", () => {
       }
     });
   }
-  // Example of changing the bot's playing game to something useful. `client.user` is what the
-  // docs refer to as the "ClientUser".
-
-  fs.exists("bugs.json", function (exists) {
-    if (!exists) {
-      var fileContent = {
-        servers: {}
-      };
-      var filepath = "bugs.json";
-
-      fs.writeFile(filepath, fileContent, err => {
-        if (err) throw err;
-
-        console.log("Bugs file generated at bugs.json");
-      });
-    }
-  });
 });
 
 client.on("guildCreate", guild => {
@@ -651,3 +640,5 @@ module.exports.ServerM = ServerM;
 module.exports.UserM = UserM
 module.exports.defaultConfig = defaultConfig;
 module.exports.defaultprofile = defaultprofile;
+
+module.exports.getServerConfig = getServerConfig;
