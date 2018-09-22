@@ -51,6 +51,11 @@ class WebSocket {
         }));
         this.app.use(passport.initialize());
         this.app.use(passport.session());
+
+        passport.serializeUser(function (user, done) {
+            done(null, user.id);
+        });
+
         // Register Handlebars instance as view engine
         this.app.engine('hbs', hbs({
             extname: 'hbs', // Extension (*.hbs Files)
@@ -151,19 +156,6 @@ class WebSocket {
             })
         })
 
-        passport.serializeClient(function (client, done) {
-            return done(null, client.id);
-        });
-
-        passport.deserializeClient(function (id, done) {
-            Clients.findOne(id, function (err, client) {
-                if (err) {
-                    return done(err);
-                }
-                return done(null, client);
-            });
-        })
-
         this.app.get('/health-check', (req, res) => res.sendStatus(200));
 
         this.app.get('/auth/discord',
@@ -178,7 +170,6 @@ class WebSocket {
                 // Successful authentication, redirect home.
                 res.redirect('/');
             });
-
 
         this.app.get('/dashboard', (req, res) => {
 
