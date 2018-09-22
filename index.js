@@ -33,11 +33,7 @@ const https = require('https');
 const fs = require('fs');
 const app = express();
 
-app.use('/static', express.static(path.join(__dirname, 'static')));
-
-app.get('/', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, './static/index.html'));
-});
+app.use('/', express.static(path.join(__dirname, 'static')));
 
 // SSL Certs
 // TODO move into config.json
