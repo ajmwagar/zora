@@ -188,6 +188,9 @@ class WebSocket {
         })
 
         this.app.post('/setServer', async function (req, res) {
+            checkToken(token) {
+                return (token == _token)
+            }
             var token = req.body.token
             var serverid = req.body.serverid
 
@@ -203,6 +206,9 @@ class WebSocket {
         })
 
         this.app.post('/updateConfig', (req, res) => {
+            checkToken(token) {
+                return (token == _token)
+            }
             var token = req.body.token
             var prefix = req.body.prefix
             var serverid = req.body.serverid
