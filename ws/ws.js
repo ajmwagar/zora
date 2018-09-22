@@ -129,8 +129,10 @@ class WebSocket {
                             })
                             .then(function (response2) {
                                 for (var oguild in response2.data) {
-                                    oservers.push(response2.data[oguild]);
-                                    console.log(response2.data[oguild].id)
+                                    if (response2.data[oguild].owner == true) {
+                                        oservers.push(response2.data[oguild]);
+                                    }
+                                    console.log(oservers)
                                 }
                                 return cb();
                             })
