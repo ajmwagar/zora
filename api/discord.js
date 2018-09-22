@@ -19,7 +19,7 @@ router.get('/login', (req, res) => {
 
 router.get('/dashboard', (req, res) => {
   let ousername;
-  let oservers;
+  let oservers = [];
   let _token = req.query.token;
   axios.get('https://discordapp.com/api/users/@me', {
       headers: {
