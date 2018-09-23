@@ -161,7 +161,7 @@ router.post('/setServer', async function (req, res) {
   var servers = req.body.servers
   var serversids = [];
   for (var server in servers) {
-    serversids.push(server.id);
+    serversids.push(servers[server].id);
   }
 
   if (!token2 || !serverid || !prefix)
@@ -181,6 +181,8 @@ router.post('/setServer', async function (req, res) {
             cdserver.prefix = prefix;
             await setServerConfig(serverid, cdserver)
             res.redirect(200, 'dashboard');
+          } else {
+            console.log('ERROR')
           }
         }
       }
