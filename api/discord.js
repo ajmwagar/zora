@@ -161,7 +161,7 @@ router.post('/setServer', async function (req, res) {
   var servers = req.body.servers
   var serversids = [];
   for (var element in servers) {
-    console.log(element)
+    console.log(servers[element])
   }
 
   console.log(servers)
