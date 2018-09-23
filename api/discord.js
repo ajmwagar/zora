@@ -180,8 +180,12 @@ router.post('/setServer', async function (req, res) {
         if (response.data[oguild].owner == true) {
           if (servers.includes(response.data[oguild].id)) {
             cdserver = await getServerConfig(serverid);
-            cdserver.prefix = prefix;
-            cdserver.modlogChannel = modlog
+            if (prefix) {
+              cdserver.prefix = prefix;
+            }
+            if (modlog) {
+              cdserver.modlogChannel = modlog
+            }
             await setServerConfig(serverid, cdserver)
             res.redirect('dashboard');
           } else {
