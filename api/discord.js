@@ -174,7 +174,7 @@ router.post('/setServer', async function (req, res) {
       }
     })
     .then(async function (response) {
-      for (var oguild in response2.data) {
+      for (var oguild in response.data) {
         if (response.data[oguild].owner == true) {
           if (servers.includes(response.data[oguild].id)) {
             cdserver = await getServerConfig(serverid);
@@ -186,8 +186,10 @@ router.post('/setServer', async function (req, res) {
       }
     })
     .catch(function (error) {
+      console.log(error);
       return res.sendStatus(401)
     })
+
 })
 
 /**
