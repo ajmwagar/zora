@@ -5,6 +5,7 @@ const axios = require('axios');
 const config = require("../config.json");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const chalk = require("chalk");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -189,13 +190,12 @@ router.post('/setServer', async function (req, res) {
             await setServerConfig(serverid, cdserver)
             res.redirect('dashboard');
           } else {
-            console.log('ERROR')
+            console.log(chalk.red('Someone is trying to hack the web interface!!!'))
           }
         }
       }
     })
     .catch(function (error) {
-      console.log(error);
       return res.sendStatus(401)
     })
 
