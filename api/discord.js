@@ -163,6 +163,7 @@ router.post('/setServer', async function (req, res) {
   var token2 = req.query.token
   var serverid = req.body.serverid
   var prefix = req.body.prefix
+  var modlog = req.body.modlog
   var servers = req.body.serverids
 
   if (!token2 || !serverid || !prefix)
@@ -180,8 +181,9 @@ router.post('/setServer', async function (req, res) {
           if (servers.includes(response.data[oguild].id)) {
             cdserver = await getServerConfig(serverid);
             cdserver.prefix = prefix;
+            cdserver.modlogChannel = modlog
             await setServerConfig(serverid, cdserver)
-            res.redirect(200, 'dashboard');
+            res.redirect('dashboard');
           } else {
             console.log('ERROR')
           }
