@@ -176,13 +176,11 @@ router.post('/setServer', async function (req, res) {
     .then(async function (response) {
       for (var oguild in response.data) {
         if (response.data[oguild].owner == true) {
-          if (servers.includes(response.data[oguild].id)) {
+          if (serversids.includes(response.data[oguild].id)) {
             cdserver = await getServerConfig(serverid);
             cdserver.prefix = prefix;
             await setServerConfig(serverid, cdserver)
             res.redirect(200, 'dashboard');
-          } else {
-            console.log('ERROR ERROR ERROR')
           }
         }
       }
