@@ -118,6 +118,7 @@ router.get('/login', (req, res) => {
 router.get('/dashboard', (req, res) => {
   let ousername;
   let oservers = [];
+  let serveridlist;
   let _token = req.query.token;
   axios.get('https://discordapp.com/api/users/@me', {
       headers: {
@@ -137,12 +138,14 @@ router.get('/dashboard', (req, res) => {
           for (var oguild in response2.data) {
             if (response2.data[oguild].owner == true) {
               oservers.push(response2.data[oguild]);
+              serveridlist.push(response2.data[oguild].id);
             }
           }
           res.render('dashboard', {
             username: ousername,
             servers: oservers,
-            token: _token
+            token: _token,
+            serverids: serveridlist
           })
         })
         .catch(function (error) {
@@ -158,11 +161,7 @@ router.post('/setServer', async function (req, res) {
   var token2 = req.query.token
   var serverid = req.body.serverid
   var prefix = req.body.prefix
-  var servers = req.body.servers
-  var serversids = [];
-  for (var element in servers) {
-    console.log(servers[element])
-  }
+  var servers = req.body.serverids
 
   console.log(servers)
   console.log(serversids)
@@ -179,7 +178,7 @@ router.post('/setServer', async function (req, res) {
     .then(async function (response) {
       for (var oguild in response.data) {
         if (response.data[oguild].owner == true) {
-          if (serversids.includes(response.data[oguild].id)) {
+          if (servers.includes(response.data[oguild].id)) {
             cdserver = await getServerConfig(serverid);
             cdserver.prefix = prefix;
             await setServerConfig(serverid, cdserver)
