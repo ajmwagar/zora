@@ -165,9 +165,6 @@ router.post('/setServer', async function (req, res) {
   var prefix = req.body.prefix
   var servers = req.body.serverids
 
-  console.log(servers)
-  console.log(serversids)
-
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
 
