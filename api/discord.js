@@ -160,12 +160,10 @@ router.post('/setServer', async function (req, res) {
   var prefix = req.body.prefix
   var servers = req.body.servers
   var serversids = [];
-  for (var server in servers) {
-    var serverid2 = servers[server].id;
-    for (var server4 in serverid2) {
-      serversids.push(serverid2[server4].id);
-    }
-  }
+  servers.forEach(function (element) {
+    console.log(element)
+  });
+
   console.log(servers)
   console.log(serversids)
 
