@@ -163,6 +163,8 @@ router.post('/setServer', async function (req, res) {
   for (var server in servers) {
     serversids.push(servers[server].id);
   }
+  console.log(servers)
+  console.log(serversids)
 
   if (!token2 || !serverid || !prefix)
     return res.sendStatus(400);
