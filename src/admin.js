@@ -347,6 +347,8 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     message.delete().catch(O_o => {});
     // And we get the bot to say the thing: 
     message.channel.send(`**${message.author} Said:\n** ` + sayMessage);
+  } else if (command === "dashboard") {
+    message.reply('Are you the owner of a server using ZoraBOT? Try out our new Dashboard at: https://dta.dekutree.org/api/discord/login');
   } else if (command === "kick") {
     // This command must be limited to mods and admins. In this example we just hardcode the role names.
     // Please read on Array.some() to understand this bit: 
