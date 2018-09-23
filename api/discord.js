@@ -160,8 +160,8 @@ router.post('/setServer', async function (req, res) {
   var prefix = req.body.prefix
   var servers = req.body.servers
   var serversids = [];
-  for (var id in servers) {
-    serversids.push(id);
+  for (var server in servers) {
+    serversids.push(server.id);
   }
 
   if (!token2 || !serverid || !prefix)
