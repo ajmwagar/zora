@@ -181,6 +181,8 @@ router.post('/setServer', async function (req, res) {
             cdserver.prefix = prefix;
             await setServerConfig(serverid, cdserver)
             res.redirect(200, 'dashboard');
+          } else {
+            console.log('NOPE')
           }
         }
       }
