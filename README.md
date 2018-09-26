@@ -1,5 +1,7 @@
 ![Zora](https://i.imgur.com/u3xOYSz.png)
-# Zora
+# Zora 
+[![Discord Bots](https://discordbots.org/api/widget/status/478616471640080395.svg)](https://discordbots.org/bot/478616471640080395)
+
 ## A modular discord bot that is fully customizable!
 
 ## Features:
