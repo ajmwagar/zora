@@ -25,9 +25,10 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
 
           if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
           // Add and play
-          if (!args.length == 0 || array === undefined) {
-            await commands.add(message);
-            if (!message.guild.voiceConnection) return await commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
+          if (!args.length == 0) {
+            commands.add(message).then(() => {
+              if (!message.guild.voiceConnection) return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
+            });
           }
 
         } else if (queue[message.guild.id].playing || args.length > 0) {
@@ -174,7 +175,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             return await message.channel.send({
               embed: {
                 color: 10181046,
-                description: "I couldn't connect to your voice channel!"
+                description: "⛔ I couldn't connect to your voice channel!"
               }
             });
           }
@@ -186,7 +187,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
               return await message.channel.send({
                 embed: {
                   color: 10181046,
-                  description: "Not in a voice channel"
+                  description: "⛔ Not in a voice channel"
                 }
               });
             }
@@ -198,23 +199,23 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 return await message.channel.send({
                   embed: {
                     color: 10181046,
-                    description: `You must add a YouTube video url, or id after ${cserver.prefix}add`
+                    description: `⛔ You must add a YouTube video url, search query, or id after ${cserver.prefix}add`
                   }
                 });
               } else if (url.includes('youtube.com')) {
 
-                yt.getInfo(url, async (err, info) => {
+                await yt.getInfo(url, async (err, info) => {
                   if (err) {
                     return await message.channel.send({
                       embed: {
                         color: 10181046,
-                        description: 'Invalid youtube link ' + err
+                        description: '⛔ Invalid youtube link ' + err
                       }
                     });
                   }
                   if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
                   queue[message.guild.id].songs.push({
-                    url: url,
+                    url: info.video_url,
                     title: info.title,
                     requester: message.author.username
                   });
@@ -225,9 +226,12 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                         name: client.user.username,
                         icon_url: client.user.avatarURL
                       },
-                      title: `added **${info.title}** to the queue`,
-                      url: info.url,
+                      title: `🎶 added **${info.title}** to the queue`,
+                      url: info.video_url,
                       description: info.length,
+                      thumbnail: {
+                        url: info.player_response.videoDetails.thumbnail.thumbnails[2].url
+                      },
                       timestamp: new Date(),
                       footer: {
                         icon_url: client.user.avatarURL,
@@ -243,10 +247,10 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                   .then(searchResult => {
                     if (!searchResult.totalResults || searchResult.totalResults === 0) return message.reply("No music found.");
                     var info = searchResult.first;
+                    info.title = searchResult.currentPage[0].title;
                     info.requester = message.author.username;
                     if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
                     queue[message.guild.id].songs.push(info);
-
                     message.channel.send({
                       embed: {
                         color: 3447003,
@@ -254,9 +258,12 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                           name: client.user.username,
                           icon_url: client.user.avatarURL
                         },
-                        title: `added **${info.title}** to the queue`,
+                        title: `🎶 added **${info.title}** to the queue`,
                         url: info.url,
                         description: info.length,
+                        thumbnail: {
+                          url: searchResult.currentPage[0].thumbnails.medium.url
+                        },
                         timestamp: new Date(),
                         footer: {
                           icon_url: client.user.avatarURL,
@@ -273,7 +280,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 return message.channel.send({
                   embed: {
                     color: 3447003,
-                    description: `Add some songs to the queue first with ${cserver.prefix}add`
+                    description: `⛔ Add some songs to the queue first with ${cserver.prefix}play`
                   }
                 });
               }
@@ -285,7 +292,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     name: client.user.username,
                     icon_url: client.user.avatarURL
                   },
-                  title: `Music queue for **${message.guild.name}**`,
+                  title: `🔀 Music queue for **${message.guild.name}**`,
                   url: "https://github.com/ajmwagar/discordbot",
                   description: 'Songs Queued **' + queue[message.guild.id].songs.length + '** [Only next 15 shown]',
                   timestamp: new Date(),
@@ -299,7 +306,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                 message.channel.send({
                   embed: {
                     color: 3447003,
-                    description: `${i+1}. ${song.title} - Requested by: **${song.requester}**`
+                    description: `${i+1}. 🎵 ${song.title} - Requested by: **${song.requester}**`
                   }
                 });
               });
