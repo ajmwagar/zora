@@ -203,7 +203,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                   }
                 });
               } else if (url.includes('youtube.com')) {
-
                 await yt.getInfo(url, async (err, info) => {
                   if (err) {
                     return await message.channel.send({
@@ -213,10 +212,14 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                       }
                     });
                   }
+                  var livestatus = ''
+                  if (info.player_response.videoDetails.isLiveContent === true) {
+                    livestatus = "🔴 **LIVE**"
+                  }
                   if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
                   queue[message.guild.id].songs.push({
                     url: info.video_url,
-                    title: info.title,
+                    title: livestatus + '  ' + info.title,
                     requester: message.author.username
                   });
                   message.channel.send({
@@ -228,7 +231,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                       },
                       title: `🎶 added **${info.title}** to the queue`,
                       url: info.video_url,
-                      description: info.length,
+                      description: `**Length Minutes:** ${(parseInt(info.length_seconds))/60} \n**Keywords:** ${info.keywords.join(", ")} \n\n ${livestatus}`,
                       thumbnail: {
                         url: info.player_response.videoDetails.thumbnail.thumbnails[2].url
                       },
