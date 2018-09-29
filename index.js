@@ -91,8 +91,8 @@ app.get('/api/discord/callback', function (req, res) {
 
             axios.get('https://discordapp.com/api/users/@me/guilds', {
                     headers: {
-                        Authorization: `Bearer ${user.accessToken}`,
-                        User-Agent: 'DiscordBot(https://zora.netlify.com, 0.1)'
+                        'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                        Authorization: `Bearer ${user.accessToken}`
                     }
                 })
                 .then(function (response) {
