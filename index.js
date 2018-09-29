@@ -82,7 +82,10 @@ app.get('/api/discord/callback', function (req, res) {
         .then(function (user) {
 
             // Refresh the current users access token.
-            user.refresh().then(function (updatedUser) {})
+            user.refresh().then(function (updatedUser) {
+                console.log(updatedUser.accessToken)
+                return res.redirect(`/#/dashboard?token=${updatedUser.accessToken}`)
+            })
 
             // Sign API requests on behalf of the current user.
             user.sign({
@@ -91,29 +94,6 @@ app.get('/api/discord/callback', function (req, res) {
             })
 
             console.log(user.accessToken)
-
-            axios.get('https://discordapp.com/api/users/@me/guilds', {
-                    headers: {
-                        'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                        Authorization: `Bearer ${user.accessToken}`
-                    }
-                })
-                .then(function (response) {
-                    let ownedservers = [];
-                    response.data.forEach(function (server) {
-                        if (server.owner == true) {
-                            ownedservers.push(server);
-                        }
-                    });
-                    console.log(ownedservers);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
-            return res.redirect(`/#/dashboard?token=${user.accessToken}`)
 
         })
 })
