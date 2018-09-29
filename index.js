@@ -81,17 +81,15 @@ app.get('/api/discord/callback', function (req, res) {
         discordAuth.code.getToken(req.originalUrl)
         .then(function (user) {
 
-            // Refresh the current users access token.
-            user.refresh().then(function (updatedUser) {
-                console.log(updatedUser.accessToken)
-                return res.redirect(`/#/dashboard?token=${updatedUser.accessToken}`)
-            })
+            user.expiresIn(124241);
 
             // Sign API requests on behalf of the current user.
             user.sign({
                 method: 'get',
                 url: 'https://dta.dekutree.org'
             })
+
+            return res.redirect(`/#/dashboard?token=${user.accessToken}`)
 
         })
 })
