@@ -89,7 +89,28 @@ app.get('/api/discord/callback', function (req, res) {
                 method: 'get',
                 url: 'https://dta.dekutree.org'
             })
-
+            axios.get('https://discordapp.com/api/users/@me/guilds', {
+                    headers: {
+                        'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then(function (response) {
+                    let ownedservers = [];
+                    response.data.forEach(function (server) {
+                        if (server.owner == true) {
+                            ownedservers.push(server);
+                        }
+                    });
+                    console.log(ownedservers);
+                    socket.emit('updateServers', ownedservers, function (answer) {});
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
             return res.redirect(`/#/dashboard?token=${user.accessToken}`)
 
         })
@@ -116,10 +137,8 @@ io.on('connection', function (socket) {
                         ownedservers.push(server);
                     }
                 });
-                socket.emit('updateServers', ownedservers, function (answer) {
-
-                });
                 console.log(ownedservers);
+                socket.emit('updateServers', ownedservers, function (answer) {});
             })
             .catch(function (error) {
                 console.log(error);
