@@ -221,7 +221,7 @@ io.on('connection', function (socket) {
                     if (server.owner == true) {
                         ownedservers.push(server);
                         if (server.id == serverid) {
-                            ownsserrver = true;
+                            ownsserver = true;
                         }
                     }
                 });
