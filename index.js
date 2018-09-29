@@ -91,7 +91,8 @@ app.get('/#/dashboard', function (req, res) {
                 }
             });
             console.log(ownedservers)
-            io.emit('getservers', ownedservers);
+            return io.emit('getservers', ownedservers);
+
         })
         .catch(function (error) {
             console.log(error);
