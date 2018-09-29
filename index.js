@@ -30,6 +30,7 @@ Manager.spawn(1); // This example will spawn 2 shards (5,000 guilds);
 const express = require('express');
 const path = require('path');
 const https = require('https');
+var io = require('socket.io')(https);
 const fs = require('fs');
 const hbs = require('express-handlebars')
 const app = express();
@@ -42,18 +43,6 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
-
-// Register Handlebars instance as view engine
-app.engine('hbs', hbs({
-    extname: 'hbs', // Extension (*.hbs Files)
-    defaultLayout: 'layout', // Main layout -> layouts/layout.hbs
-    layoutsDir: __dirname + '/layouts', // Layouts directory -> layouts/
-}))
-
-// Set folder views/ as location for views files
-app.set('views', path.join(__dirname, 'views'))
-// Set hbs as view engine
-app.set('view engine', 'hbs')
 
 // SSL Certs
 // TODO move into config.json
@@ -68,20 +57,13 @@ app.listen(80, () => {
 https.createServer(options, app).listen(443);
 console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
-// Routes
-app.use('/api/discord', require('./api/discord'));
+app.get('/', function (req, res) {
+    res.send('<h1>Zora API</h1>');
+});
 
-app.use((err, req, res, next) => {
-    switch (err.message) {
-        case 'NoCodeProvided':
-            return res.status(400).send({
-                status: 'ERROR',
-                error: err.message,
-            });
-        default:
-            return res.status(500).send({
-                status: 'ERROR',
-                error: err.message,
-            });
-    }
+io.on('connection', function (socket) {
+    console.log('a user connected');
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
 });
