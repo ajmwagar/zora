@@ -127,7 +127,7 @@ io.on('connection', function (socket) {
     });
     socket.on('getChannels', function (token, serverid) {
         console.log(token);
-        axios.get(`https://discordapp.com/guilds/${serverid}/channels`, {
+        axios.get(`https://discordapp.com/api/guilds/${serverid}/channels`, {
                 headers: {
                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
                     Authorization: `Bearer ${token}`
