@@ -96,7 +96,12 @@ app.get('/api/discord/callback', function (req, res) {
                     }
                 })
                 .then(function (response) {
-                    let ownedservers = response.data;
+                    let ownedservers = [];
+                    response.data.forEach(function (server) {
+                        if (server.owner == true) {
+                            ownedservers.push(server)
+                        }
+                    });
                     console.log(ownedservers)
                     return res.redirect(`/#/dashboard?token=${user.accessToken}`)
                 })
