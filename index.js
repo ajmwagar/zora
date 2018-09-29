@@ -79,7 +79,6 @@ app.get('/api/discord/login', function (req, res) {
 app.get('/api/discord/callback', function (req, res) {
     discordAuth.code.getToken(req.originalUrl)
         .then(function (user) {
-            console.log(user) //=> { accessToken: '...', tokenType: 'bearer', ... }
 
             // Refresh the current users access token.
             user.refresh().then(function (updatedUser) {})
@@ -103,6 +102,7 @@ app.get('/api/discord/callback', function (req, res) {
                         }
                     });
                     console.log(ownedservers)
+                    socket.emit('getservers', ownedservers);
                     return res.redirect(`/#/dashboard?token=${user.accessToken}`)
                 })
                 .catch(function (error) {
