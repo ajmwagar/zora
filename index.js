@@ -71,7 +71,7 @@ console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 app.use(express.static('public'))
 
 app.get('/api/discord/login', function (req, res) {
-    var uri = githubAuth.code.getUri()
+    var uri = discordAuth.code.getUri()
     res.redirect(uri)
 })
 
