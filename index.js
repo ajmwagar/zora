@@ -29,10 +29,9 @@ Manager.spawn(1); // This example will spawn 2 shards (5,000 guilds);
 
 const express = require('express');
 const path = require('path');
-const app = express()
-const https = require('https').Server(app);
-var io = require('socket.io')(https);
+const https = require('https');
 const fs = require('fs');
+const app = express();
 const bodyParser = require("body-parser");
 
 app.use(express.static(path.join(__dirname, 'static')))
@@ -53,7 +52,8 @@ const options = {
 app.listen(80, () => {
     console.info('Running on port 80');
 });
-https.createServer(options, app).listen(443);
+var server = https.createServer(options, app).listen(443);
+var io = require('socket.io')(server);
 console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
 app.use(express.static('public'))
