@@ -37,6 +37,8 @@ var url = require('url');
 const config = require("./config.json");
 var ClientOAuth2 = require('client-oauth2')
 const axios = require('axios');
+var AES = require("crypto-js/aes");
+var SHA256 = require("crypto-js/sha256");
 
 var discordAuth = new ClientOAuth2({
     clientId: config.ws.clientid,
@@ -77,6 +79,7 @@ app.get('/api/discord/login', function (req, res) {
 })
 
 app.get('/api/discord/callback', function (req, res) {
+    discordAuth.state = SHA256(Math.random().toString(36).substr(2));
     discordAuth.code.getToken(req.originalUrl)
         .then(function (user) {
 
