@@ -42,7 +42,7 @@ var discordAuth = new ClientOAuth2({
     clientSecret: config.ws.clientsecret,
     accessTokenUri: config.ws.tokenurl,
     authorizationUri: config.ws.authurl,
-    redirectUri: 'https://dta.dekutree.org:443/api/discord/callback',
+    redirectUri: 'https://dta.dekutree.org/api/discord/callback',
     scopes: ['identify', 'guilds']
 })
 
