@@ -37,6 +37,85 @@ var url = require('url');
 const config = require("./config.json");
 var ClientOAuth2 = require('client-oauth2')
 const axios = require('axios');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
+
+// URL that points to MongoDB database
+var url = "mongodb://localhost:27017/zora";
+
+// Connect/Create MongoDB database
+mongoose.connect(url, {
+    user: config.databaseuser,
+    pass: config.databasepass
+});
+console.log(chalk.green('connected web interface to database'));
+
+// Default server configuration (also used with .clearcfg)
+var defaultConfig = new Schema({
+    name: {
+        type: String,
+        default: ''
+    },
+    _id: Schema.Types.Decimal128,
+    prefix: {
+        type: String,
+        default: "+"
+    },
+    modlogChannel: {
+        type: String,
+        default: "modlog"
+    },
+    welcomes: {
+        type: Boolean,
+        default: false
+    },
+    reddit: {
+        subreddits: [],
+        posts: {
+            type: String,
+            default: 3
+        },
+        channel: {
+            type: String,
+            default: "memes"
+        },
+        interval: {
+            type: Number,
+            default: 1
+        }
+    },
+    automod: {
+        bannedwords: []
+    }
+});
+
+// Default user profile config
+var defaultprofile = new Schema({
+    level: {
+        type: Number,
+        default: "1"
+    },
+    username: String,
+    xp: {
+        type: Number,
+        default: "0"
+    },
+    zcoins: {
+        type: Number,
+        default: "100"
+    },
+    VIP: {
+        type: Boolean,
+        default: false
+    },
+    inventory: [],
+    _id: Schema.Types.Decimal128
+});
+
+// Define models
+const UserM = mongoose.model("Users", defaultprofile);
+const ServerM = mongoose.model("Servers", defaultConfig);
 
 var discordAuth = new ClientOAuth2({
     clientId: config.ws.clientid,
@@ -124,15 +203,43 @@ io.on('connection', function (socket) {
             });
     });
     socket.on('getChannels', function (token, serverid) {
-        axios.get('https://discordapp.com/api/guilds/' + serverid + '/channels', {
+        /**
+         * Always make sure the token submitted by the client
+         * has access to the server you are modifying
+         */
+        axios.get('https://discordapp.com/api/users/@me/guilds', {
                 headers: {
                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
                     Authorization: `Bearer ${token}`
                 }
             })
             .then(function (response) {
-                var serverchannels = response.data;
-                socket.emit('updateChannels', serverchannels, function (answer) {});
+                let ownedservers = [];
+                let channels = [];
+                let ownsserrver = false;
+
+                response.data.forEach(function (server) {
+                    if (server.owner == true) {
+                        ownedservers.push(server);
+                        if (server.id == serverid) {
+                            ownsserrver = true;
+                        }
+                    }
+                });
+
+                if (ownsserver == true) {
+                    let channel = "";
+                    let prefix = "";
+                    ServerM.findById(serverid, function (err, server) {
+                        channel = server.modlogChannel;
+                    });
+                    ServerM.findById(serverid, function (err, server) {
+                        prefix = server.prefix;
+                    });
+
+                    socket.emit('updateChannel', channel, function (answer) {});
+                    socket.emit('updatePrefix', prefix, function (answer) {});
+                }
             })
             .catch(function (error) {
                 console.log(error);
