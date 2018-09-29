@@ -124,21 +124,15 @@ io.on('connection', function (socket) {
             });
     });
     socket.on('getChannels', function (token, serverid) {
-        axios.get('https://discordapp.com/api/users/@me/guilds', {
+        axios.get('https://discordapp.com/api/guilds/' + serverid + '/channels', {
                 headers: {
                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
                     Authorization: `Bearer ${token}`
                 }
             })
             .then(function (response) {
-                let ownedservers = [];
-                response.data.forEach(function (server) {
-                    if (server.owner == true) {
-                        ownedservers.push(server);
-                    }
-                });
-                socket.emit('updateServers', ownedservers, function (answer) {});
-                console.log(ownedservers)
+                var serverchannels = response.data;
+                socket.emit('updateChannels', serverchannels, function (answer) {});
             })
             .catch(function (error) {
                 console.log(error);
