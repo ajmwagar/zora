@@ -93,8 +93,6 @@ app.get('/api/discord/callback', function (req, res) {
                 url: 'https://dta.dekutree.org'
             })
 
-            console.log(user.accessToken)
-
         })
 })
 
@@ -105,7 +103,6 @@ io.on('connection', function (socket) {
         console.log(chalk.bgBlue('Dashboard User Disconnected'));
     });
     socket.on('getServers', function (token) {
-        console.log(token);
         axios.get('https://discordapp.com/api/users/@me/guilds', {
                 headers: {
                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
@@ -119,8 +116,26 @@ io.on('connection', function (socket) {
                         ownedservers.push(server);
                     }
                 });
-                console.log(ownedservers);
                 socket.emit('updateServers', ownedservers, function (answer) {});
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
+    });
+    socket.on('getChannels', function (token, serverid) {
+        console.log(token);
+        axios.get(`https://discordapp.com/guilds/${serverid}/channels`, {
+                headers: {
+                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then(function (response) {
+                var serverchannels = response.data;
+                socket.emit('updateChannels', serverchannels, function (answer) {});
             })
             .catch(function (error) {
                 console.log(error);
