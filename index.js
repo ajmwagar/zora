@@ -103,7 +103,7 @@ app.get('/api/discord/callback', function (req, res) {
                         }
                     });
                     console.log(ownedservers)
-                    socket.emit('getservers', ownedservers);
+                    io.emit('getservers', ownedservers);
                     return res.redirect(`/#/dashboard?token=${user.accessToken}`)
                 })
                 .catch(function (error) {
