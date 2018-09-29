@@ -64,9 +64,7 @@ app.get('/api/discord/login', function (req, res) {
 })
 
 app.get('/api/discord/callback', function (req, res) {
-    var url_parts = url.parse(req.url, true);
-    var query = url_parts.query;
-    console.log(query.code)
+    console.log(req.query.code)
     res.redirect('/#/dashboard')
 })
 
