@@ -191,6 +191,7 @@ io.on('connection', function (socket) {
                 response.data.forEach(function (server) {
                     if (server.owner == true) {
                         ownedservers.push(server);
+                        console.log(server.id)
                     }
                 });
                 socket.emit('updateServers', ownedservers, function (answer) {});
