@@ -76,33 +76,6 @@ app.get('/api/discord/login', function (req, res) {
     res.redirect(uri)
 })
 
-app.get('/#/dashboard', function (req, res) {
-    axios.get('https://discordapp.com/api/users/@me/guilds', {
-            headers: {
-                'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                Authorization: `Bearer ${req.query.token}`
-            }
-        })
-        .then(function (response) {
-            let ownedservers = [];
-            response.data.forEach(function (server) {
-                if (server.owner == true) {
-                    ownedservers.push(server)
-                }
-            });
-            console.log(ownedservers)
-            io.emit('getservers', ownedservers);
-            return res.redirect('/#/dashboard?token=' + req.query.token)
-
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
-});
-
 app.get('/api/discord/callback', function (req, res) {
     discordAuth.code.getToken(req.originalUrl)
         .then(function (user) {
