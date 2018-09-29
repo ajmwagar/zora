@@ -36,6 +36,7 @@ const bodyParser = require("body-parser");
 var url = require('url');
 const config = require("./config.json");
 var ClientOAuth2 = require('client-oauth2')
+const axios = require('axios');
 
 var discordAuth = new ClientOAuth2({
     clientId: config.ws.clientid,
@@ -81,10 +82,7 @@ app.get('/api/discord/callback', function (req, res) {
             console.log(user) //=> { accessToken: '...', tokenType: 'bearer', ... }
 
             // Refresh the current users access token.
-            user.refresh().then(function (updatedUser) {
-                console.log(updatedUser !== user) //=> true
-                console.log(updatedUser.accessToken)
-            })
+            user.refresh().then(function (updatedUser) {})
 
             // Sign API requests on behalf of the current user.
             user.sign({
@@ -92,8 +90,23 @@ app.get('/api/discord/callback', function (req, res) {
                 url: 'https://dta.dekutree.org'
             })
 
-            // We should store the token into a database.
-            return res.send(user.accessToken)
+            axios.get('https://discordapp.com/api/users/@me/guilds', {
+                    params: {
+                        Authorization: `Bearer ${user.accessToken}`
+                    }
+                })
+                .then(function (response) {
+                    let ownedservers = response.data;
+                    console.log(ownedservers)
+                    return res.redirect(`/#/dashboard?token=${user.accessToken}`)
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
+
         })
 })
 
