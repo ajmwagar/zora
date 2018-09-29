@@ -215,8 +215,7 @@ io.on('connection', function (socket) {
             })
             .then(function (response) {
                 let ownedservers = [];
-                let channels = [];
-                let ownsserrver = false;
+                let ownsserver = false;
 
                 response.data.forEach(function (server) {
                     if (server.owner == true) {
