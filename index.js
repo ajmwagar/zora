@@ -57,10 +57,6 @@ app.listen(80, () => {
 https.createServer(options, app).listen(443);
 console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
-app.get('/', function (req, res) {
-    res.send('<h1>Zora API</h1>');
-});
-
 app.use(express.static('public'))
 
 io.on('connection', function (socket) {
