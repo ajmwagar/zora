@@ -81,13 +81,10 @@ app.get('/api/discord/callback', function (req, res) {
         discordAuth.code.getToken(req.originalUrl)
         .then(function (user) {
 
-            user.expiresIn(1234233) // Seconds.
-
             // Refresh the current users access token.
             user.refresh().then(function (updatedUser) {
                 console.log(updatedUser.accessToken)
-                user.expiresIn(1234233) // Seconds.
-                return res.redirect(`/#/dashboard?token=${updatedUser.accessToken}&refreshtoken=${updatedUser.refreshToken}`)
+                return res.redirect(`/#/dashboard?token=${updatedUser.accessToken}`)
             })
 
             // Sign API requests on behalf of the current user.
@@ -128,28 +125,12 @@ io.on('connection', function (socket) {
                 // always executed
             });
     });
-    socket.on('getChannels', function (token, refreshtoken, serverid) {
-        var newtoken = discordAuth.createToken(token, refreshtoken)
-        // Set the token TTL.
-        newtoken.expiresIn(1234233) // Seconds.
-
-        // Refresh the users credentials and save the new access token and info.
-        newtoken.refresh().then(function (updatedUser) {
-            console.log(updatedUser.accessToken)
-            return res.redirect(`/#/dashboard?token=${updatedUser.accessToken}`)
-        })
-
-        // Sign a standard HTTP request object, updating the URL with the access token
-        // or adding authorization headers, depending on token type.
-        newtoken.sign({
-            method: 'get',
-            url: 'https://api.github.com/users'
-        })
-        console.log(newtoken);
+    socket.on('getChannels', function (token, serverid) {
+        console.log(token);
         axios.get(`https://discordapp.com/api/guilds/${serverid}/channels`, {
                 headers: {
                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                    Authorization: `Bearer ${newtoken.accessToken}`
+                    Authorization: `Bearer ${token}`
                 }
             })
             .then(function (response) {
