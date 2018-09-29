@@ -146,7 +146,7 @@ io.on('connection', function (socket) {
         axios.get(`https://discordapp.com/api/guilds/${serverid}/channels`, {
                 headers: {
                     'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                    Authorization: `Bearer ${newtoken}`
+                    Authorization: `Bearer ${newtoken.accessToken}`
                 }
             })
             .then(function (response) {
