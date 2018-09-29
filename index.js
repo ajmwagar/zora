@@ -117,6 +117,22 @@ var defaultprofile = new Schema({
 const UserM = mongoose.model("Users", defaultprofile);
 const ServerM = mongoose.model("Servers", defaultConfig);
 
+async function getServerConfig(id) {
+    var outserver;
+    await ServerM.findById(id, function (err, server) {
+        outserver = server;
+    });
+    return outserver;
+}
+
+async function setServerConfig(id, newconfig) {
+    await ServerM.findById(id, function (err, server) {
+        server = newconfig;
+        server.save();
+    });
+    return;
+}
+
 var discordAuth = new ClientOAuth2({
     clientId: config.ws.clientid,
     clientSecret: config.ws.clientsecret,
@@ -203,7 +219,6 @@ io.on('connection', function (socket) {
             });
     });
     socket.on('getChannels', function (token, serverid) {
-        console.log(serverid);
         /**
          * Always make sure the token submitted by the client
          * has access to the server you are modifying
@@ -230,13 +245,11 @@ io.on('connection', function (socket) {
                 if (ownsserver == true) {
                     let channel = "";
                     let prefix = "";
-                    ServerM.findById(serverid, function (err, server) {
-                        channel = server.modlogChannel;
-                        prefix = server.prefix;
-                    });
+                    cdserver = await getServerConfig(serverid);
+                    prefix = cdserver.prefix;
+                    channel = cdserver.modlogChannel;
                     socket.emit('updateChannel', channel, function (answer) {});
                     socket.emit('updatePrefix', prefix, function (answer) {});
-                    console.log('updated ' + channel + ' ' + prefix);
                 }
             })
             .catch(function (error) {
