@@ -91,7 +91,8 @@ app.get('/#/dashboard', function (req, res) {
                 }
             });
             console.log(ownedservers)
-            return io.emit('getservers', ownedservers);
+            io.emit('getservers', ownedservers);
+            return res.redirect('/#/dashboard?token=' + req.query.token)
 
         })
         .catch(function (error) {
