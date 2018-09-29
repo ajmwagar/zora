@@ -76,24 +76,6 @@ app.get('/api/discord/login', function (req, res) {
     res.redirect(uri)
 })
 
-app.get('/api/discord/callback', function (req, res) {
-    discordAuth.code.getToken(req.originalUrl)
-        .then(function (user) {
-
-            // Refresh the current users access token.
-            user.refresh().then(function (updatedUser) {})
-
-            // Sign API requests on behalf of the current user.
-            user.sign({
-                method: 'get',
-                url: 'https://dta.dekutree.org'
-            })
-
-            return res.redirect(`/#/dashboard?token=${user.accessToken}`)
-
-        })
-})
-
 app.get('/#/dashboard', function (req, res) {
     axios.get('https://discordapp.com/api/users/@me/guilds', {
             headers: {
@@ -118,6 +100,25 @@ app.get('/#/dashboard', function (req, res) {
             // always executed
         });
 });
+
+app.get('/api/discord/callback', function (req, res) {
+    discordAuth.code.getToken(req.originalUrl)
+        .then(function (user) {
+
+            // Refresh the current users access token.
+            user.refresh().then(function (updatedUser) {})
+
+            // Sign API requests on behalf of the current user.
+            user.sign({
+                method: 'get',
+                url: 'https://dta.dekutree.org'
+            })
+
+            return res.redirect(`/#/dashboard?token=${user.accessToken}`)
+
+        })
+})
+
 
 io.on('connection', function (socket) {
     console.log(chalk.bgBlue('Dashboard User Connected'));
