@@ -172,7 +172,7 @@ client.on("ready", () => {
   }, 10000);
 
 
-  console.log(chalk.bgGreen("Client Ready!"));
+  console.log(chalk.green("Client Ready!"));
   BotUsers = client.users;
 
   // Write users into database
@@ -210,7 +210,7 @@ client.on("ready", () => {
   console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
   if (client.shard) {
     console.log(
-      chalk.bgGreen(
+      chalk.green(
         "Shard #" +
         client.shard.id +
         " active with " +
@@ -220,7 +220,7 @@ client.on("ready", () => {
     );
   } else {
     console.log(
-      chalk.bgGreen("Shard #0 active with " + client.guilds.size + " guilds")
+      chalk.green("Shard #0 active with " + client.guilds.size + " guilds")
     );
     client.user.setPresence({
       game: {

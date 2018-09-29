@@ -146,7 +146,7 @@ app.listen(80, () => {
 });
 var server = https.createServer(options, app).listen(443);
 var io = require('socket.io')(server);
-console.log(chalk.bgGreen("HTTPS server set up at port 443"))
+console.log(chalk.green("HTTPS server set up at port 443"))
 
 app.use(express.static('public'))
 
@@ -231,13 +231,11 @@ io.on('connection', function (socket) {
                     let prefix = "";
                     ServerM.findById(serverid, function (err, server) {
                         channel = server.modlogChannel;
-                    });
-                    ServerM.findById(serverid, function (err, server) {
                         prefix = server.prefix;
                     });
-
                     socket.emit('updateChannel', channel, function (answer) {});
                     socket.emit('updatePrefix', prefix, function (answer) {});
+                    console.log('updated');
                 }
             })
             .catch(function (error) {
