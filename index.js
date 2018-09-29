@@ -58,9 +58,13 @@ console.log(chalk.bgGreen("HTTPS server set up at port 443"))
 
 app.use(express.static('public'))
 
+app.get('/api/discord/login', function (req, res) {
+    res.redirect('https://discordapp.com/api/oauth2/authorize?client_id=478616471640080395&redirect_uri=https%3A%2F%2Fdta.dekutree.org%2F%23%2Fdashboard&response_type=code&scope=identify%20guilds')
+})
+
 io.on('connection', function (socket) {
-    console.log('a user connected');
+    console.log(chalk.bgBlue('Dashboard User Connected'));
     socket.on('disconnect', function () {
-        console.log('user disconnected');
+        console.log(chalk.bgBlue('Dashboard User Disconnected'));
     });
 });
