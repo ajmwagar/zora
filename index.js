@@ -142,7 +142,7 @@ const options = {
 };
 
 app.listen(80, () => {
-    console.info('Running on port 80');
+    console.info(chalk.green('HTTP server set up at port 80'));
 });
 var server = https.createServer(options, app).listen(443);
 var io = require('socket.io')(server);
@@ -191,7 +191,6 @@ io.on('connection', function (socket) {
                 response.data.forEach(function (server) {
                     if (server.owner == true) {
                         ownedservers.push(server);
-                        console.log(server.id)
                     }
                 });
                 socket.emit('updateServers', ownedservers, function (answer) {});
@@ -204,6 +203,7 @@ io.on('connection', function (socket) {
             });
     });
     socket.on('getChannels', function (token, serverid) {
+        console.log(serverid);
         /**
          * Always make sure the token submitted by the client
          * has access to the server you are modifying
