@@ -61,6 +61,8 @@ app.get('/', function (req, res) {
     res.send('<h1>Zora API</h1>');
 });
 
+app.use(express.static('public'))
+
 io.on('connection', function (socket) {
     console.log('a user connected');
     socket.on('disconnect', function () {
