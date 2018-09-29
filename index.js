@@ -106,8 +106,8 @@ io.on('connection', function (socket) {
         axios
             .get("https://discordapp.com/api/users/@me/guilds", {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                    'User-Agent': 'DiscordBot (https://github.com/ajmwagar/zora, 0.1)'
+                    'user-agent': 'DiscordBot (https://github.com/ajmwagar/zora, 0.1)',
+                    Authorization: `Bearer ${token}`
                 }
             })
             .then(function (response) {
