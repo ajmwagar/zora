@@ -33,6 +33,7 @@ const https = require('https');
 const fs = require('fs');
 const app = express();
 const bodyParser = require("body-parser");
+var url = require('url');
 
 app.use(express.static(path.join(__dirname, 'static')))
 
@@ -63,7 +64,9 @@ app.get('/api/discord/login', function (req, res) {
 })
 
 app.get('/api/discord/callback', function (req, res) {
-    console.log(res.query.code)
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    console.log(query.code)
     res.redirect('/#/dashboard')
 })
 
