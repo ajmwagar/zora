@@ -92,7 +92,7 @@ app.get('/api/discord/callback', function (req, res) {
             axios.get('https://discordapp.com/api/users/@me/guilds', {
                     headers: {
                         'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${user.accessToken}`
                     }
                 })
                 .then(function (response) {
