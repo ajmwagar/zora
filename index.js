@@ -235,7 +235,7 @@ io.on('connection', function (socket) {
                     });
                     socket.emit('updateChannel', channel, function (answer) {});
                     socket.emit('updatePrefix', prefix, function (answer) {});
-                    console.log('updated');
+                    console.log('updated ' + channel + ' ' + prefix);
                 }
             })
             .catch(function (error) {
