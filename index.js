@@ -91,7 +91,7 @@ app.get('/api/discord/callback', function (req, res) {
             })
 
             axios.get('https://discordapp.com/api/users/@me/guilds', {
-                    params: {
+                    headers: {
                         Authorization: `Bearer ${user.accessToken}`
                     }
                 })
