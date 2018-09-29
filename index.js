@@ -175,9 +175,9 @@ app.get('/api/discord/callback', function (req, res) {
 
 
 io.on('connection', function (socket) {
-    console.log(chalk.bgBlue('Dashboard User Connected'));
+    console.log(chalk.cyan('Dashboard User Connected'));
     socket.on('disconnect', function () {
-        console.log(chalk.bgBlue('Dashboard User Disconnected'));
+        console.log(chalk.cyan('Dashboard User Disconnected'));
     });
     socket.on('getServers', function (token) {
         axios.get('https://discordapp.com/api/users/@me/guilds', {
