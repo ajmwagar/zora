@@ -128,7 +128,7 @@ io.on('connection', function (socket) {
                 // always executed
             });
     });
-    socket.on('getChannels', function (token, refreshToken, serverid) {
+    socket.on('getChannels', function (token, refreshtoken, serverid) {
         var newtoken = discordAuth.createToken(token, refreshtoken)
         // Set the token TTL.
         newtoken.expiresIn(1234233) // Seconds.
