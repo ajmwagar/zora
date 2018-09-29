@@ -34,6 +34,17 @@ const fs = require('fs');
 const app = express();
 const bodyParser = require("body-parser");
 var url = require('url');
+const config = require("../config.json");
+var ClientOAuth2 = require('client-oauth2')
+
+var discordAuth = new ClientOAuth2({
+    clientId: config.ws.clientid,
+    clientSecret: config.ws.clientsecret,
+    accessTokenUri: config.ws.tokenurl,
+    authorizationUri: config.ws.authurl,
+    redirectUri: 'https://localhost/api/discord/callback',
+    scopes: ['identify', 'guilds']
+})
 
 app.use(express.static(path.join(__dirname, 'static')))
 
@@ -64,8 +75,25 @@ app.get('/api/discord/login', function (req, res) {
 })
 
 app.get('/api/discord/callback', function (req, res) {
-    console.log(req.query.code)
-    res.redirect('/#/dashboard')
+    discordAuth.code.getToken(req.originalUrl)
+        .then(function (user) {
+            console.log(user) //=> { accessToken: '...', tokenType: 'bearer', ... }
+
+            // Refresh the current users access token.
+            user.refresh().then(function (updatedUser) {
+                console.log(updatedUser !== user) //=> true
+                console.log(updatedUser.accessToken)
+            })
+
+            // Sign API requests on behalf of the current user.
+            user.sign({
+                method: 'get',
+                url: 'http://example.com'
+            })
+
+            // We should store the token into a database.
+            return res.send(user.accessToken)
+        })
 })
 
 io.on('connection', function (socket) {
