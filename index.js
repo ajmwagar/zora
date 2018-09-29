@@ -34,7 +34,7 @@ const fs = require('fs');
 const app = express();
 const bodyParser = require("body-parser");
 var url = require('url');
-const config = require("../config.json");
+const config = require("./config.json");
 var ClientOAuth2 = require('client-oauth2')
 
 var discordAuth = new ClientOAuth2({
