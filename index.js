@@ -229,7 +229,7 @@ io.on('connection', function (socket) {
                     Authorization: `Bearer ${token}`
                 }
             })
-            .then(function (response) {
+            .then(async function (response) {
                 let ownedservers = [];
                 let ownsserver = false;
 
