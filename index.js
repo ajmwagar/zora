@@ -63,6 +63,7 @@ app.get('/api/discord/login', function (req, res) {
 })
 
 app.get('/api/discord/callback', function (req, res) {
+    console.log(res.query.code)
     res.redirect('/#/dashboard')
 })
 
