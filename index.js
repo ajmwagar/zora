@@ -42,7 +42,7 @@ var discordAuth = new ClientOAuth2({
     clientSecret: config.ws.clientsecret,
     accessTokenUri: config.ws.tokenurl,
     authorizationUri: config.ws.authurl,
-    redirectUri: 'https://localhost/api/discord/callback',
+    redirectUri: 'https://dta.dekutree.org:443/api/discord/callback',
     scopes: ['identify', 'guilds']
 })
 
@@ -88,7 +88,7 @@ app.get('/api/discord/callback', function (req, res) {
             // Sign API requests on behalf of the current user.
             user.sign({
                 method: 'get',
-                url: 'http://example.com'
+                url: 'https://dta.dekutree.org'
             })
 
             // We should store the token into a database.
