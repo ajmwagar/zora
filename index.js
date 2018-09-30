@@ -278,11 +278,10 @@ io.on('connection', function (socket) {
                      *  If the client is authorized to modify settings for this server
                      *  get the current values and send them over socket.io
                      * */
-                    let channel = "";
-                    let prefix = "";
+                    let channel = "modlog";
+                    let prefix = "+";
                     let welcomestate = false;
                     let musicstate = true;
-                    let bannedwords = [];
                     let playercount = 0;
 
                     // get current config for server from database
@@ -291,11 +290,10 @@ io.on('connection', function (socket) {
                     // update variables based on database
                     prefix = cdserver.prefix;
                     channel = cdserver.modlogChannel;
-                    bannedwords = cdserver.automod.bannedwords;
                     musicstate = cdserver.modules.music;
                     welcomestate = cdserver.modules.music;
                     playercount = cdserver.stats.users;
-                    socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, bannedwords, playercount, function (answer) {});
+                    socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, playercount, function (answer) {});
                 }
             })
             .catch(function (error) {
@@ -305,7 +303,7 @@ io.on('connection', function (socket) {
                 // always executed
             });
     });
-    socket.on('SaveCFG', function (token, serverid, prefix, modlog, musicstate, welcomestate, bannedwords) {
+    socket.on('SaveCFG', function (token, serverid, prefix, modlog, musicstate, welcomestate) {
         /**
          * Always make sure the token submitted by the client
          * has access to the server you are modifying
@@ -341,7 +339,6 @@ io.on('connection', function (socket) {
                     newconfig.modlogChannel = modlog;
                     newconfig.modules.music = musicstate;
                     newconfig.welcomes = welcomestate;
-                    newconfig.automod.bannedwords = bannedwords;
 
                     // set current config for server in database
                     await setServerConfig(serverid, newconfig);
