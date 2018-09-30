@@ -220,9 +220,10 @@ app.get('/api/discord/callback', function (req, res) {
             // Sign API requests on behalf of the current user.
             user.sign({
                 method: 'get',
-                url: 'https://zora.netlify.com'
+                url: 'https://dta.dekutree.org'
             })
 
+            console.log('redirected!')
             return res.redirect(`https://zora.netlify.com/#/dashboard?token=${user.accessToken}`)
 
         })
