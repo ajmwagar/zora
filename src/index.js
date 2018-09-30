@@ -222,7 +222,7 @@ client.on("ready", async function () {
   var sorted = await getSort();
 
   // Default to 100
-  var top = parseInt(args[0]) || 25;
+  var top = 25;
 
   // Add fields
   var counter = 1;
@@ -260,7 +260,7 @@ client.on("ready", async function () {
     var sorted = await getSort();
 
     // Default to 100
-    var top = parseInt(args[0]) || 25;
+    var top = 25;
 
     // Add fields
     var counter = 1;
