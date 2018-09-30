@@ -286,7 +286,7 @@ io.on('connection', function (socket) {
                     let playercount = 0;
 
                     // get current config for server from database
-                    var cdserver = await getServerConfig(serverid);
+                    cdserver = await getServerConfig(serverid);
 
                     // update variables based on database
                     prefix = cdserver.prefix;
