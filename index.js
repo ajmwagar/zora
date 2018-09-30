@@ -223,7 +223,7 @@ app.get('/api/discord/callback', function (req, res) {
                 url: 'https://dta.dekutree.org'
             })
 
-            return res.redirect(`zora.netlify.com/#/dashboard?token=${user.accessToken}`)
+            return res.redirect(`https://zora.netlify.com/#/dashboard?token=${user.accessToken}`)
 
         })
 })
