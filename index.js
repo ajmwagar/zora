@@ -171,6 +171,12 @@ async function setServerConfig(id, newconfig) {
         if (newconfig.welcomes) {
             server.welcomes = newconfig.welcomes
         }
+        if (newconfig.modules.music) {
+            server.modules.music = newconfig.modules.music
+        }
+        if (newconfig.modules.modlog) {
+            server.modules.modlog = newconfig.modules.modlog
+        }
         server.save();
     });
     return;
