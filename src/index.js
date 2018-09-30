@@ -212,7 +212,7 @@ client.on("ready", async function () {
    * Start the main loop, this runs every hour
    * used to update things such as stats
    */
-  (async function update() {
+  async function update() {
     var j = schedule.scheduleJob('0 * * * *', async function () {
       console.log(chalk.magenta('UPDATED DATA'))
       // Get from database and sort!
@@ -246,40 +246,10 @@ client.on("ready", async function () {
         }
       }
     });
-  })
-
+  }
+  update();
   var j = schedule.scheduleJob('0 * * * *', async function () {
-    console.log(chalk.magenta('UPDATED DATA'))
-    // Get from database and sort!
-    const getSort = () => {
-      return UserM.find({}).sort({
-        zcoins: -1
-      }).exec()
-    }
-
-    var sorted = await getSort();
-
-    // Default to 100
-    var top = 25;
-
-    // Add fields
-    var counter = 1;
-    for (var usr in sorted) {
-      var profile = sorted[counter - 1];
-      if (profile) {
-        if (counter <= top && counter <= 25) {
-          if (counter === 1) {
-            UserM.findById(profile._id, function (err, user) {
-              user.stats.richest.id = profile._id;
-              user.stats.richest.name = profile.username;
-              user.stats.richest.zcoins = profile.zcoins;
-              user.stats.richest.level = profile.level;
-              user.save();
-            });
-          }
-        }
-      }
-    }
+    update();
   });
 
 
