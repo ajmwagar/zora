@@ -248,9 +248,9 @@ client.on("ready", async function () {
     }
   }
 
-  await update();
+  update();
   var j = schedule.scheduleJob('0 * * * *', async function () {
-    await update();
+    update();
   });
 
 
