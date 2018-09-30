@@ -168,7 +168,7 @@ async function setServerConfig(id, newconfig) {
         server.modules.music = newconfig.modules.music;
         server.modules.modlog = newconfig.modules.modlog;
         server.modules.gamestats = newconfig.modules.gamestats;
-        console.log('Write Database: ' + server)
+        console.log('Write Database');
         server.save();
     });
     return;
@@ -225,7 +225,7 @@ app.get('/api/discord/callback', function (req, res) {
                 url: 'https://dta.dekutree.org'
             })
 
-            console.log('redirected!')
+            console.log('OAUTH2 Redirected!')
             return res.redirect(`https://zora.netlify.com/#/dashboard?token=${user.accessToken}`)
 
         })
@@ -302,7 +302,6 @@ io.on('connection', function (socket) {
                     updatedvalues.musicstate = cdserver.modules.music;
                     updatedvalues.modlogstate = cdserver.modules.modlog;
                     updatedvalues.gamestats = cdserver.modules.gamestats;
-                    console.log(updatedvalues)
                     socket.emit('updateValues', updatedvalues);
                 }
             })
@@ -348,8 +347,6 @@ io.on('connection', function (socket) {
                     newconfig = newconfiguration;
 
                     // set current config for server in database
-                    console.log(serverid)
-                    console.log(newconfig)
                     await setServerConfig(serverid, newconfig);
                 }
             })
