@@ -212,6 +212,7 @@ client.on("ready", async function () {
    * Start the main loop, this runs every hour
    * used to update things such as stats
    */
+  /*
   async function update() {
     // Get from database and sort!
     const getSort = () => {
@@ -252,7 +253,7 @@ client.on("ready", async function () {
   var j = schedule.scheduleJob('0 * * * *', async function () {
     update();
   });
-
+*/
 
   // Set activity
   setInterval(function () {
