@@ -292,7 +292,7 @@ io.on('connection', function (socket) {
                     channel = cdserver.modlogChannel;
                     welcomestate = cdserver.welcomes;
                     playercount = cdserver.stats.users;
-                    socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, playercount, function (answer) {});
+                    socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, playercount);
                 }
             })
             .catch(function (error) {
