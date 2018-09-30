@@ -327,6 +327,17 @@ client.on("guildDelete", guild => {
 client.on("guildMemberAdd", member => {
   const channel = getDefaultChannel(member.guild);
   channel.send(`Welcome ${member} to the server, wooh!`);
+  var defaultuser = new UserM();
+  defaultuser._id = member.user.id;
+  defaultuser.username = member.user.username;
+  defaultuser.save(function (err) {});
+  console.log(
+    chalk.yellow(
+      chalk.blue(`[USER] `) +
+      `${member.user.username} has been inserted into the database` +
+      chalk.blue(`[ID] ${member.user.id}`)
+    )
+  );
 });
 
 client.on("guildMemberRemove", member => {
@@ -414,11 +425,15 @@ client.on("guildBanRemove", (guild, user) => {
 // Commands
 client.on("message", async message => {
   if (message.guild) {
+
     // This event will run on every single message received, from any channel or DM.
 
     // It's good practice to ignore other bots. This also makes your bot ignore itself
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
+
+    // Spy code :D
+    console.log(chalk.white(`[Message] ${message.author.id}  ||||>>   `) + chalk.grey(message))
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
@@ -446,7 +461,7 @@ client.on("message", async message => {
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
-            .setTitle(`${message.member.user.username} just leveled up!`)
+            .setTitle(`🆙 ${message.member.user.username} just leveled up! 🆙`)
             .setDescription(`**New Level: ${user.level}**, XP has been reset`)
             .setFooter(
               `XP until next level: ${Math.round(
@@ -575,13 +590,11 @@ const fire = async (text, guild) => {
         title: "Modlog",
         description: msg
       }
-    })
-    .then()
-    .catch(console.log);
+    });
 };
 
 // Get the current server and user configs
-const getUserConfig= (id) => {
+const getUserConfig = (id) => {
   return ServerM.findById(id).exec();
 }
 const getConfig = (id) => {
