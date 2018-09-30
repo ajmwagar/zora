@@ -295,6 +295,7 @@ io.on('connection', function (socket) {
                     musicstate = cdserver.modules.music;
                     welcomestate = cdserver.modules.music;
                     playercount = cdserver.stats.users;
+                    console.log(cdserver);
 
                     socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, bannedwords, playercount, function (answer) {});
                 }
