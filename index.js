@@ -305,7 +305,7 @@ io.on('connection', function (socket) {
                 // always executed
             });
     });
-    socket.on('SaveCFG', function (token, serverid, prefix, modlog, musicstate, welcomestate) {
+    socket.on('SaveCFG', function (token, serverid, newconfiguration) {
         /**
          * Always make sure the token submitted by the client
          * has access to the server you are modifying
@@ -337,9 +337,7 @@ io.on('connection', function (socket) {
 
                     var newconfig = {};
 
-                    newconfig.prefix = prefix;
-                    newconfig.modlogChannel = modlog;
-                    newconfig.welcomes = welcomestate;
+                    newconfig = newconfiguration;
 
                     // set current config for server in database
                     await setServerConfig(serverid, newconfig);
