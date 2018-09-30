@@ -158,7 +158,15 @@ async function getServerConfig(id) {
 
 async function setServerConfig(id, newconfig) {
     await ServerM.findById(id, function (err, server) {
-        server = newconfig;
+        if (newconfig.prefix) {
+            server.prefix = newconfig.prefix
+        }
+        if (newconfig.modlogChannel) {
+            server.modlogChannel = newconfig.modlogChannel
+        }
+        if (newconfig.welcomes) {
+            server.welcomes = newconfig.welcomes
+        }
         server.save();
     });
     return;
