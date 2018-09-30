@@ -295,9 +295,56 @@ io.on('connection', function (socket) {
                     musicstate = cdserver.modules.music;
                     welcomestate = cdserver.modules.music;
                     playercount = cdserver.stats.users;
-                    console.log(cdserver);
-
                     socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, bannedwords, playercount, function (answer) {});
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
+    });
+    socket.on('SaveCFG', function (token, serverid, prefix, modlog, musicstate, welcomestate, bannedwords) {
+        /**
+         * Always make sure the token submitted by the client
+         * has access to the server you are modifying
+         */
+        axios.get('https://discordapp.com/api/users/@me/guilds', {
+                headers: {
+                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then(async function (response) {
+                let ownedservers = [];
+                let ownsserver = false;
+
+                response.data.forEach(function (server) {
+                    if (server.owner == true) {
+                        ownedservers.push(server);
+                        if (server.id == serverid) {
+                            ownsserver = true;
+                        }
+                    }
+                });
+
+                if (ownsserver == true) {
+                    /**
+                     *  If the client is authorized to modify settings for this server
+                     *  set the current values
+                     * */
+
+                    var newconfig = {};
+
+                    newconfig.prefix = prefix;
+                    newconfig.modlogChannel = modlog;
+                    newconfig.modules.music = musicstate;
+                    newconfig.welcomes = welcomestate;
+                    newconfig.automod.bannedwords = bannedwords;
+
+                    // set current config for server in database
+                    await setServerConfig(serverid, newconfig);
                 }
             })
             .catch(function (error) {
