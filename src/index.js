@@ -232,9 +232,8 @@ client.on("ready", async function () {
     if (profile) {
       if (counter <= top && counter <= 25) {
         if (counter === 1) {
-          console.log(profile._id)
           UserM.findById(profile._id, function (err, user) {
-            user.stats.richest.id = profile.id;
+            user.stats.richest.id = profile._id;
             user.stats.richest.name = profile.username;
             user.stats.richest.zcoins = profile.zcoins;
             user.stats.richest.level = profile.level;
@@ -272,7 +271,7 @@ client.on("ready", async function () {
         if (counter <= top && counter <= 25) {
           if (counter === 1) {
             UserM.findById(profile._id, function (err, user) {
-              user.stats.richest.id = profile.id;
+              user.stats.richest.id = profile._id;
               user.stats.richest.name = profile.username;
               user.stats.richest.zcoins = profile.zcoins;
               user.stats.richest.level = profile.level;
