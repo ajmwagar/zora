@@ -167,6 +167,7 @@ async function setServerConfig(id, newconfig) {
         server.welcomes = newconfig.welcomes;
         server.modules.music = newconfig.modules.music;
         server.modules.modlog = newconfig.modules.modlog;
+        server.modules.gamestats = newconfig.modules.gamestats;
         console.log('Write Database: ' + server)
         server.save();
     });
@@ -299,7 +300,8 @@ io.on('connection', function (socket) {
                     updatedvalues.welcomestate = cdserver.welcomes;
                     updatedvalues.playercount = cdserver.stats.users;
                     updatedvalues.musicstate = cdserver.modules.music;
-                    updatedvalues.modlogstate = cdserver.modules.modlog
+                    updatedvalues.modlogstate = cdserver.modules.modlog;
+                    updatedvalues.gamestats = cdserver.modules.gamestats;
                     console.log(updatedvalues)
                     socket.emit('updateValues', updatedvalues);
                 }

@@ -538,16 +538,26 @@ client.on("message", async message => {
         memes.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Music
-
-        radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        let musicstate = false;
+        ServerM.findById(message.guild.id, function (err, server) {
+          musicstate = server.modules.music;
+        });
+        if (musicstate == true) {
+          radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        }
 
         // Yodaspeak
 
         yoda.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Game stats
-
-        games.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        let gamestatState = false;
+        ServerM.findById(message.guild.id, function (err, server) {
+          gamestatState = server.modules.gamestats;
+        });
+        if (gamestatState == true) {
+          games.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        }
 
         // Stack Overflow
 
