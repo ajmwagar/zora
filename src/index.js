@@ -346,6 +346,10 @@ client.on("guildDelete", guild => {
 
 // This is called as, for instance:
 client.on("guildMemberAdd", member => {
+  ServerM.findById(member.guild.id, function (err, server) {
+    server.stats.users = member.guild.memberCount;
+    server.save();
+  });
   let welcomestate = false;
   ServerM.findById(member.guild.id, function (err, server) {
     welcomestate = server.welcomes;
@@ -446,10 +450,6 @@ client.on("guildBanRemove", (guild, user) => {
 
 // Commands
 client.on("message", async message => {
-  ServerM.findById(message.guild.id, function (err, server) {
-    server.stats.users = message.guild.memberCount;
-    server.save();
-  });
   if (message.guild) {
     // This event will run on every single message received, from any channel or DM.
 
