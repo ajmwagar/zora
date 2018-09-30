@@ -234,6 +234,7 @@ client.on("ready", async function () {
           if (counter === 1) {
             client.guilds.forEach(async function (guild) {
               await ServerM.findById(guild.id, function (err, server) {
+                console.log('update_data: ' + guild.id)
                 server.stats.richest.id = profile._id;
                 server.stats.richest.name = profile.username;
                 server.stats.richest.zcoins = profile.zcoins;
