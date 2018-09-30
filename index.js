@@ -260,7 +260,7 @@ io.on('connection', function (socket) {
                 // always executed
             });
     });
-    socket.on('getChannels', function (token, serverid) {
+    socket.on('getChannels', async function (token, serverid) {
 
         // INFO: THIS IS COMPLETELY UNSECURE! Due to rate limiting restrictions, anyone can view the config of a server!
 
