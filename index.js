@@ -341,6 +341,7 @@ io.on('connection', function (socket) {
 
                     // set current config for server in database
                     console.log(serverid)
+                    console.log(newconfig)
                     await setServerConfig(serverid, newconfig);
                 }
             })
