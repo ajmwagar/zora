@@ -361,6 +361,10 @@ client.on("guildMemberAdd", member => {
 });
 
 client.on("guildMemberRemove", member => {
+  ServerM.findById(member.guild.id, function (err, server) {
+    server.stats.users = member.guild.memberCount;
+    server.save();
+  });
   let welcomestate = false;
   ServerM.findById(member.guild.id, function (err, server) {
     welcomestate = server.welcomes;
