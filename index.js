@@ -80,6 +80,27 @@ var defaultConfig = new Schema({
             default: true
         }
     },
+    stats: {
+        users: {
+            type: Number,
+            default: 0
+        },
+        richest: {
+            id: Schema.Types.Decimal128,
+            name: {
+                type: String,
+                default: ''
+            },
+            zcoins: {
+                type: Number,
+                default: 0
+            }
+        }
+    },
+    premium: {
+        type: Boolean,
+        default: false
+    },
     reddit: {
         subreddits: [],
         posts: {
