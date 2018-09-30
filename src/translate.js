@@ -8,7 +8,7 @@ translate.engine = 'google';
 // We use the same API key that we used for youtube-search!
 translate.key = config.youtubeKey;
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, cuser, cserver) {
     if (command === "translate") {
         if (args) {
             var input = args;

@@ -3,7 +3,7 @@ const config = require('../config.json');
 const Discord = require("discord.js");
 const decodeString = require("unescape");
 
-async function bot(client, message, command, args) {
+async function bot(client, message, command, args, cuser, cserver, UserM, ServerM) {
   if (command === "stack") {
     var stackapi = axios.create({
       baseURL: 'https://api.stackexchange.com/'

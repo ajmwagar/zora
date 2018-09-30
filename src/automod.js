@@ -1,6 +1,6 @@
 const config = require('../config.json');
 
-function censor(message) {
+function censor(message, cserver) {
 
   /*
   'AΑАᎪᗅᴀꓮꭺＡ𐊠𖽀𝐀𝐴𝑨𝒜𝓐𝔄𝔸𝕬𝖠𝗔𝘈𝘼𝙰𝚨𝛢𝜜𝝖𝞐@＠aɑαа⍺ａ𝐚𝑎𝒂𝒶𝓪𝔞𝕒𝖆𝖺𝗮𝘢𝙖𝚊𝛂𝛼𝜶𝝰𝞪ÅȦÄӒåȧäӓĂǍăǎᗄ∀Ɐꓯ𝈗'
@@ -43,8 +43,7 @@ function censor(message) {
   text = text.replace(/#/g, 'h');
   text = text.replace(/@/g, 'a');
   text = text.replace(/©/g, 'c');
-  console.log(text);
-  config.serverconfigs[message.guild.id].automod.bannedwords.forEach((word) => {
+  cserver.automod.bannedwords.forEach((word) => {
     if (text.toLowerCase().includes(word.toString().toLowerCase())) {
       message.reply("Watch your mouth.\nYour message has been removed for profanity.")
       // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
