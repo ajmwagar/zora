@@ -538,17 +538,11 @@ client.on("message", async message => {
         memes.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Music
-        // Game stats
-        let musicstate = true;
-        let gamestatState = true;
-        ServerM.findById(message.guild.id, function (err, server) {
-          musicstate = server.modules.music;
-          gamestatState = server.modules.gamestats;
-        });
-        if (musicstate == true) {
+        if (cserver.modules.music == true) {
           radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
         }
-        if (gamestatState == true) {
+        // Game stats
+        if (cserver.modules.gamestats == true) {
           games.bot(client, message, command, args, user, cserver, UserM, ServerM);
         }
 
