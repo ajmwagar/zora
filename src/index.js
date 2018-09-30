@@ -124,6 +124,10 @@ var defaultConfig = new Schema({
     gamestats: {
       type: Boolean,
       default: true
+    },
+    modlog: {
+      type: Boolean,
+      default: true
     }
   },
   stats: {

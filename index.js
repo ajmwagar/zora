@@ -78,6 +78,10 @@ var defaultConfig = new Schema({
         gamestats: {
             type: Boolean,
             default: true
+        },
+        modlog: {
+            type: Boolean,
+            default: true
         }
     },
     stats: {
@@ -287,24 +291,31 @@ io.on('connection', function (socket) {
                      *  If the client is authorized to modify settings for this server
                      *  get the current values and send them over socket.io
                      * */
-                    let channel = "modlog";
-                    let prefix = "+";
-                    let welcomestate = false;
-                    let musicstate = true;
-                    let playercount = 0;
+                    let updatedvalues = {};
 
                     // get current config for server from database
                     cdserver = await getServerConfig(serverid);
 
                     // update variables based on database
-                    prefix = cdserver.prefix;
-                    channel = cdserver.modlogChannel;
-                    welcomestate = cdserver.welcomes;
-                    playercount = cdserver.stats.users;
-                    socket.emit('updateChannel', channel);
-                    socket.emit('updatePrefix', prefix);
-                    socket.emit('updateWelcome', welcomestate);
-                    socket.emit('updatePlayercount', playercount);
+                    if (cdserver.prefix) {
+                        updatedvalues.prefix = cdserver.prefix;
+                    }
+                    if (cdserver.modlogChannel) {
+                        updatedvalues.channel = cdserver.modlogChannel;
+                    }
+                    if (cdserver.welcomes) {
+                        updatedvalues.welcomestate = cdserver.welcomes;
+                    }
+                    if (cdserver.stats.users) {
+                        updatedvalues.playercount = cdserver.stats.users;
+                    }
+                    if (cdserver.modules.music) {
+                        updatedvalues.musicstate = cdserver.modules.music;
+                    }
+                    if (cdserver.modules.modlog) {
+                        updatedvalues.modlogstate = cdserver.modules.modlog
+                    }
+                    socket.emit('updateValues', updatedvalues);
                 }
             })
             .catch(function (error) {
