@@ -213,38 +213,41 @@ client.on("ready", async function () {
    * used to update things such as stats
    */
   async function update() {
-    console.log(chalk.magenta('UPDATED DATA'))
-    // Get from database and sort!
-    const getSort = () => {
-      return UserM.find({}).sort({
-        zcoins: -1
-      }).exec()
-    }
+    client.guilds.forEach(function (guild) {
+      console.log(chalk.magenta('UPDATED DATA FOR: ' + guild.id))
+      // Get from database and sort!
+      const getSort = () => {
+        return UserM.find({}).sort({
+          zcoins: -1
+        }).exec()
+      }
 
-    var sorted = await getSort();
+      var sorted = await getSort();
 
-    // Default to 100
-    var top = 25;
+      // Default to 100
+      var top = 25;
 
-    // Add fields
-    var counter = 1;
-    for (var usr in sorted) {
-      var profile = sorted[counter - 1];
-      if (profile) {
-        if (counter <= top && counter <= 25) {
-          if (counter === 1) {
-            UserM.findById(profile._id, function (err, user) {
-              user.stats.richest.id = profile._id;
-              user.stats.richest.name = profile.username;
-              user.stats.richest.zcoins = profile.zcoins;
-              user.stats.richest.level = profile.level;
-              user.save();
-            });
+      // Add fields
+      var counter = 1;
+      for (var usr in sorted) {
+        var profile = sorted[counter - 1];
+        if (profile) {
+          if (counter <= top && counter <= 25) {
+            if (counter === 1) {
+              ServerM.findById(guild.id, function (err, server) {
+                server.stats.richest.id = profile._id;
+                server.stats.richest.name = profile.username;
+                server.stats.richest.zcoins = profile.zcoins;
+                server.stats.richest.level = profile.level;
+                server.save();
+              });
+            }
           }
         }
       }
-    }
+    });
   }
+
   update();
   var j = schedule.scheduleJob('0 * * * *', async function () {
     update();
