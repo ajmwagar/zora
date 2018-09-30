@@ -290,8 +290,7 @@ io.on('connection', function (socket) {
                     // update variables based on database
                     prefix = cdserver.prefix;
                     channel = cdserver.modlogChannel;
-                    musicstate = cdserver.modules.music;
-                    welcomestate = cdserver.modules.music;
+                    welcomestate = cdserver.welcomes;
                     playercount = cdserver.stats.users;
                     socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, playercount, function (answer) {});
                 }
@@ -337,7 +336,6 @@ io.on('connection', function (socket) {
 
                     newconfig.prefix = prefix;
                     newconfig.modlogChannel = modlog;
-                    newconfig.modules.music = musicstate;
                     newconfig.welcomes = welcomestate;
 
                     // set current config for server in database
