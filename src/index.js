@@ -233,11 +233,11 @@ client.on("ready", async function () {
       if (counter <= top && counter <= 25) {
         if (counter === 1) {
           UserM.findById(profile._id, function (err, user) {
-            server.stats.richest.id = profile.id;
-            server.stats.richest.name = profile.username;
-            server.stats.richest.zcoins = profile.zcoins;
-            server.stats.richest.level = profile.level;
-            server.save();
+            user.stats.richest.id = profile.id;
+            user.stats.richest.name = profile.username;
+            user.stats.richest.zcoins = profile.zcoins;
+            user.stats.richest.level = profile.level;
+            user.save();
           });
         }
       }
@@ -271,11 +271,11 @@ client.on("ready", async function () {
         if (counter <= top && counter <= 25) {
           if (counter === 1) {
             UserM.findById(profile._id, function (err, user) {
-              server.stats.richest.id = profile.id;
-              server.stats.richest.name = profile.username;
-              server.stats.richest.zcoins = profile.zcoins;
-              server.stats.richest.level = profile.level;
-              server.save();
+              user.stats.richest.id = profile.id;
+              user.stats.richest.name = profile.username;
+              user.stats.richest.zcoins = profile.zcoins;
+              user.stats.richest.level = profile.level;
+              user.save();
             });
           }
         }
