@@ -293,6 +293,7 @@ io.on('connection', function (socket) {
                     welcomestate = cdserver.welcomes;
                     playercount = cdserver.stats.users;
                     socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, playercount, function (answer) {});
+                    console.log(prefix)
                 }
             })
             .catch(function (error) {
