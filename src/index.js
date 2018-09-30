@@ -232,6 +232,7 @@ client.on("ready", async function () {
     if (profile) {
       if (counter <= top && counter <= 25) {
         if (counter === 1) {
+          console.log(profile._id)
           UserM.findById(profile._id, function (err, user) {
             user.stats.richest.id = profile.id;
             user.stats.richest.name = profile.username;
