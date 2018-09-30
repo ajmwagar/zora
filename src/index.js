@@ -209,42 +209,6 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 client.on("ready", async function () {
 
   /**
-   * Update on start
-   */
-
-  // Get from database and sort!
-  console.log(chalk.magenta('UPDATED DATA'))
-  const getSort = () => {
-    return UserM.find({}).sort({
-      zcoins: -1
-    }).exec()
-  }
-
-  var sorted = await getSort();
-
-  // Default to 100
-  var top = 25;
-
-  // Add fields
-  var counter = 1;
-  for (var usr in sorted) {
-    var profile = sorted[counter - 1];
-    if (profile) {
-      if (counter <= top && counter <= 25) {
-        if (counter === 1) {
-          UserM.findById(profile._id, function (err, user) {
-            user.stats.richest.id = profile._id;
-            user.stats.richest.name = profile.username;
-            user.stats.richest.zcoins = profile.zcoins;
-            user.stats.richest.level = profile.level;
-            user.save();
-          });
-        }
-      }
-    }
-  }
-
-  /**
    * Start the main loop, this runs every hour
    * used to update things such as stats
    */
