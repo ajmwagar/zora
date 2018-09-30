@@ -182,6 +182,7 @@ var defaultprofile = new Schema({
     default: "1"
   },
   username: String,
+  profileurl: String,
   xp: {
     type: Number,
     default: "0"
