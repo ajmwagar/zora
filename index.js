@@ -162,21 +162,12 @@ async function getServerConfig(id) {
 
 async function setServerConfig(id, newconfig) {
     await ServerM.findById(id, function (err, server) {
-        if (newconfig.prefix) {
-            server.prefix = newconfig.prefix
-        }
-        if (newconfig.modlogChannel) {
-            server.modlogChannel = newconfig.modlogChannel
-        }
-        if (newconfig.welcomes) {
-            server.welcomes = newconfig.welcomes
-        }
-        if (newconfig.modules.music) {
-            server.modules.music = newconfig.modules.music
-        }
-        if (newconfig.modules.modlog) {
-            server.modules.modlog = newconfig.modules.modlog
-        }
+        server.prefix = newconfig.prefix;
+        server.modlogChannel = newconfig.modlogChannel;
+        server.welcomes = newconfig.welcomes;
+        server.modules.music = newconfig.modules.music;
+        server.modules.modlog = newconfig.modules.modlog;
+        console.log('Write Database: ' + server)
         server.save();
     });
     return;
