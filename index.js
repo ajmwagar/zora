@@ -303,6 +303,7 @@ io.on('connection', function (socket) {
                     updatedvalues.playercount = cdserver.stats.users;
                     updatedvalues.musicstate = cdserver.modules.music;
                     updatedvalues.modlogstate = cdserver.modules.modlog
+                    console.log(updatedvalues)
                     socket.emit('updateValues', updatedvalues);
                 }
             })
