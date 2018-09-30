@@ -297,24 +297,12 @@ io.on('connection', function (socket) {
                     cdserver = await getServerConfig(serverid);
 
                     // update variables based on database
-                    if (cdserver.prefix) {
-                        updatedvalues.prefix = cdserver.prefix;
-                    }
-                    if (cdserver.modlogChannel) {
-                        updatedvalues.channel = cdserver.modlogChannel;
-                    }
-                    if (cdserver.welcomes) {
-                        updatedvalues.welcomestate = cdserver.welcomes;
-                    }
-                    if (cdserver.stats.users) {
-                        updatedvalues.playercount = cdserver.stats.users;
-                    }
-                    if (cdserver.modules.music) {
-                        updatedvalues.musicstate = cdserver.modules.music;
-                    }
-                    if (cdserver.modules.modlog) {
-                        updatedvalues.modlogstate = cdserver.modules.modlog
-                    }
+                    updatedvalues.prefix = cdserver.prefix;
+                    updatedvalues.channel = cdserver.modlogChannel;
+                    updatedvalues.welcomestate = cdserver.welcomes;
+                    updatedvalues.playercount = cdserver.stats.users;
+                    updatedvalues.musicstate = cdserver.modules.music;
+                    updatedvalues.modlogstate = cdserver.modules.modlog
                     socket.emit('updateValues', updatedvalues);
                 }
             })
