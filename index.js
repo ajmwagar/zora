@@ -261,56 +261,24 @@ io.on('connection', function (socket) {
             });
     });
     socket.on('getChannels', function (token, serverid) {
-        /**
-         * Always make sure the token submitted by the client
-         * has access to the server you are modifying
-         */
-        axios.get('https://discordapp.com/api/users/@me/guilds', {
-                headers: {
-                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            .then(async function (response) {
-                let ownedservers = [];
-                let ownsserver = false;
 
-                response.data.forEach(function (server) {
-                    if (server.owner == true) {
-                        ownedservers.push(server);
-                        if (server.id == serverid) {
-                            ownsserver = true;
-                        }
-                    }
-                });
+        // INFO: THIS IS COMPLETELY UNSECURE! Due to rate limiting restrictions, anyone can view the config of a server!
 
-                if (ownsserver == true) {
-                    /**
-                     *  If the client is authorized to modify settings for this server
-                     *  get the current values and send them over socket.io
-                     * */
-                    let updatedvalues = {};
+        let updatedvalues = {};
 
-                    // get current config for server from database
-                    cdserver = await getServerConfig(serverid);
+        // get current config for server from database
+        cdserver = await getServerConfig(serverid);
 
-                    // update variables based on database
-                    updatedvalues.prefix = cdserver.prefix;
-                    updatedvalues.channel = cdserver.modlogChannel;
-                    updatedvalues.welcomestate = cdserver.welcomes;
-                    updatedvalues.playercount = cdserver.stats.users;
-                    updatedvalues.musicstate = cdserver.modules.music;
-                    updatedvalues.modlogstate = cdserver.modules.modlog;
-                    updatedvalues.gamestats = cdserver.modules.gamestats;
-                    socket.emit('updateValues', updatedvalues);
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .then(function () {
-                // always executed
-            });
+        // update variables based on database
+        updatedvalues.prefix = cdserver.prefix;
+        updatedvalues.channel = cdserver.modlogChannel;
+        updatedvalues.welcomestate = cdserver.welcomes;
+        updatedvalues.playercount = cdserver.stats.users;
+        updatedvalues.musicstate = cdserver.modules.music;
+        updatedvalues.modlogstate = cdserver.modules.modlog;
+        updatedvalues.gamestats = cdserver.modules.gamestats;
+        socket.emit('updateValues', updatedvalues);
+
     });
     socket.on('SaveCFG', function (token, serverid, newconfiguration) {
         /**
