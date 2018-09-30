@@ -205,7 +205,7 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
-client.on("ready", () => {
+client.on("ready", async function () {
 
   /**
    * Update on start
