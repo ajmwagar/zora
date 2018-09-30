@@ -235,10 +235,10 @@ client.on("ready", () => {
         `${guild.id} has been inserted into the database`
       )
     );
-    ServerM.findById(guild.id, function (err, server) {
-      server.stats.users = guild.memberCount;
-      server.save();
-    });
+  });
+  ServerM.findById(guild.id, function (err, server) {
+    server.stats.users = guild.memberCount;
+    server.save();
   });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -358,6 +358,10 @@ client.on("guildMemberAdd", member => {
     const channel = getDefaultChannel(member.guild);
     channel.send(`Welcome ${member} to the server, wooh!`);
   }
+  ServerM.findById(guild.id, function (err, server) {
+    server.stats.users = guild.memberCount;
+    server.save();
+  });
 });
 
 client.on("guildMemberRemove", member => {
@@ -371,6 +375,10 @@ client.on("guildMemberRemove", member => {
       channel.send(`Farewell, ${member} will be missed!`);
     }
   }
+  ServerM.findById(guild.id, function (err, server) {
+    server.stats.users = guild.memberCount;
+    server.save();
+  });
 });
 
 client.on("messageDelete", msg => {
