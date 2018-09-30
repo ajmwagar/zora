@@ -447,7 +447,7 @@ client.on("guildBanRemove", (guild, user) => {
 // Commands
 client.on("message", async message => {
   ServerM.findById(message.guild.id, function (err, server) {
-    server.stats.users = guild.memberCount;
+    server.stats.users = message.guild.memberCount;
     server.save();
   });
   if (message.guild) {
