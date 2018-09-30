@@ -212,6 +212,7 @@ client.on("ready", async function () {
    */
 
   // Get from database and sort!
+  console.log(chalk.magenta('UPDATED DATA'))
   const getSort = () => {
     return UserM.find({}).sort({
       zcoins: -1
@@ -248,6 +249,7 @@ client.on("ready", async function () {
    */
 
   var j = schedule.scheduleJob('0 * * * *', async function () {
+    console.log(chalk.magenta('UPDATED DATA'))
     // Get from database and sort!
     const getSort = () => {
       return UserM.find({}).sort({
