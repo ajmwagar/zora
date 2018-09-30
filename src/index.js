@@ -601,38 +601,46 @@ client.on("message", async message => {
 });
 
 const fire = async (text, guild) => {
-  var cserver = await getConfig(guild.id);
 
-  if (guild)
-    if (!guild.channels) return;
+  let ModlogEnabled = false;
+  ServerM.findById(guild.id, function (err, server) {
+    ModlogEnabled = server.modules.modlog
+  });
 
-  let channel = guild.channels.find(
-    c => cserver && c.name && c.name.includes(cserver.modlogChannel)
-  );
+  if (ModlogEnabled == true) {
+    var cserver = await getConfig(guild.id);
 
-  if (!channel) {
-    //console.log(cserver);
-    //console.log(channel);
-    console.log(chalk.yellow("Channel not found"));
-    return;
+    if (guild)
+      if (!guild.channels) return;
+
+    let channel = guild.channels.find(
+      c => cserver && c.name && c.name.includes(cserver.modlogChannel)
+    );
+
+    if (!channel) {
+      //console.log(cserver);
+      //console.log(channel);
+      console.log(chalk.yellow("Channel not found"));
+      return;
+    }
+
+    let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
+    var msg = time + text;
+    channel
+      .send({
+        embed: {
+          color: 12370112,
+          author: {
+            name: client.user.username,
+            icon_url: client.user.avatarURL
+          },
+          title: "Modlog",
+          description: msg
+        }
+      })
+      .then()
+      .catch();
   }
-
-  let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
-  var msg = time + text;
-  channel
-    .send({
-      embed: {
-        color: 12370112,
-        author: {
-          name: client.user.username,
-          icon_url: client.user.avatarURL
-        },
-        title: "Modlog",
-        description: msg
-      }
-    })
-    .then()
-    .catch();
 };
 
 // Get the current server and user configs
