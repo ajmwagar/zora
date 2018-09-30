@@ -247,7 +247,7 @@ client.on("ready", async function () {
    * used to update things such as stats
    */
 
-  var j = schedule.scheduleJob('0 * * * *', function () {
+  var j = schedule.scheduleJob('0 * * * *', async function () {
     // Get from database and sort!
     const getSort = () => {
       return UserM.find({}).sort({
