@@ -71,6 +71,7 @@ const axios = require("axios");
 const moment = require("moment");
 var Long = require("long");
 const chalk = require("chalk");
+const schedule = require('node-schedule');
 
 // Internal modules
 const automod = require("./automod");
