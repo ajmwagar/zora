@@ -277,9 +277,11 @@ io.on('connection', function (socket) {
         updatedvalues.musicstate = cdserver.modules.music;
         updatedvalues.modlogstate = cdserver.modules.modlog;
         updatedvalues.gamestats = cdserver.modules.gamestats;
-        updatedvalues.richestPerson.name = cdserver.stats.richest.name;
-        updatedvalues.richestPerson.zcoins = cdserver.stats.richest.zcoins;
-        updatedvalues.richestPerson.level = cdserver.stats.richest.level;
+        if (cdserver.stats.richest) {
+            updatedvalues.richestPerson.name = cdserver.stats.richest.name;
+            updatedvalues.richestPerson.zcoins = cdserver.stats.richest.zcoins;
+            updatedvalues.richestPerson.level = cdserver.stats.richest.level;
+        }
         socket.emit('updateValues', updatedvalues);
 
     });
