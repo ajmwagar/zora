@@ -116,6 +116,37 @@ var defaultConfig = new Schema({
     type: Boolean,
     default: false
   },
+  modules: {
+    music: {
+      type: Boolean,
+      default: true
+    },
+    gamestats: {
+      type: Boolean,
+      default: true
+    }
+  },
+  stats: {
+    users: {
+      type: Number,
+      default: 0
+    },
+    richest: {
+      id: Schema.Types.Decimal128,
+      name: {
+        type: String,
+        default: ''
+      },
+      zcoins: {
+        type: Number,
+        default: 0
+      }
+    }
+  },
+  premium: {
+    type: Boolean,
+    default: false
+  },
   reddit: {
     subreddits: [],
     posts: {
@@ -204,6 +235,10 @@ client.on("ready", () => {
         `${guild.id} has been inserted into the database`
       )
     );
+    ServerM.findById(guild.id, function (err, server) {
+      server.stats.users = guild.memberCount;
+      server.save();
+    });
   });
 
   // This event will run if the bot starts, and logs in, successfully.

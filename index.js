@@ -70,6 +70,16 @@ var defaultConfig = new Schema({
         type: Boolean,
         default: false
     },
+    modules: {
+        music: {
+            type: Boolean,
+            default: true
+        },
+        gamestats: {
+            type: Boolean,
+            default: true
+        }
+    },
     reddit: {
         subreddits: [],
         posts: {
@@ -243,13 +253,29 @@ io.on('connection', function (socket) {
                 });
 
                 if (ownsserver == true) {
+                    /**
+                     *  If the client is authorized to modify settings for this server
+                     *  get the current values and send them over socket.io
+                     * */
                     let channel = "";
                     let prefix = "";
+                    let welcomestate = false;
+                    let musicstate = true;
+                    let bannedwords = [];
+                    let playercount = 0;
+
+                    // get current config for server from database
                     cdserver = await getServerConfig(serverid);
+
+                    // update variables based on database
                     prefix = cdserver.prefix;
                     channel = cdserver.modlogChannel;
-                    socket.emit('updateChannel', channel, function (answer) {});
-                    socket.emit('updatePrefix', prefix, function (answer) {});
+                    bannedwords = cdserver.automod.bannedwords;
+                    musicstate = cdserver.modules.music;
+                    welcomestate = cdserver.modules.music;
+                    playercount = cdserver.stats.users;
+
+                    socket.emit('updateStatus', channel, prefix, musicstate, welcomestate, bannedwords, playercount, function (answer) {});
                 }
             })
             .catch(function (error) {
