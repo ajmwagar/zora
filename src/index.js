@@ -213,7 +213,7 @@ client.on("ready", async function () {
    * used to update things such as stats
    */
   async function update() {
-    client.guilds.forEach(function (guild) {
+    client.guilds.forEach(async function (guild) {
       console.log(chalk.magenta('UPDATED DATA FOR: ' + guild.id))
       // Get from database and sort!
       const getSort = () => {
