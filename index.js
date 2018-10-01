@@ -194,8 +194,8 @@ app.use(bodyParser.json());
 // SSL Certs
 // TODO move into config.json
 const options = {
-    cert: fs.readFileSync('./sslcert/fullchain.pem'),
-    key: fs.readFileSync('./sslcert/privkey.pem')
+    //cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    //key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
 app.listen(80, () => {

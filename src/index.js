@@ -3,12 +3,16 @@ var start = Date.now();
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const vision = require('@google-cloud/vision');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `client.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
+
+const VisionClient = new vision.ImageAnnotatorClient();
+
 
 const config = require("../config.json");
 // const profiles = require("../profiles.json");
@@ -71,6 +75,7 @@ const axios = require("axios");
 const moment = require("moment");
 var Long = require("long");
 const chalk = require("chalk");
+const Path = require('path')
 const schedule = require('node-schedule');
 
 // Internal modules
@@ -519,14 +524,111 @@ client.on("message", async message => {
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
 
+    const cserver = await getConfig(message.guild.id);
+    const cuser = await getUserConfig(message.author.id);
+
+    function attachIsImage(msgAttach) {
+      var url = msgAttach.url;
+      //True if this url is a png image.
+      return url.indexOf("png", url.length - "png".length /*or 3*/ ) !== -1;
+      //True if this url is a png image.
+      return url.indexOf("jpg", url.length - "jpg".length /*or 3*/ ) !== -1;
+      //True if this url is a png image.
+      return url.indexOf("gif", url.length - "gif".length /*or 3*/ ) !== -1;
+    }
+
+    async function detectLabels(fileName, url) {
+      console.log('Autotagger Detecting Labels...')
+      VisionClient
+        .labelDetection(fileName)
+        .then(async function (results) {
+          const labels = results[0].labelAnnotations;
+          var tags = [];
+          await labels.forEach(label => tags.push(label.description));
+          if (message.guild)
+            if (!message.guild.channels) return;
+
+          let channel = message.guild.channels.find(
+            c => cserver && c.name && c.name.includes(cserver.modlogChannel)
+          );
+
+          if (!channel) {
+            //console.log(cserver);
+            //console.log(channel);
+            console.log(chalk.yellow("Channel not found"));
+            return;
+          }
+
+          let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
+          var text = `\n**Original Message:**\n` + message.content + `\n **Zora AutoTagger:** ${tags.join(', ')}`
+          var msg = time + text;
+          if (tags) {
+            console.log('Autotagger Successful')
+          }
+          message.react('\uD83C\uDFF7');
+          const embed = new Discord.RichEmbed()
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .setColor("#FF7F50")
+            .setThumbnail(url)
+            .setTitle(`📷 Zora Autotagger 📷`)
+            .setDescription(msg)
+          return channel.send({
+            embed
+          });
+        })
+        .catch(err => {
+          console.error('ERROR:', err);
+        });
+    }
+
+    async function downloadImage(url) {
+
+      const path = Path.resolve(__dirname, 'cache', url.substring(url.lastIndexOf('/') + 1))
+
+      // axios image download with response type "stream"
+      const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'stream'
+      })
+
+      // pipe the result stream into a file on disc
+      response.data.pipe(fs.createWriteStream(path))
+
+      // return a promise and resolve when download finishes
+      return new Promise((resolve, reject) => {
+        response.data.on('end', () => {
+          resolve(path)
+        })
+
+        response.data.on('error', () => {
+          reject()
+        })
+      })
+
+    }
+    if (cserver.modules.modlog == true) {
+      if (message.attachments.size > 0) {
+        if (message.attachments.every(attachIsImage)) {
+          var Attachment = (message.attachments).array();
+          console.log(Attachment[0].url)
+          //Download Image
+          await downloadImage(Attachment[0].url).then(async function (path) {
+            // AI Magic, otherwise known as if statements
+            console.log(path);
+            await detectLabels(path, Attachment[0].url);
+            // Delete Image
+            fs.unlinkSync(path);
+          });
+        }
+      }
+    }
+
     // Spy code :D
     console.log(chalk.white(`[Message] ${message.author.id}  ||||>>   `) + chalk.grey(message))
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
-
-    const cserver = await getConfig(message.guild.id);
-    const cuser = await getUserConfig(message.author.id);
 
 
     // TODO Automod filter
