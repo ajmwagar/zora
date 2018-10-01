@@ -9,7 +9,7 @@
 ## A modular discord bot that is fully customizable!
 
 ## Features:
-
+- Compatible with ZoraWeb a customizable dashboard made in Vue!
 - Music
   - Youtube links
   - Searching youtube
@@ -20,6 +20,10 @@
   - Server specific subreddits
 - Stack Overflow Search
 - Weather command
+- Wolfram Alpha Search
+- Modlog
+  - Various actions
+  - Image archive with AI autotagger
 - Joke command
 - Yodaspeak translator
 - Google Translate
