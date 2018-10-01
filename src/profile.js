@@ -3,7 +3,6 @@ const axios = require("axios");
 const fs = require("fs");
 
 const config = require("../config.json");
-const bugs = require("../bugs.json");
 
 const talkedRecently = new Set();
 

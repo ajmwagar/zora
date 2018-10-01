@@ -67,7 +67,6 @@ fs.openSync("./profiles.json", "r", (err, fd) => {
 */
 
 // Here we load the config.json file that contains our token and our prefix values.
-const bugs = require("../bugs.json");
 // config.token contains the bot's token
 // config.serverconfigs[message.guild.id].prefix contains the message prefix.
 
