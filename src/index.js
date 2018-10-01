@@ -4,6 +4,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const vision = require('@google-cloud/vision');
+const isAnImageUrl = require('is-an-image-url');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
@@ -529,11 +530,12 @@ client.on("message", async message => {
     function attachIsImage(msgAttach) {
       var url = msgAttach.url;
       //True if this url is a png image.
-      return url.indexOf("png", url.length - "png".length /*or 3*/ ) !== -1;
-      //True if this url is a png image.
-      return url.indexOf("jpg", url.length - "jpg".length /*or 3*/ ) !== -1;
-      //True if this url is a png image.
-      return url.indexOf("gif", url.length - "gif".length /*or 3*/ ) !== -1;
+      isAnImageUrl(url, function (isAnImageResult) {
+        return isAnImageResult;
+        if (isAnImageResult == true) {
+          console.log('Image detected');
+        }
+      });
     }
 
     async function detectLabels(fileName, url) {

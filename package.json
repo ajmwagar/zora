@@ -33,6 +33,7 @@
     "https": "^1.0.0",
     "icanhazdadjoke-client": "0.0.2",
     "image-cache": "^1.0.1",
+    "is-an-image-url": "^1.0.3",
     "long": "^4.0.0",
     "moment": "^2.22.2",
     "mongodb": "^2.2.36",
