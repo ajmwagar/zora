@@ -3,12 +3,16 @@ var start = Date.now();
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const vision = require('@google-cloud/vision');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`, or `client.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
+
+const VisionClient = new vision.ImageAnnotatorClient();
+
 
 const config = require("../config.json");
 // const profiles = require("../profiles.json");
@@ -26,27 +30,41 @@ dbl.on("error", e => {
   console.log(`Oops! ${e}`);
 });
 
-if (!fs.existsSync("./config.json")) {
-  console.log("No config file detected.");
-  var fileContent = {
-    token: "",
-    youtubeKey: "",
-    serverconfigs: {},
-    userprofiles: {}
-  };
-  fs.writeFileSync("./config.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+fs.openSync("./config.json", "r", (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      token: "",
+      dbltoken: "",
+      youtubeKey: "",
+      serverconfigs: {}
+    };
+    fs.writeFileSync("./config.json", JSON.stringify(fileContent), err => {
+      if (err) throw err;
+    });
 
-  console.log("Configuration file generated at ./config.json \nPlease add your bot token and youtube api key, then restart the bot.\n\n\n");
-}
-if (!fs.existsSync("./profiles.json")) {
-  console.log("No profiles file detected.");
-  var fileContent = {
-    userprofiles: {}
-  };
-  fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), (err) => {if (err) throw err;});
+    console.log(
+      "Configuration file generated at ./config.json \n Please add your bot token and youtube api key, then restart the bot."
+    );
+    process.exit(0);
+  }
+});
+/*
+fs.openSync("./profiles.json", "r", (err, fd) => {
+  if (err) {
+    console.log("No config file detected.");
+    var fileContent = {
+      userprofiles: {}
+    };
+    fs.writeFileSync("./profiles.json", JSON.stringify(fileContent), err => {
+      if (err) throw err;
+    });
 
-  console.log("Profiles file generated at ./profiles.json\n\n");
-}
+    console.log("Profiles file generated at ./profiles.json");
+    process.exit(0);
+  }
+});
+*/
 
 // Here we load the config.json file that contains our token and our prefix values.
 const bugs = require("../bugs.json");
@@ -57,6 +75,8 @@ const axios = require("axios");
 const moment = require("moment");
 var Long = require("long");
 const chalk = require("chalk");
+const Path = require('path')
+const schedule = require('node-schedule');
 
 // Internal modules
 const automod = require("./automod");
@@ -71,6 +91,7 @@ const utility = require("./utility");
 const translate = require("./translate");
 const crypto = require("./crypto");
 const profile = require("./profile");
+const wolfram = require("./wolfram");
 const modlog = require("./events/modlog");
 
 // URL that points to MongoDB database
@@ -86,7 +107,7 @@ mongoose.connect(url, {
 var defaultConfig = new Schema({
   name: {
     type: String,
-    default: config.name
+    default: ''
   },
   _id: Schema.Types.Decimal128,
   prefix: {
@@ -96,6 +117,49 @@ var defaultConfig = new Schema({
   modlogChannel: {
     type: String,
     default: "modlog"
+  },
+  welcomes: {
+    type: Boolean,
+    default: false
+  },
+  modules: {
+    music: {
+      type: Boolean,
+      default: true
+    },
+    gamestats: {
+      type: Boolean,
+      default: true
+    },
+    modlog: {
+      type: Boolean,
+      default: true
+    }
+  },
+  stats: {
+    users: {
+      type: Number,
+      default: 0
+    },
+    richest: {
+      id: Schema.Types.Decimal128,
+      name: {
+        type: String,
+        default: ''
+      },
+      zcoins: {
+        type: Number,
+        default: 0
+      },
+      level: {
+        type: Number,
+        default: 0
+      }
+    }
+  },
+  premium: {
+    type: Boolean,
+    default: false
   },
   reddit: {
     subreddits: [],
@@ -124,6 +188,7 @@ var defaultprofile = new Schema({
     default: "1"
   },
   username: String,
+  profileurl: String,
   xp: {
     type: Number,
     default: "0"
@@ -146,28 +211,62 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
-client.on("ready", () => {
-<<<<<<< HEAD
-  // Activity
-  setInterval (function (){
-    client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size}`);
-  }, 10000);
+client.on("ready", async function () {
 
-// Setup User base
-BotUsers = client.users;
-BotUsers.forEach(function (user) {
-  if (user instanceof Discord.User) {
-    if (config.serverconfigs && !profiles.userprofiles.hasOwnProperty(user.id)) {
-      profiles.userprofiles[user.id] = defaultprofile;
-      fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
-=======
+  /**
+   * Start the main loop, this runs every hour
+   * used to update things such as stats
+   */
+  /*
+  async function update() {
+    // Get from database and sort!
+    const getSort = () => {
+      return UserM.find({}).sort({
+        zcoins: -1
+      }).exec()
+    }
+
+    var sorted = await getSort();
+
+    // Default to 100
+    var top = 25;
+
+    // Add fields
+    var counter = 1;
+    for (var usr in sorted) {
+      var profile = sorted[counter - 1];
+      if (profile) {
+        if (counter <= top && counter <= 25) {
+          if (counter === 1) {
+            client.guilds.forEach(async function (guild) {
+              await ServerM.findById(guild.id, function (err, server) {
+                console.log('update_data: ' + guild.id)
+                server.stats.richest.id = profile._id;
+                server.stats.richest.name = profile.username;
+                server.stats.richest.zcoins = profile.zcoins;
+                server.stats.richest.level = profile.level;
+                server.save();
+              });
+            });
+          }
+        }
+      }
+    }
+  }
+
+  update();
+  var j = schedule.scheduleJob('0 * * * *', async function () {
+    update();
+  });
+*/
+
   // Set activity
   setInterval(function () {
     client.user.setActivity(`on ${client.guilds.size} servers | ${client.users.size} users`);
   }, 10000);
 
 
-  console.log(chalk.bgGreen("Client Ready!"));
+  console.log(chalk.green("Client Ready!"));
   BotUsers = client.users;
 
   // Write users into database
@@ -184,50 +283,14 @@ BotUsers.forEach(function (user) {
           chalk.blue(`[ID] ${user.id}`)
         )
       );*/
->>>>>>> mogodb
-    }
-  }
-});
-
-client.guilds.forEach(function (guild) {
-  if (config.serverconfigs && !config.serverconfigs.hasOwnProperty(guild.id)) {
-    config.serverconfigs[guild.id] = defaultConfig;
-    fs.writeFileSync("./config.json", JSON.stringify(config));
-  }
-});
-
-<<<<<<< HEAD
-// This event will run if the bot starts, and logs in, successfully.
-console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
-if (client.shard) {
-  console.log(chalk.bgGreen(
-    "Shard #" +
-    client.shard.id +
-    " active with " +
-    client.guilds.size +
-    " guilds"
-  ));
-  client.user.setPresence({
-    game: {
-      name: "@Nitro help | Shard " +
-      (client.shard.id + 1) +
-      "/" +
-      client.shard.count,
-      type: 0
     }
   });
-} else {
-  console.log(chalk.bgGreen(("Shard #0 active with " + client.guilds.size + " guilds")));
-  client.user.setPresence({
-    game: {
-      name: "@Nitro help | " + client.guilds.size + " guilds",
-      type: 0
-    }
-=======
+
   // Write servers into database
   client.guilds.forEach(function (guild) {
     var defaultserver = new ServerM();
     defaultserver._id = guild.id;
+    defaultserver.name = guild.name;
     defaultserver.save(function (err) {});
     console.log(
       chalk.yellow(
@@ -235,32 +298,13 @@ if (client.shard) {
         `${guild.id} has been inserted into the database`
       )
     );
->>>>>>> mogodb
   });
-}
-// Example of changing the bot's playing game to something useful. `client.user` is what the
-// docs refer to as the "ClientUser".
-fs.exists("bugs.json", function (exists) {
-  if (!exists) {
-    var fileContent = {
-      servers: {}
-    };
-    var filepath = "bugs.json";
 
-<<<<<<< HEAD
-    fs.writeFile(filepath, fileContent, err => {
-      if (err) throw err;
-
-      console.log("Bugs file generated at bugs.json");
-    });
-  }
-});
-=======
   // This event will run if the bot starts, and logs in, successfully.
   console.log("Shard startup took: " + (new Date().getTime() - start) + "MS");
   if (client.shard) {
     console.log(
-      chalk.bgGreen(
+      chalk.green(
         "Shard #" +
         client.shard.id +
         " active with " +
@@ -270,7 +314,7 @@ fs.exists("bugs.json", function (exists) {
     );
   } else {
     console.log(
-      chalk.bgGreen("Shard #0 active with " + client.guilds.size + " guilds")
+      chalk.green("Shard #0 active with " + client.guilds.size + " guilds")
     );
     client.user.setPresence({
       game: {
@@ -279,24 +323,6 @@ fs.exists("bugs.json", function (exists) {
       }
     });
   }
-  // Example of changing the bot's playing game to something useful. `client.user` is what the
-  // docs refer to as the "ClientUser".
-
-  fs.exists("bugs.json", function (exists) {
-    if (!exists) {
-      var fileContent = {
-        servers: {}
-      };
-      var filepath = "bugs.json";
-
-      fs.writeFile(filepath, fileContent, err => {
-        if (err) throw err;
-
-        console.log("Bugs file generated at bugs.json");
-      });
-    }
-  });
->>>>>>> mogodb
 });
 
 client.on("guildCreate", guild => {
@@ -311,6 +337,7 @@ client.on("guildCreate", guild => {
   // Add this new guild to database
   var defaultserver = new defaultServer();
   defaultserver._id = guild.id;
+  defaultserver.name = guild.name
   defaultserver.save(function (err) {});
   console.log(
     chalk.yellow(
@@ -382,32 +409,41 @@ client.on("guildDelete", guild => {
 
 // This is called as, for instance:
 client.on("guildMemberAdd", member => {
-  const channel = getDefaultChannel(member.guild);
-  channel.send(`Welcome ${member} to the server, wooh!`);
-  var defaultuser = new UserM();
-  defaultuser._id = member.user.id;
-  defaultuser.username = member.user.username;
-  defaultuser.save(function (err) {});
-  console.log(
-    chalk.yellow(
-      chalk.blue(`[USER] `) +
-      `${member.user.username} has been inserted into the database` +
-      chalk.blue(`[ID] ${member.user.id}`)
-    )
-  );
+  ServerM.findById(member.guild.id, function (err, server) {
+    server.stats.users = member.guild.memberCount;
+    server.save();
+  });
+  let welcomestate = false;
+  ServerM.findById(member.guild.id, function (err, server) {
+    welcomestate = server.welcomes;
+  });
+  if (welcomestate == true) {
+    const channel = getDefaultChannel(member.guild);
+    channel.send(`Welcome ${member} to the server, wooh!`);
+  }
 });
 
 client.on("guildMemberRemove", member => {
-  const channel = getDefaultChannel(member.guild);
-  if (channel.send) {
-    channel.send(`Farewell, ${member} will be missed!`);
+  ServerM.findById(member.guild.id, function (err, server) {
+    server.stats.users = member.guild.memberCount;
+    server.save();
+  });
+  let welcomestate = false;
+  ServerM.findById(member.guild.id, function (err, server) {
+    welcomestate = server.welcomes;
+  });
+  if (welcomestate == true) {
+    const channel = getDefaultChannel(member.guild);
+    if (channel.send) {
+      channel.send(`Farewell, ${member} will be missed!`);
+    }
   }
 });
 
 client.on("messageDelete", msg => {
   // Get the modlog channel
   let modlog = "";
-  ServerM.findById(msg.guild.id, function (err, server) {
+  ServerM.findById(msg.channel.guild.id, function (err, server) {
     modlog = server.modlogChannel;
   });
 
@@ -482,21 +518,117 @@ client.on("guildBanRemove", (guild, user) => {
 // Commands
 client.on("message", async message => {
   if (message.guild) {
-
     // This event will run on every single message received, from any channel or DM.
 
     // It's good practice to ignore other bots. This also makes your bot ignore itself
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
 
+    const cserver = await getConfig(message.guild.id);
+    const cuser = await getUserConfig(message.author.id);
+
+    function attachIsImage(msgAttach) {
+      var url = msgAttach.url;
+      //True if this url is a png image.
+      return url.indexOf("png", url.length - "png".length /*or 3*/ ) !== -1;
+      //True if this url is a png image.
+      return url.indexOf("jpg", url.length - "jpg".length /*or 3*/ ) !== -1;
+      //True if this url is a png image.
+      return url.indexOf("gif", url.length - "gif".length /*or 3*/ ) !== -1;
+    }
+
+    async function detectLabels(fileName, url) {
+      console.log('Autotagger Detecting Labels...')
+      VisionClient
+        .labelDetection(fileName)
+        .then(async function (results) {
+          const labels = results[0].labelAnnotations;
+          var tags = [];
+          await labels.forEach(label => tags.push(label.description));
+          if (message.guild)
+            if (!message.guild.channels) return;
+
+          let channel = message.guild.channels.find(
+            c => cserver && c.name && c.name.includes(cserver.modlogChannel)
+          );
+
+          if (!channel) {
+            //console.log(cserver);
+            //console.log(channel);
+            console.log(chalk.yellow("Channel not found"));
+            return;
+          }
+
+          let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
+          var text = `\n**Original Message:**\n` + message.content + `\n **Zora AutoTagger:** ${tags.join(', ')}`
+          var msg = time + text;
+          if (tags) {
+            console.log('Autotagger Successful')
+          }
+          message.react('\uD83C\uDFF7');
+          const embed = new Discord.RichEmbed()
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .setColor("#FF7F50")
+            .setThumbnail(url)
+            .setTitle(`📷 Zora Autotagger 📷`)
+            .setDescription(msg)
+          return channel.send({
+            embed
+          });
+        })
+        .catch(err => {
+          console.error('ERROR:', err);
+        });
+    }
+
+    async function downloadImage(url) {
+
+      const path = Path.resolve(__dirname, 'cache', url.substring(url.lastIndexOf('/') + 1))
+
+      // axios image download with response type "stream"
+      const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'stream'
+      })
+
+      // pipe the result stream into a file on disc
+      response.data.pipe(fs.createWriteStream(path))
+
+      // return a promise and resolve when download finishes
+      return new Promise((resolve, reject) => {
+        response.data.on('end', () => {
+          resolve(path)
+        })
+
+        response.data.on('error', () => {
+          reject()
+        })
+      })
+
+    }
+    if (cserver.modules.modlog == true) {
+      if (message.attachments.size > 0) {
+        if (message.attachments.every(attachIsImage)) {
+          var Attachment = (message.attachments).array();
+          console.log(Attachment[0].url)
+          //Download Image
+          await downloadImage(Attachment[0].url).then(async function (path) {
+            // AI Magic, otherwise known as if statements
+            console.log(path);
+            await detectLabels(path, Attachment[0].url);
+            // Delete Image
+            fs.unlinkSync(path);
+          });
+        }
+      }
+    }
+
     // Spy code :D
     console.log(chalk.white(`[Message] ${message.author.id}  ||||>>   `) + chalk.grey(message))
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
-
-    const cserver = await getConfig(message.guild.id);
-    const cuser = await getUserConfig(message.author.id);
 
 
     // TODO Automod filter
@@ -518,7 +650,7 @@ client.on("message", async message => {
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
             .setThumbnail(message.member.user.avatarURL)
-            .setTitle(`🆙 ${message.member.user.username} just leveled up! 🆙`)
+            .setTitle(`${message.member.user.username} just leveled up!`)
             .setDescription(`**New Level: ${user.level}**, XP has been reset`)
             .setFooter(
               `XP until next level: ${Math.round(
@@ -562,16 +694,17 @@ client.on("message", async message => {
         memes.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Music
-
-        radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        if (cserver.modules.music == true) {
+          radio.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        }
+        // Game stats
+        if (cserver.modules.gamestats == true) {
+          games.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        }
 
         // Yodaspeak
 
         yoda.bot(client, message, command, args, user, cserver, UserM, ServerM);
-
-        // Game stats
-
-        games.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Stack Overflow
 
@@ -592,6 +725,11 @@ client.on("message", async message => {
         // Profile
 
         profile.bot(client, message, command, args, user, cserver, UserM, ServerM);
+
+        // Wolfram Alpha
+
+        wolfram.bot(client, message, command, args, user, cserver, UserM, ServerM);
+
       });
 
       // Jokes
@@ -620,34 +758,46 @@ client.on("message", async message => {
 });
 
 const fire = async (text, guild) => {
-  var cserver = await getConfig(guild.id);
 
-  if (guild)
-    if (!guild.channels) return;
+  let ModlogEnabled = false;
+  ServerM.findById(guild.id, function (err, server) {
+    ModlogEnabled = server.modules.modlog
+  });
 
-  let channel = guild.channels.find(
-    c => cserver && c.name && c.name.includes(cserver.modlogChannel)
-  );
+  if (ModlogEnabled == true) {
+    var cserver = await getConfig(guild.id);
 
-  if (!channel) {
-    console.log("Channel not found");
-    return;
+    if (guild)
+      if (!guild.channels) return;
+
+    let channel = guild.channels.find(
+      c => cserver && c.name && c.name.includes(cserver.modlogChannel)
+    );
+
+    if (!channel) {
+      //console.log(cserver);
+      //console.log(channel);
+      console.log(chalk.yellow("Channel not found"));
+      return;
+    }
+
+    let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
+    var msg = time + text;
+    channel
+      .send({
+        embed: {
+          color: 12370112,
+          author: {
+            name: client.user.username,
+            icon_url: client.user.avatarURL
+          },
+          title: "Modlog",
+          description: msg
+        }
+      })
+      .then()
+      .catch();
   }
-
-  let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
-  var msg = time + text;
-  channel
-    .send({
-      embed: {
-        color: 12370112,
-        author: {
-          name: client.user.username,
-          icon_url: client.user.avatarURL
-        },
-        title: "Modlog",
-        description: msg
-      }
-    });
 };
 
 // Get the current server and user configs

@@ -140,6 +140,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
             value: "Gets and compares currency prices"
           },
           {
+            name: helpprefix + "wolfram <search>",
+            value: "Searches Wolfram Alpha"
+          },
+          {
             name: helpprefix + "bug <description>",
             value: "Report a bug"
           },
@@ -214,7 +218,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
         title: "Game Commands for" + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
-          name: helpprefix + "fortnite <platform> <username>",
+            name: helpprefix + "fortnite <platform> <username>",
             value: "Fortnite Stats"
           },
           {
@@ -343,6 +347,8 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     message.delete().catch(O_o => {});
     // And we get the bot to say the thing: 
     message.channel.send(`**${message.author} Said:\n** ` + sayMessage);
+  } else if (command === "dashboard") {
+    message.reply('Are you the owner of a server using ZoraBOT? Try out our new Dashboard at: https://dta.dekutree.org/api/discord/login');
   } else if (command === "kick") {
     // This command must be limited to mods and admins. In this example we just hardcode the role names.
     // Please read on Array.some() to understand this bit: 

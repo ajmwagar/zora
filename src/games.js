@@ -40,7 +40,6 @@ async function bot(client, message, command, args, cuser, cserver) {
           .setDescription("Platform: " + res.data.platformNameLong)
           .setAuthor(client.user.username + " - Stats", client.user.avatarURL)
           .setColor(15844367)
-          .addBlankField(true)
 
         for (var obj in res.data.lifeTimeStats) {
           var stat = res.data.lifeTimeStats[obj]
@@ -51,6 +50,8 @@ async function bot(client, message, command, args, cuser, cserver) {
         // TODO Implement formatting
         m.edit(embed);
 
+      }).catch(error => {
+        m.edit("Sorry! Something didn't work properly! Please try fixing any typos or use the " + cserver.prefix + "bug command to report any more serious issues. Thank you for choosing ZoraBOT!")
       });
 
 
@@ -82,6 +83,8 @@ async function bot(client, message, command, args, cuser, cserver) {
         // TODO Implement formatting
         m.edit(embed);
 
+      }).catch(error => {
+        m.edit("Sorry! Something didn't work properly! Please try fixing any typos or use the " + cserver.prefix + "bug command to report any more serious issues. Thank you for choosing ZoraBOT!")
       });
 
     } else {
