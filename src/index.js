@@ -4,7 +4,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const vision = require('@google-cloud/vision');
-const isAnImageUrl = require('is-an-image-url');
+const isImageUrl = require('is-image-url');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 // This is your client. Some people call it `bot`, some people call it `self`,
@@ -530,12 +530,8 @@ client.on("message", async message => {
     function attachIsImage(msgAttach) {
       var url = msgAttach.url;
       //True if this url is a png image.
-      isAnImageUrl(url, function (isAnImageResult) {
-        return isAnImageResult;
-        if (isAnImageResult == true) {
-          console.log('Image detected');
-        }
-      });
+      return isImageUrl(url)
+
     }
 
     async function detectLabels(fileName, url) {
@@ -608,19 +604,22 @@ client.on("message", async message => {
       })
 
     }
-    if (cserver.modules.modlog == true) {
-      if (message.attachments.size > 0) {
-        if (message.attachments.every(attachIsImage)) {
-          var Attachment = (message.attachments).array();
-          console.log(Attachment[0].url)
-          //Download Image
-          await downloadImage(Attachment[0].url).then(async function (path) {
-            // AI Magic, otherwise known as if statements
-            console.log(path);
-            await detectLabels(path, Attachment[0].url);
-            // Delete Image
-            fs.unlinkSync(path);
-          });
+
+    if (cserver.modules.modlog) {
+      if (cserver.modules.modlog == true) {
+        if (message.attachments.size > 0) {
+          if (message.attachments.every(attachIsImage)) {
+            var Attachment = (message.attachments).array();
+            console.log(Attachment[0].url)
+            //Download Image
+            await downloadImage(Attachment[0].url).then(async function (path) {
+              // AI Magic, otherwise known as if statements
+              console.log(path);
+              await detectLabels(path, Attachment[0].url);
+              // Delete Image
+              fs.unlinkSync(path);
+            });
+          }
         }
       }
     }
