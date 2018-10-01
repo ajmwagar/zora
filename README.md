@@ -60,35 +60,39 @@ git clone https://github.com/ajmwagar/zora
 ```bash
 cd zora
 ```
-### 2. Install dependences
+### 3. Install dependences
 
 ```bash
 npm install
 ```
-### 3. Create and Edit config.json (add ytsearch key, discord bot key)
+### 4. Setup MongoDB 
+
+Install a MongoDB server with a database called `zora`
+
+Make sure it's on a server that can handle it! Each user and server will have their own document!
+
+### 5. Create and Edit config.json (add ytsearch key, discord bot key)
 ```bash
 $EDITOR config.json
 ```
   Add the following to config.json 
 ```json
 {
-  "token": "mydiscordtoken",
-  "youtubekey": "myyoutubedataapikey",
-  "serverconfigs": {}
-}
-```
-### 4. Create and Edit bugs.json
-```bash
-$EDITOR bugs.json
-```  
-  Add the following to config.json 
-```json
-{
-  "servers": {}
+    "token": "my discord bot token",
+    "youtubeKey": "my youtube data api key",
+    "databaseuser": "my mongodb username",
+    "databasepass": "my mongodb password",
+    "wolfram": "my wolframalpha key",
+    "ws": {
+        "clientid": "my discord client id",
+        "clientsecret": "my discord client secret",
+        "authurl": "https://discordapp.com/api/oauth2/authorize",
+        "tokenurl": "https://discordapp.com/api/oauth2/token"
+    }
 }
 ```
 
-### 5. Profit!
+### 6. Profit!
 
 ```bash
 node index.js
