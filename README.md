@@ -1,5 +1,11 @@
 ![Zora](https://i.imgur.com/u3xOYSz.png)
-# Zora
+# Zora 
+[![Discord Bots](https://discordbots.org/api/widget/status/478616471640080395.svg)](https://discordbots.org/bot/478616471640080395)
+![Deps](https://david-dm.org/ajmwagar/zora.svg)
+[![HitCount](http://hits.dwyl.io/ajmwagar/zora.svg)](http://hits.dwyl.io/ajmwagar/zora)
+[![Discord](https://img.shields.io/badge/discord-server-%239d89d6.svg)](https://discord.gg/rRt5AHQ)
+
+
 ## A modular discord bot that is fully customizable!
 
 ## Features:
