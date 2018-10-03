@@ -639,7 +639,7 @@ client.on("message", async message => {
         admin.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
 
         // LOOOOPSSSS BOI!!!
-        loops.bot(client, message, command, args, user, cserver, UserM, ServerM);
+        loops.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
 
         // Weather
 
