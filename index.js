@@ -277,11 +277,11 @@ io.on('connection', function (socket) {
         updatedvalues.musicstate = cdserver.modules.music;
         updatedvalues.modlogstate = cdserver.modules.modlog;
         updatedvalues.gamestats = cdserver.modules.gamestats;
-        /*
+        if (cdserver.stats.richest.name && cdserver.stats.richest.zcoins && cdserver.stats.richest.level) {
             updatedvalues.richestPerson.name = cdserver.stats.richest.name;
             updatedvalues.richestPerson.zcoins = cdserver.stats.richest.zcoins;
             updatedvalues.richestPerson.level = cdserver.stats.richest.level;
-        */
+        }
         socket.emit('updateValues', updatedvalues);
 
     });
