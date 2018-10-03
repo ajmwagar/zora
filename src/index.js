@@ -639,7 +639,8 @@ client.on("message", async message => {
         admin.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
 
         // LOOOOPSSSS BOI!!!
-        loops.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
+        // TODO Fix this, it causes great problems (memory leaks and such)
+        //loops.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
 
         // Weather
 
