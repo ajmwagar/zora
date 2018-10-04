@@ -717,7 +717,7 @@ client.on("message", async message => {
 const fire = async (text, guild) => {
 
   let ModlogEnabled = false;
-  ServerM.findById(guild.id, function (err, server) {
+  await ServerM.findById(guild.id, function (err, server) {
     ModlogEnabled = server.modules.modlog
   });
 
