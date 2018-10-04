@@ -193,15 +193,19 @@ app.use(bodyParser.json());
 
 // SSL Certs
 // TODO move into config.json
-const options = {
-    cert: fs.readFileSync('./sslcert/fullchain.pem'),
-    key: fs.readFileSync('./sslcert/privkey.pem')
-};
-
+if (fs.exists('./sslcert/fullchain.pem') || fs.exists('./sslcert/privkey.pem')) {
+    const options = {
+        cert: fs.readFileSync('./sslcert/fullchain.pem'),
+        key: fs.readFileSync('./sslcert/privkey.pem')
+    };
+    var server = https.createServer(options, app).listen(443);
+} else {
+    var server = https.createServer(app).listen(443);
+}
 app.listen(80, () => {
     console.info(chalk.green('HTTP server set up at port 80'));
 });
-var server = https.createServer(options, app).listen(443);
+
 var io = require('socket.io')(server);
 console.log(chalk.green("HTTPS server set up at port 443"))
 

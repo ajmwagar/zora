@@ -20,6 +20,7 @@
     "body-parser": "^1.18.3",
     "brain.js": "^1.2.8",
     "btoa": "^1.2.1",
+    "canvas": "^2.0.0-alpha.17",
     "chalk": "^2.4.1",
     "client-oauth2": "^4.2.1",
     "cookie-parser": "^1.4.3",
