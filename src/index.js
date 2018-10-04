@@ -480,6 +480,11 @@ client.on("message", async message => {
     const cserver = await getConfig(message.guild.id);
     const cuser = await getUserConfig(message.author.id);
 
+    // Reply with a message if the bot is mentioned:
+    if (message.isMentioned(client.user)) {
+      message.reply(`Thanks for pinging me! I'm happy to help out, just type **${cserver.prefix}help** for information on how to use me! Visit my dashboard for even more options, type **${cserver.prefix}dashboard**`);
+    }
+
     function attachIsImage(msgAttach) {
       var url = msgAttach.url;
       //True if this url is a png image.
