@@ -571,8 +571,17 @@ client.on("message", async message => {
             console.log(Attachment[0].url)
             //Download Image
             await downloadImage(Attachment[0].url).then(async function (path) {
-              // AI Magic, otherwise known as if statements
               console.log(path);
+              // Don't send a request to google unless it has place to go!
+              let channel = message.guild.channels.find(
+                c => cserver && c.name && c.name.includes(cserver.modlogChannel)
+              );
+
+              if (!channel) {
+                console.log(chalk.yellow("Channel not found"));
+                return;
+              }
+              // AI Magic, otherwise known as if statements
               await detectLabels(path, Attachment[0].url);
               // Delete Image
               fs.unlinkSync(path);
