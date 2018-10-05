@@ -29,8 +29,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
             commands.add(message).then(() => {
               if (!message.guild.voiceConnection) {
                 return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
-              } else {
-                return playSong(queue[message.guild.id].songs.shift())
               }
             });
           }
@@ -47,6 +45,16 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
               embed: {
                 color: 15844367,
                 description: "Already Playing!"
+              }
+            });
+          }
+        } else if (queue[message.guild.id] === !undefined || queue[message.guild.id].length === !0) {
+          if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+          // Add and play
+          if (!args.length == 0) {
+            commands.add(message).then(() => {
+              if (!message.guild.voiceConnection) {
+                return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
               }
             });
           }
