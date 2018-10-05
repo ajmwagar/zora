@@ -204,6 +204,48 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     description: `⛔ You must add a YouTube video url, search query, or id after ${cserver.prefix}add`
                   }
                 });
+              } else if (url.includes('youtube.com')) {
+                await yt.getInfo(url, async (err, info) => {
+                  if (err) {
+                    return await message.channel.send({
+                      embed: {
+                        color: 10181046,
+                        description: '⛔ Invalid youtube link ' + err
+                      }
+                    });
+                  }
+                  var livestatus = ''
+                  if (info.player_response.videoDetails.isLiveContent === true) {
+                    livestatus = "🔴 **LIVE**"
+                  }
+                  if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
+                  await queue[message.guild.id].songs.push({
+                    url: info.video_url,
+                    title: livestatus + '  ' + info.title,
+                    requester: message.author.username
+                  });
+                  return message.channel.send({
+                    embed: {
+                      color: 3447003,
+                      author: {
+                        name: client.user.username,
+                        icon_url: client.user.avatarURL
+                      },
+                      title: `🎶 added **${info.title}** to the queue`,
+                      url: info.video_url,
+                      description: `**Length Minutes:** ${((parseInt(info.length_seconds))/60).toFixed(2)} \n**Keywords:** ${info.keywords.join(", ")} \n\n ${livestatus}`,
+                      thumbnail: {
+                        url: info.player_response.videoDetails.thumbnail.thumbnails[2].url
+                      },
+                      timestamp: new Date(),
+                      footer: {
+                        icon_url: client.user.avatarURL,
+                        text: "© " + message.guild
+                      }
+                    }
+                  });
+                });
+              } else {
                 searcher.search(url, {
                     type: 'video'
                   })
