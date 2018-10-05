@@ -193,7 +193,7 @@ app.use(bodyParser.json());
 
 // SSL Certs
 // TODO move into config.json
-if (fs.exists('./sslcert/fullchain.pem') || fs.exists('./sslcert/privkey.pem')) {
+if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey.pem')) {
     const options = {
         cert: fs.readFileSync('./sslcert/fullchain.pem'),
         key: fs.readFileSync('./sslcert/privkey.pem')
