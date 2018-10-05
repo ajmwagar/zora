@@ -27,9 +27,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           // Add and play
           if (!args.length == 0) {
             commands.add(message).then(() => {
-              if (!message.guild.voiceConnection) {
-                return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()));
-              }
+              if (!message.guild.voiceConnection) return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
             });
           }
 
@@ -219,12 +217,12 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     livestatus = "🔴 **LIVE**"
                   }
                   if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-                  await queue[message.guild.id].songs.push({
+                  queue[message.guild.id].songs.push({
                     url: info.video_url,
                     title: livestatus + '  ' + info.title,
                     requester: message.author.username
                   });
-                  return message.channel.send({
+                  message.channel.send({
                     embed: {
                       color: 3447003,
                       author: {
@@ -315,19 +313,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                   }
                 });
               });
-            },
-            'reboot': (message) => {
-              // Clear queue
-              queue[message.guild.id].songs = [];
-              queue[message.guild.id].playing = false;
-
-              // Stop pause
-              dispatcher.pause();
-              collector.stop();
-
-              // Leave
-              commands.leave(message);
-
             }
   };
 
