@@ -221,12 +221,12 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                     livestatus = "🔴 **LIVE**"
                   }
                   if (!queue.hasOwnProperty(message.guild.id)) queue[message.guild.id] = {}, queue[message.guild.id].playing = false, queue[message.guild.id].songs = [];
-                  queue[message.guild.id].songs.push({
+                  await queue[message.guild.id].songs.push({
                     url: info.video_url,
                     title: livestatus + '  ' + info.title,
                     requester: message.author.username
                   });
-                  message.channel.send({
+                  return message.channel.send({
                     embed: {
                       color: 3447003,
                       author: {
