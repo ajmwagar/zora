@@ -27,7 +27,11 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
           // Add and play
           if (!args.length == 0) {
             commands.add(message).then(() => {
-              if (!message.guild.voiceConnection) return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
+              if (!message.guild.voiceConnection) {
+                return commands.join(message).then(() => playSong(queue[message.guild.id].songs.shift()))
+              } else {
+                return playSong(queue[message.guild.id].songs.shift())
+              }
             });
           }
 
@@ -315,7 +319,17 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
               });
             },
             'reboot': (message) => {
-              if (message.author.id == config.adminID) process.exit(); //Requires a node module like Forever to work.
+              // Clear queue
+              queue[message.guild.id].songs = [];
+              queue[message.guild.id].playing = false;
+
+              // Stop pause
+              dispatcher.pause();
+              collector.stop();
+
+              // Leave
+              commands.leave(message);
+
             }
   };
 
