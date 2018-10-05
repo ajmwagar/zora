@@ -28,11 +28,11 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       .setColor("#FF7F50")
       .setThumbnail(client.user.avatarURL)
       .setTitle(`🔶 Bot Information 🔶`)
-      .setDescription(`**Invite:**\n[INVITE ME](https://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot)\n\nZora is the most flexible and easy to use bot available to manage your Discord Server! Actively maintained and constantly being improved, our bot offers many unique features. Whether you just need a simple music bot, or you want to browse Reddit and StackOverflow from the comfort of your Discord server, Zora is the bot for you!`)
-      .addField(`Info`, `**Prefix:** ` + '`' + cserver.prefix + '`' + `\n**Vote:** [DiscordBots.org](https://discordbots.org/bot/478616471640080395/vote)\n**Website:** [ZoraBOT](https://zora.netlify.com)`, true)
-      .addField("Developers:", `**DekuTree#0460**\n**ajmwagar#6469**`, true)
-      .addField("Population:", `**Guilds:** ${client.guilds.size}\n**Users:** ${client.users.size}`, true)
-      .addField("Performance:", `**System Memory:** ${Math.round(((systemMemory / (1048576)) * 10) / 10)}Mb / ${Math.round(((systemMemoryTotal / (1048576)) * 10) / 10)}Mb\n**Allocated Memory:** ${Math.round(((memory / (1048576)) * 10) / 10)}Mb / ${Math.round(((memoryTotal / (1048576)) * 10) / 10)}Mb`, true)
+      .setDescription(`Zora is the most flexible and easy to use bot available to manage your Discord Server! Actively maintained and constantly being improved, our bot offers many unique features. Whether you just need a simple music bot, or you want to browse Reddit and StackOverflow from the comfort of your Discord server, Zora is the bot for you!\n\n💬 **Invite:** 💬\n[INVITE ME](https://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot)`)
+      .addField(`📚 Info 📚`, `**Prefix:** ` + '`' + cserver.prefix + '`' + `\n**Vote:** [DiscordBots.org](https://discordbots.org/bot/478616471640080395/vote)\n**Website:** [ZoraBOT](https://zora.netlify.com)`, true)
+      .addField("💻 Developers 💻", `**DekuTree#0460**\n**ajmwagar#6469**`, true)
+      .addField("🏙️ Population 🏙️", `**Guilds:** ${client.guilds.size}\n**Users:** ${client.users.size}`, true)
+      .addField("💾 Performance 💾", `**System Memory:** ${Math.round(((systemMemory / (1048576)) * 10) / 10)}Mb / ${Math.round(((systemMemoryTotal / (1048576)) * 10) / 10)}Mb\n**Allocated Memory:** ${Math.round(((memory / (1048576)) * 10) / 10)}Mb / ${Math.round(((memoryTotal / (1048576)) * 10) / 10)}Mb`, true)
       .setFooter(
         `Powered by Discord.js and MongoDB`,
         client.user.avatarURL

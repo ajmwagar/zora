@@ -231,7 +231,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
                       },
                       title: `🎶 added **${info.title}** to the queue`,
                       url: info.video_url,
-                      description: `**Length Minutes:** ${(parseInt(info.length_seconds))/60} \n**Keywords:** ${info.keywords.join(", ")} \n\n ${livestatus}`,
+                      description: `**Length Minutes:** ${((parseInt(info.length_seconds))/60).toFixed(2)} \n**Keywords:** ${info.keywords.join(", ")} \n\n ${livestatus}`,
                       thumbnail: {
                         url: info.player_response.videoDetails.thumbnail.thumbnails[2].url
                       },
