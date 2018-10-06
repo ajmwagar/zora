@@ -515,7 +515,7 @@ client.on("message", async message => {
           }
 
           let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
-          var text = `\n**Message Author: **` + message.author.tag + `\n**Message Content: **\n` + message.content + `\n **Zora AutoTagger:** ${tags.join(', ')}`
+          var text = `\n**Message Author: **` + message.author.tag + `\n**Message Content: **\n` + message.cleanContent + `\n **Zora AutoTagger:** ${tags.join(', ')}`
           var msg = time + text;
           if (tags) {
             console.log('Autotagger Successful')
