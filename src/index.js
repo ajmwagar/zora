@@ -93,6 +93,7 @@ const profile = require("./profile");
 const wolfram = require("./wolfram");
 const modlog = require("./events/modlog");
 const loops = require("./mainloops");
+const chatbot = require('./chatbot/ai')
 
 // URL that points to MongoDB database
 var url = "mongodb://localhost:27017/zora";
@@ -672,6 +673,9 @@ client.on("message", async message => {
         if (cserver.modules.gamestats == true) {
           games.bot(client, message, command, args, user, cserver, UserM, ServerM);
         }
+
+        // Chatbot
+        chatbot.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Yodaspeak
 
