@@ -24,7 +24,7 @@ async function bot(client, message, command, args, cuser, cserver) {
     }
 
     if (command === "translate") {
-        if (args && !args === undefined) {
+        if (args && args.length > 0) {
             var input = args;
             var language = ""
             language = input.shift();
