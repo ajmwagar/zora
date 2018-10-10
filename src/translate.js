@@ -14,7 +14,11 @@ async function bot(client, message, command, args, cuser, cserver) {
         translate
             .translate(input, language)
             .then(results => {
-                message.channel.send(`**${message.author} \:flag_${fromlang}:==>\:flag_${language}: Said:\n** ` + results[0]);
+                if (language == "en") {
+                    message.channel.send(`**${message.author} \:flag_${fromlang}:==>\:flag_gb: Said:\n** ` + results[0]);
+                } else {
+                    message.channel.send(`**${message.author} \:flag_${fromlang}:==>\:flag_${language}: Said:\n** ` + results[0]);
+                }
             })
             .catch(err => {
                 message.channel.send(`Something went wrong when translating! Please make sure you format the command as follows:\n**${config.serverconfigs[message.guild.id].prefix}translate <language code> <text input>**`)
