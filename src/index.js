@@ -95,6 +95,13 @@ const modlog = require("./events/modlog");
 const loops = require("./mainloops");
 const chatbot = require('./chatbot/ai')
 
+const {
+  createCanvas,
+  loadImage
+} = require('canvas')
+const canvas = createCanvas(128, 128)
+const ctx = canvas.getContext('2d')
+
 // URL that points to MongoDB database
 var url = "mongodb://localhost:27017/zora";
 
@@ -614,21 +621,39 @@ client.on("message", async message => {
           user.xp = 0;
           user.level += 1;
           user.save();
-          const embed = new Discord.RichEmbed()
-            .setAuthor(client.user.username, client.user.avatarURL)
-            .setColor("#FF7F50")
-            .setThumbnail(message.member.user.avatarURL)
-            .setTitle(`${message.member.user.username} just leveled up!`)
-            .setDescription(`**New Level: ${user.level}**, XP has been reset`)
-            .setFooter(
-              `XP until next level: ${Math.round(
-                Math.pow(100, user.level / 10 + 1)
-              )}`,
-              client.user.avatarURL
-            );
-          message.channel.send({
-            embed
-          });
+
+          // Load background
+          loadImage('./src/images/LevelupBG.png').then(async function (image) {
+
+            // Draw background
+            ctx.drawImage(image, 0, 0, 128, 128)
+
+            // User Name
+            ctx.font = '16px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`${message.member.user.username}\nLEVELED UP!`, 5, 20)
+
+            // Stats
+            ctx.font = '22px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`XP:\n${user.xp} / ${Math.round(Math.pow(100, user.level / 10 + 1))}`, 5, 95)
+
+            // Load avatar
+            let tempurl = message.member.user.avatarURL;
+            tempurl = tempurl.replace('?size=2048', '')
+            await loadImage(tempurl).then(async function (image) {
+              // Draw Avatar
+              ctx.drawImage(image, 80, 75, 52, 54)
+            });
+
+            // Asynchronous PNG output to discord
+            canvas.toBuffer(async function (err, buf) {
+              if (err) throw err; // encoding failed
+              await message.channel.send(`${message.author}`, {
+                file: buf
+              });
+            })
+          })
         }
       });
       // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
