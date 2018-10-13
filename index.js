@@ -202,6 +202,7 @@ if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey
 } else {
     var server = https.createServer(app).listen(443);
 }
+
 app.listen(80, () => {
     console.info(chalk.green('HTTP server set up at port 80'));
 });
