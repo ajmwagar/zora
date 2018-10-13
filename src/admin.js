@@ -531,7 +531,7 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
     })
 
   } else if (command === "credits") {
-    message.author.send({
+    message.channel.send({
       embed: {
         color: 12370112,
         author: {
@@ -546,7 +546,6 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
         }]
       }
     });
-    message.reply("please check you direct messages.");
   } else if (command === "invite") {
     message.author.send("**Invite our official bot to your discord server!**\nhttps://discordapp.com/oauth2/authorize?client_id=478616471640080395&permissions=8&scope=bot");
     message.reply("please check you direct messages.");

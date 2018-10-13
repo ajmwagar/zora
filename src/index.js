@@ -76,7 +76,6 @@ const moment = require("moment");
 var Long = require("long");
 const chalk = require("chalk");
 const Path = require('path')
-const schedule = require('node-schedule');
 
 // Internal modules
 const automod = require("./automod");
@@ -93,6 +92,8 @@ const crypto = require("./crypto");
 const profile = require("./profile");
 const wolfram = require("./wolfram");
 const modlog = require("./events/modlog");
+const loops = require("./mainloops");
+const chatbot = require('./chatbot/ai')
 
 // URL that points to MongoDB database
 var url = "mongodb://localhost:27017/zora";
@@ -212,53 +213,6 @@ const ServerM = mongoose.model("Servers", defaultConfig);
 // var memeInterval = setInterval(getMemes, config.reddit.interval * 1000 * 60 * 60);
 
 client.on("ready", async function () {
-
-  /**
-   * Start the main loop, this runs every hour
-   * used to update things such as stats
-   */
-  /*
-  async function update() {
-    // Get from database and sort!
-    const getSort = () => {
-      return UserM.find({}).sort({
-        zcoins: -1
-      }).exec()
-    }
-
-    var sorted = await getSort();
-
-    // Default to 100
-    var top = 25;
-
-    // Add fields
-    var counter = 1;
-    for (var usr in sorted) {
-      var profile = sorted[counter - 1];
-      if (profile) {
-        if (counter <= top && counter <= 25) {
-          if (counter === 1) {
-            client.guilds.forEach(async function (guild) {
-              await ServerM.findById(guild.id, function (err, server) {
-                console.log('update_data: ' + guild.id)
-                server.stats.richest.id = profile._id;
-                server.stats.richest.name = profile.username;
-                server.stats.richest.zcoins = profile.zcoins;
-                server.stats.richest.level = profile.level;
-                server.save();
-              });
-            });
-          }
-        }
-      }
-    }
-  }
-
-  update();
-  var j = schedule.scheduleJob('0 * * * *', async function () {
-    update();
-  });
-*/
 
   // Set activity
   setInterval(function () {
@@ -527,6 +481,11 @@ client.on("message", async message => {
     const cserver = await getConfig(message.guild.id);
     const cuser = await getUserConfig(message.author.id);
 
+    // Reply with a message if the bot is mentioned:
+    if (message.isMentioned(client.user)) {
+      message.reply(`Thanks for pinging me! I'm happy to help out, just type **${cserver.prefix}help** for information on how to use me! Visit my dashboard for even more options, type **${cserver.prefix}dashboard**`);
+    }
+
     function attachIsImage(msgAttach) {
       var url = msgAttach.url;
       //True if this url is a png image.
@@ -557,7 +516,7 @@ client.on("message", async message => {
           }
 
           let time = `**\`[${moment().format("M/D/YY - hh:mm")}]\`** `;
-          var text = `\n**Original Message:**\n` + message.content + `\n **Zora AutoTagger:** ${tags.join(', ')}`
+          var text = `\n**Message Author: **` + message.author.tag + `\n**Message Content: **\n` + message.cleanContent + `\n **Zora AutoTagger:** ${tags.join(', ')}`
           var msg = time + text;
           if (tags) {
             console.log('Autotagger Successful')
@@ -613,8 +572,17 @@ client.on("message", async message => {
             console.log(Attachment[0].url)
             //Download Image
             await downloadImage(Attachment[0].url).then(async function (path) {
-              // AI Magic, otherwise known as if statements
               console.log(path);
+              // Don't send a request to google unless it has place to go!
+              let channel = message.guild.channels.find(
+                c => cserver && c.name && c.name.includes(cserver.modlogChannel)
+              );
+
+              if (!channel) {
+                console.log(chalk.yellow("Channel not found"));
+                return;
+              }
+              // AI Magic, otherwise known as if statements
               await detectLabels(path, Attachment[0].url);
               // Delete Image
               fs.unlinkSync(path);
@@ -685,6 +653,10 @@ client.on("message", async message => {
 
         admin.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
 
+        // LOOOOPSSSS BOI!!!
+        // TODO Fix this, it causes great problems (memory leaks and such)
+        //loops.bot(client, message, command, args, defaultConfig, defaultprofile, user, cserver, UserM, ServerM);
+
         // Weather
 
         weather.bot(client, message, command, args, user, cserver, UserM, ServerM);
@@ -701,6 +673,9 @@ client.on("message", async message => {
         if (cserver.modules.gamestats == true) {
           games.bot(client, message, command, args, user, cserver, UserM, ServerM);
         }
+
+        // Chatbot
+        chatbot.bot(client, message, command, args, user, cserver, UserM, ServerM);
 
         // Yodaspeak
 
@@ -760,7 +735,7 @@ client.on("message", async message => {
 const fire = async (text, guild) => {
 
   let ModlogEnabled = false;
-  ServerM.findById(guild.id, function (err, server) {
+  await ServerM.findById(guild.id, function (err, server) {
     ModlogEnabled = server.modules.modlog
   });
 

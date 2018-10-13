@@ -193,15 +193,20 @@ app.use(bodyParser.json());
 
 // SSL Certs
 // TODO move into config.json
-const options = {
-    cert: fs.readFileSync('./sslcert/fullchain.pem'),
-    key: fs.readFileSync('./sslcert/privkey.pem')
-};
+if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey.pem')) {
+    const options = {
+        cert: fs.readFileSync('./sslcert/fullchain.pem'),
+        key: fs.readFileSync('./sslcert/privkey.pem')
+    };
+    var server = https.createServer(options, app).listen(443);
+} else {
+    var server = https.createServer(app).listen(443);
+}
 
 app.listen(80, () => {
     console.info(chalk.green('HTTP server set up at port 80'));
 });
-var server = https.createServer(options, app).listen(443);
+
 var io = require('socket.io')(server);
 console.log(chalk.green("HTTPS server set up at port 443"))
 
@@ -277,11 +282,11 @@ io.on('connection', function (socket) {
         updatedvalues.musicstate = cdserver.modules.music;
         updatedvalues.modlogstate = cdserver.modules.modlog;
         updatedvalues.gamestats = cdserver.modules.gamestats;
-        /*
+        if (cdserver.stats.richest.name && cdserver.stats.richest.zcoins && cdserver.stats.richest.level) {
             updatedvalues.richestPerson.name = cdserver.stats.richest.name;
             updatedvalues.richestPerson.zcoins = cdserver.stats.richest.zcoins;
             updatedvalues.richestPerson.level = cdserver.stats.richest.level;
-        */
+        }
         socket.emit('updateValues', updatedvalues);
 
     });

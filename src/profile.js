@@ -6,20 +6,21 @@ const config = require("../config.json");
 
 const talkedRecently = new Set();
 
-var shopItems = {
-    Heart: {
+var shopItems = [{
         Name: "Heart",
         Description: "Adds a ❤️ to your inventory, can be used in battles",
         Price: 500,
+        ID: 0,
         Icon: "❤️"
     },
-    Mana: {
+    {
         Name: "Mana",
         Description: "Adds a 🌀 to your inventory, increases the chance to win battles",
         Price: 1000,
+        ID: 1,
         Icon: "🌀"
     }
-};
+];
 
 var spinningImg = {
     attachment: "./src/images/zslotsSpinning.gif",
@@ -82,11 +83,22 @@ async function bot(
             .then(() => {
                 var userInventory = cuser.inventory;
 
+                var itemtext = []
+                userInventory.forEach((item) => {
+                    let quantity = 1;
+                    if (typeof itemtext[item.ID] === 'undefined') {
+                        itemtext[item.ID] = `${item.Icon} - ${item.Name} - **x${quantity}**`;
+                    } else {
+                        quantity++;
+                        itemtext[item.ID] = `${item.Icon} - ${item.Name} - **x${quantity}**`;
+                    }
+                })
+
                 if (userInventory.length > 0) {
                     const embed = new Discord.RichEmbed()
                         .setColor("#FF7F50")
                         .setTitle(`${message.member.user.username}'s inventory:`)
-                        .setDescription(userInventory.join("\n"));
+                        .setDescription(itemtext.join("\n"));
                     message.channel.send({
                         embed
                     });
@@ -176,7 +188,10 @@ async function bot(
                 });
         }
     } else if (command === "shop") {
-        var itemNames = Object.keys(shopItems);
+        var itemNames = [];
+        shopItems.forEach(function (item) {
+            itemNames.push(item);
+        });
         const embed = new Discord.RichEmbed()
             .setAuthor(client.user.username, client.user.avatarURL)
             .setColor("#FF7F50")
@@ -196,11 +211,11 @@ async function bot(
                     message.channel.send({
                         embed: {
                             color: 3447003,
-                            title: item,
-                            description: shopItems[item].Description,
+                            title: item.Name,
+                            description: item.Description,
                             fields: [{
                                 name: "Price:",
-                                value: `${shopItems[item].Price} ZCoins 💰`
+                                value: `${item.Price} ZCoins 💰`
                             }]
                         }
                     });
@@ -209,11 +224,17 @@ async function bot(
     } else if (command === "buy") {
         var item = args[0];
         item = item.charAt(0).toUpperCase() + item.substr(1);
-        if (shopItems[item]) {
-            if (cuser.zcoins >= shopItems[item].Price) {
+        if (shopItems.some(function (elem) {
+                return elem.Name == item
+            })) {
+            var citem;
+            citem = shopItems[shopItems.findIndex(elem => {
+                return elem.Name == item
+            })];
+            if (cuser.zcoins >= citem.Price) {
                 UserM.findById(message.author.id, function (err, user) {
-                    user.zcoins -= shopItems[item].Price;
-                    user.inventory.push(shopItems[item].Name);
+                    user.zcoins -= citem.Price;
+                    user.inventory.push(citem);
                     user.save();
                 });
                 message.channel.send({
@@ -334,6 +355,13 @@ async function bot(
             });
         }
     } else if (command === "next") {
+
+        /**
+         * * This command basically starts the main
+         * * game loop, battleTimout() is for ending and resetting the duel
+         * * battle() executes every turn
+         */
+
         function battleTimeout() {
             duelplayer = {
                 opponent: [],
@@ -357,29 +385,41 @@ async function bot(
             });
         }
 
-        function battle() {
+        async function battle(items1, items2) {
+
             if (duelplayer.playerhealth <= 0 || duelplayer.opponenthealth <= 0) {
                 duelplayer.battleStarted = false;
             }
             if (duelplayer.battleStarted == true) {
                 if (Math.random() < 0.5) {
-                    player1();
+                    player1(items1);
                 } else {
-                    player2();
+                    player2(items2);
                 }
 
-                function player1() {
+                async function player1(items) {
                     // Attack hits!
-                    var items = [];
-                    UserM.findById(duelplayer.opponentid, function (err, user) {
-                        items = items.concat(user.inventory);
-                    });
-                    if (items.includes("Mana")) {
+                    /*
+                    if (items.some(function (elem) {
+                            if (elem.Name == "Mana") {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        })) {
                         // Remove 1 Mana
-                        var index = items.indexOf("Mana");
+                        var index = items.findIndex((elem) => {
+                            if (elem.Name == "Mana") {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        });
                         if (index > -1) {
-                            UserM.findById(message.author.id, function (err, user) {
-                                user.inventory.splice(index, 1);
+                            UserM.findById(duelplayer.opponentid, {
+                                $arrayElemAt: ["inventory", index]
+                            }, function (err, user) {
+
                                 user.save();
                             });
                         }
@@ -403,19 +443,35 @@ async function bot(
                                 ]
                             }
                         });
-                        UserM.findById(duelplayer.opponentid, function (err, user) {
+                        UserM.findById(duelplayer.opponentid, {
+                            $arrayElemAt: ["inventory", index]
+                        }, function (err, user) {
                             user.xp += 800;
                             user.save();
                         });
                         duelplayer.battleStarted = true;
 
                         if (duelplayer.playerhealth <= 0) {
-                            if (items.includes("Heart")) {
-                                // Remove 1 Mana
-                                var index = items.indexOf("Heart");
+                            if (items.some(function (elem) {
+                                    if (elem.Name == "Heart") {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                })) {
+                                // Remove 1 Heart
+                                var index = items.findIndex((elem) => {
+                                    if (elem.Name == "Heart") {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                });
                                 if (index > -1) {
-                                    UserM.findById(message.author.id, function (err, user) {
-                                        user.inventory.splice(index, 1);
+                                    UserM.findById(duelplayer.opponentid, {
+                                        $arrayElemAt: ["inventory", index]
+                                    }, function (err, user) {
+
                                         user.save();
                                     });
                                 }
@@ -437,7 +493,9 @@ async function bot(
                                     }
                                 });
                                 clearTimeout(battleTimeout);
-                                UserM.findById(duelplayer.opponentid, function (err, user) {
+                                UserM.findById(duelplayer.opponentid, {
+                                    $arrayElemAt: ["inventory", index]
+                                }, function (err, user) {
                                     user.xp += 5000;
                                     user.zcoins += 2500;
                                     user.save();
@@ -455,95 +513,120 @@ async function bot(
                                 };
                             }
                         }
-                    } else {
-                        let damage = Math.floor(Math.random() * 25);
-                        duelplayer.playerhealth -= damage;
+                    } else {*/
+                    let damage = Math.floor(Math.random() * 25);
+                    duelplayer.playerhealth -= damage;
+                    message.channel.send({
+                        embed: {
+                            color: 3447003,
+                            title: item,
+                            description: `🔥 ${
+                  duelplayer.opponent
+                }'s attack hit for ${damage} damage!`,
+                            fields: [{
+                                    name: `${duelplayer.opponent}'s health:`,
+                                    value: `${duelplayer.opponenthealth}`
+                                },
+                                {
+                                    name: `${duelplayer.player}'s health:`,
+                                    value: `${duelplayer.playerhealth}`
+                                }
+                            ]
+                        }
+                    });
+                    UserM.findById(duelplayer.opponentid, function (err, user) {
+                        user.xp += 500;
+                        user.save();
+                    });
+                    duelplayer.battleStarted = true;
+
+                    if (duelplayer.playerhealth <= 0) {
+                        /*
+                        if (items.some(function (elem) {
+                                if (elem.Name == "Heart") {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            })) {
+                            // Remove 1 Heart
+                            var index = items.findIndex((elem) => {
+                                if (elem.Name == "Heart") {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                            if (index > -1) {
+                                UserM.findById(duelplayer.opponentid, {
+                                    $arrayElemAt: ["inventory", index]
+                                }, function (err, user) {
+
+                                    user.save();
+                                });
+                            }
+                            duelplayer.playerhealth = 100;
+                        } else {*/
+                        alive == false;
                         message.channel.send({
                             embed: {
                                 color: 3447003,
                                 title: item,
-                                description: `🔥 ${
-                  duelplayer.opponent
-                }'s attack hit for ${damage} damage!`,
-                                fields: [{
-                                        name: `${duelplayer.opponent}'s health:`,
-                                        value: `${duelplayer.opponenthealth}`
-                                    },
-                                    {
-                                        name: `${duelplayer.player}'s health:`,
-                                        value: `${duelplayer.playerhealth}`
-                                    }
-                                ]
+                                description: `💀 ${duelplayer.player} died! 💀`
                             }
                         });
+                        message.channel.send({
+                            embed: {
+                                color: 3447003,
+                                title: item,
+                                description: `✨ ${duelplayer.opponent} IS VICTORIOUS! ✨`
+                            }
+                        });
+                        clearTimeout(battleTimeout);
                         UserM.findById(duelplayer.opponentid, function (err, user) {
-                            user.xp += 500;
-                            user.save();
+                            user.xp += 5000;
+                            user.zcoins += 2500;
+                            return user.save();
                         });
-                        duelplayer.battleStarted = true;
-
-                        if (duelplayer.playerhealth <= 0) {
-                            if (items.includes("Heart")) {
-                                // Remove 1 Mana
-                                var index = items.indexOf("Heart");
-                                if (index > -1) {
-                                    UserM.findById(message.author.id, function (err, user) {
-                                        user.inventory.splice(index, 1);
-                                        user.save();
-                                    });
-                                }
-                                duelplayer.playerhealth = 100;
-                            } else {
-                                alive == false;
-                                message.channel.send({
-                                    embed: {
-                                        color: 3447003,
-                                        title: item,
-                                        description: `💀 ${duelplayer.player} died! 💀`
-                                    }
-                                });
-                                message.channel.send({
-                                    embed: {
-                                        color: 3447003,
-                                        title: item,
-                                        description: `✨ ${duelplayer.opponent} IS VICTORIOUS! ✨`
-                                    }
-                                });
-                                clearTimeout(battleTimeout);
-                                UserM.findById(duelplayer.opponentid, function (err, user) {
-                                    user.xp += 5000;
-                                    user.zcoins += 2500;
-                                    user.save();
-                                });
-                                duelplayer = {
-                                    opponent: [],
-                                    player: [],
-                                    battleStarted: false,
-                                    opponentid: "",
-                                    playerid: "",
-                                    playerhealth: 100,
-                                    opponenthealth: 100,
-                                    player1: false,
-                                    player2: false
-                                };
-                            }
-                        }
+                        duelplayer = {
+                            opponent: [],
+                            player: [],
+                            battleStarted: false,
+                            opponentid: "",
+                            playerid: "",
+                            playerhealth: 100,
+                            opponenthealth: 100,
+                            player1: false,
+                            player2: false
+                        };
                     }
                 }
-
-                function player2() {
+                /*
+                    }
+                }
+                */
+                async function player2(items) {
                     // Attack hits!
-                    var items = [];
-                    UserM.findById(duelplayer.playerid, function (err, user) {
-                        items = items.concat(user.inventory);
-                    });
-                    if (items.includes("Mana")) {
+                    /*
+                    if (items.some(function (elem) {
+                            if (elem.Name == "Mana") {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        })) {
                         // Remove 1 Mana
-                        var index = items.indexOf("Mana");
+                        var index = items.findIndex((elem) => {
+                            if (elem.Name == "Mana") {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        });
                         if (index > -1) {
                             UserM.findById(message.author.id, function (err, user) {
-                                user.inventory.splice(index, 1);
-                                user.save();
+
+                                return user.save();
                             });
                         }
                         let damage = Math.floor(Math.random() * 80) + 25;
@@ -553,8 +636,8 @@ async function bot(
                                 color: 3447003,
                                 title: item,
                                 description: `🔥🌀 ${
-                  duelplayer.player
-                }'s attack hit for ${damage} damage!`,
+                      duelplayer.player
+                    }'s attack hit for ${damage} damage!`,
                                 fields: [{
                                         name: `${duelplayer.opponent}'s health:`,
                                         value: `${duelplayer.opponenthealth}`
@@ -568,17 +651,29 @@ async function bot(
                         });
                         UserM.findById(duelplayer.playerid, function (err, user) {
                             user.xp += 800;
-                            user.save();
+                            return user.save();
                         });
                         duelplayer.battleStarted = true;
 
                         if (duelplayer.opponenthealth <= 0) {
-                            if (items.includes("Heart")) {
-                                // Remove 1 Mana
-                                var index = items.indexOf("Heart");
+                            if (items.some(function (elem) {
+                                    if (elem.Name == "Heart") {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                })) {
+                                // Remove 1 Heart
+                                var index = items.findIndex((elem) => {
+                                    if (elem.Name == "Heart") {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                });
                                 if (index > -1) {
-                                    UserM.findById(message.author.id, function (err, user) {
-                                        user.inventory.splice(index, 1);
+                                    UserM.findById(duelplayer.playerid, function (err, user) {
+
                                         user.save();
                                     });
                                 }
@@ -603,7 +698,7 @@ async function bot(
                                 UserM.findById(duelplayer.playerid, function (err, user) {
                                     user.xp += 5000;
                                     user.zcoins += 2500;
-                                    user.save();
+                                    return user.save();
                                 });
                                 duelplayer = {
                                     opponent: [],
@@ -618,86 +713,109 @@ async function bot(
                                 };
                             }
                         }
-                    } else {
-                        let damage = Math.floor(Math.random() * 25);
-                        duelplayer.opponenthealth -= damage;
+                    } else {*/
+                    let damage = Math.floor(Math.random() * 25);
+                    duelplayer.opponenthealth -= damage;
+                    message.channel.send({
+                        embed: {
+                            color: 3447003,
+                            title: item,
+                            description: `🔥 ${
+                  duelplayer.player
+                }'s attack hit for ${damage} damage!`,
+                            fields: [{
+                                    name: `${duelplayer.opponent}'s health:`,
+                                    value: `${duelplayer.opponenthealth}`
+                                },
+                                {
+                                    name: `${duelplayer.player}'s health:`,
+                                    value: `${duelplayer.playerhealth}`
+                                }
+                            ]
+                        }
+                    });
+                    UserM.findById(duelplayer.playerid, function (err, user) {
+                        user.xp += 500;
+                        return user.save();
+                    });
+                    duelplayer.battleStarted = true;
+
+                    if (duelplayer.opponenthealth <= 0) {
+                        /*
+                        if (items.some(function (elem) {
+                                if (elem.Name == "Heart") {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            })) {
+                            // Remove 1 Heart
+                            var index = items.findIndex((elem) => {
+                                if (elem.Name == "Heart") {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                            if (index > -1) {
+                                UserM.findById(duelplayer.playerid, function (err, user) {
+
+                                    return user.save();
+                                });
+                            }
+                            duelplayer.opponenthealth = 100;
+                        } else {*/
+                        alive == false;
                         message.channel.send({
                             embed: {
                                 color: 3447003,
                                 title: item,
-                                description: `🔥 ${
-                  duelplayer.player
-                }'s attack hit for ${damage} damage!`,
-                                fields: [{
-                                        name: `${duelplayer.opponent}'s health:`,
-                                        value: `${duelplayer.opponenthealth}`
-                                    },
-                                    {
-                                        name: `${duelplayer.player}'s health:`,
-                                        value: `${duelplayer.playerhealth}`
-                                    }
-                                ]
+                                description: `💀 ${duelplayer.opponent} died! 💀`
                             }
                         });
+                        message.channel.send({
+                            embed: {
+                                color: 3447003,
+                                title: item,
+                                description: `✨ ${duelplayer.player} IS VICTORIOUS! ✨`
+                            }
+                        });
+                        clearTimeout(battleTimeout);
                         UserM.findById(duelplayer.playerid, function (err, user) {
-                            user.xp += 500;
-                            user.save();
+                            user.xp += 5000;
+                            user.zcoins += 2500;
+                            return user.save();
                         });
-                        duelplayer.battleStarted = true;
-
-                        if (duelplayer.opponenthealth <= 0) {
-                            if (items.includes("Heart")) {
-                                // Remove 1 Mana
-                                var index = items.indexOf("Heart");
-                                if (index > -1) {
-                                    UserM.findById(message.author.id, function (err, user) {
-                                        user.inventory.splice(index, 1);
-                                        user.save();
-                                    });
-                                }
-                                duelplayer.opponenthealth = 100;
-                            } else {
-                                alive == false;
-                                message.channel.send({
-                                    embed: {
-                                        color: 3447003,
-                                        title: item,
-                                        description: `💀 ${duelplayer.opponent} died! 💀`
-                                    }
-                                });
-                                message.channel.send({
-                                    embed: {
-                                        color: 3447003,
-                                        title: item,
-                                        description: `✨ ${duelplayer.player} IS VICTORIOUS! ✨`
-                                    }
-                                });
-                                clearTimeout(battleTimeout);
-                                UserM.findById(duelplayer.playerid, function (err, user) {
-                                    user.xp += 5000;
-                                    user.zcoins += 2500;
-                                    user.save();
-                                });
-                                duelplayer = {
-                                    opponent: [],
-                                    player: [],
-                                    battleStarted: false,
-                                    opponentid: "",
-                                    playerid: "",
-                                    playerhealth: 100,
-                                    opponenthealth: 100,
-                                    player1: false,
-                                    player2: false
-                                };
-                            }
-                        }
+                        duelplayer = {
+                            opponent: [],
+                            player: [],
+                            battleStarted: false,
+                            opponentid: "",
+                            playerid: "",
+                            playerhealth: 100,
+                            opponenthealth: 100,
+                            player1: false,
+                            player2: false
+                        };
                     }
                 }
             }
         }
+        /*
+        }
+        }
+        */
         if (duelplayer.battleStarted == true) {
+            var items1 = [];
+            var items2 = [];
+            await UserM.findById(duelplayer.opponentid, function (err, user) {
+                return items1 = items1.concat(user.inventory);
+            });
+            await UserM.findById(duelplayer.playerid, function (err, user) {
+                return items2 = items2.concat(user.inventory);
+            });
             while (duelplayer.battleStarted == true) {
-                battle();
+                battle(items1, items2);
             }
         } else {
             message.channel.send({
