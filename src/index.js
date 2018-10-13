@@ -634,9 +634,13 @@ client.on("message", async message => {
             ctx.fillText(`${message.member.user.username}\nLEVELED UP!`, 5, 20)
 
             // Stats
-            ctx.font = '22px Impact'
+            ctx.font = '28px Impact'
+            ctx.fillStyle = '#ff4e00';
+            ctx.fillText(`${user.level}`, 5, 70);
+
+            ctx.font = '12px Impact'
             ctx.fillStyle = '#262626';
-            ctx.fillText(`XP:\n${user.xp} / ${Math.round(Math.pow(100, user.level / 10 + 1))}`, 5, 95)
+            ctx.fillText(`XP:\n${user.xp} / ${Math.round(Math.pow(100, user.level / 10 + 1))}`, 5, 105)
 
             // Load avatar
             let tempurl = message.member.user.avatarURL;
