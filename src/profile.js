@@ -157,7 +157,7 @@ async function bot(
                         .setAuthor(client.user.username, client.user.avatarURL)
                         .setColor("#FF7F50")
                         .setTitle(`Gave ${message.member.user.username} 500 ZCoins!`)
-                        .addField("Current Balance:", `${cuser.zcoins}`, true);
+                        .addField("💰 Current Balance 💰", `${cuser.zcoins}`, true);
                     message.channel.send({
                         embed
                     });
@@ -175,7 +175,7 @@ async function bot(
                 message.member.user.username
               } 5000 ZCoins! [VIP]⭐`
                         )
-                        .addField("Current Balance:", `${cuser.zcoins}`, true);
+                        .addField("💰 Current Balance 💰", `${cuser.zcoins}`, true);
                     message.channel.send({
                         embed
                     });
