@@ -1,7 +1,14 @@
 const Discord = require("discord.js");
 const axios = require("axios");
 const fs = require("fs");
+const Path = require('path')
 
+const {
+    createCanvas,
+    loadImage
+} = require('canvas')
+const canvas = createCanvas(1350, 768)
+const ctx = canvas.getContext('2d')
 const config = require("../config.json");
 
 const talkedRecently = new Set();
@@ -61,49 +68,80 @@ async function bot(
     ServerM
 ) {
     if (command === "profile") {
-        const embed = new Discord.RichEmbed()
-            .setAuthor(client.user.username, client.user.avatarURL)
-            .setColor("#FF7F50")
-            .setThumbnail(message.member.user.avatarURL)
-            .setTitle(`${message.member.user.username}'s profile`)
-            .addField("Level:", `${cuser.level}`, true)
-            .addField("XP:", `${cuser.xp}`, true)
-            .addField("Inventory Contents Below:", "⏬", true)
-            .addField("💰 ZCoins: 💰", `${cuser.zcoins}`, true)
-            .setFooter(
-                `XP until next level: ${Math.round(
-          Math.pow(100, cuser.level / 10 + 1)
-        )}`,
-                client.user.avatarURL
-            );
-        message.channel
-            .send({
-                embed
-            })
-            .then(() => {
-                var userInventory = cuser.inventory;
 
-                var itemtext = []
-                userInventory.forEach((item) => {
-                    let quantity = 1;
-                    if (typeof itemtext[item.ID] === 'undefined') {
-                        itemtext[item.ID] = `${item.Icon} - ${item.Name} - **x${quantity}**`;
-                    } else {
-                        quantity++;
-                        itemtext[item.ID] = `${item.Icon} - ${item.Name} - **x${quantity}**`;
-                    }
-                })
+        // Load background
+        loadImage('./src/images/ProfileBG.png').then(async function (image) {
 
-                if (userInventory.length > 0) {
-                    const embed = new Discord.RichEmbed()
-                        .setColor("#FF7F50")
-                        .setTitle(`${message.member.user.username}'s inventory:`)
-                        .setDescription(itemtext.join("\n"));
-                    message.channel.send({
-                        embed
-                    });
+            // Draw background
+            ctx.drawImage(image, 0, 0, 1350, 768)
+
+            // User Name
+            ctx.font = '70px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`${message.member.user.username}`, 40, 650)
+
+            // Stats
+            ctx.font = '40px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`XP:   ${cuser.xp} / ${Math.round(Math.pow(100, cuser.level / 10 + 1))}`, 580, 150)
+
+            ctx.font = '40px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`ZCoins:   ${cuser.zcoins}`, 580, 200);
+
+            var userInventory = cuser.inventory;
+
+            var itemtext = []
+            userInventory.forEach((item) => {
+                let quantity = 1;
+                if (typeof itemtext[item.ID] === 'undefined') {
+                    itemtext[item.ID] = `${item.Name} - x${quantity}`;
+                } else {
+                    quantity++;
+                    itemtext[item.ID] = `${item.Name} - x${quantity}`;
                 }
+            })
+
+            itemtext = itemtext.slice(0, 3);
+
+            ctx.font = '40px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`Inventory:   `, 580, 250);
+
+            ctx.font = '40px Impact'
+            ctx.fillStyle = '#ff4e00';
+            ctx.fillText(`\n${itemtext.join("\n")}`, 580, 250);
+
+            // User Level and VIP Status
+            ctx.font = '40px Impact'
+            ctx.fillStyle = '#ff4e00';
+            if (cuser.VIP === true) {
+                ctx.fillText(`Level: ${cuser.level} | VIP`, 40, 700)
+            } else {
+                ctx.fillText(`Level: ${cuser.level}`, 40, 700)
+            }
+
+            ctx.font = '30px Impact'
+            ctx.fillStyle = '#262626';
+            ctx.fillText(`Visit our website: https://zora.netlify.com`, 700, 740)
+
+            // Load avatar
+            let tempurl = message.member.user.avatarURL;
+            tempurl = tempurl.replace('?size=2048', '')
+            await loadImage(tempurl).then(async function (image) {
+                // Draw Avatar
+                ctx.drawImage(image, 84, 47, 398, 398)
             });
+
+            // Asynchronous PNG output to discord
+            canvas.toBuffer(async function (err, buf) {
+                if (err) throw err; // encoding failed
+                await message.channel.send(`${message.author}`, {
+                    file: buf
+                });
+            })
+        })
+
     } else if (command === "daily") {
         if (talkedRecently.has(message.author.id)) {
             message.channel.send(
@@ -400,120 +438,120 @@ async function bot(
                 async function player1(items) {
                     // Attack hits!
                     /*
-                    if (items.some(function (elem) {
-                            if (elem.Name == "Mana") {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        })) {
-                        // Remove 1 Mana
-                        var index = items.findIndex((elem) => {
-                            if (elem.Name == "Mana") {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        });
-                        if (index > -1) {
-                            UserM.findById(duelplayer.opponentid, {
-                                $arrayElemAt: ["inventory", index]
-                            }, function (err, user) {
-
-                                user.save();
-                            });
-                        }
-                        let damage = Math.floor(Math.random() * 80) + 25;
-                        duelplayer.playerhealth -= damage;
-                        message.channel.send({
-                            embed: {
-                                color: 3447003,
-                                title: item,
-                                description: `🔥🌀 ${
-                  duelplayer.opponent
-                }'s attack hit for ${damage} damage!`,
-                                fields: [{
-                                        name: `${duelplayer.opponent}'s health:`,
-                                        value: `${duelplayer.opponenthealth}`
-                                    },
-                                    {
-                                        name: `${duelplayer.player}'s health:`,
-                                        value: `${duelplayer.playerhealth}`
-                                    }
-                                ]
-                            }
-                        });
-                        UserM.findById(duelplayer.opponentid, {
-                            $arrayElemAt: ["inventory", index]
-                        }, function (err, user) {
-                            user.xp += 800;
-                            user.save();
-                        });
-                        duelplayer.battleStarted = true;
-
-                        if (duelplayer.playerhealth <= 0) {
-                            if (items.some(function (elem) {
-                                    if (elem.Name == "Heart") {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                })) {
-                                // Remove 1 Heart
-                                var index = items.findIndex((elem) => {
-                                    if (elem.Name == "Heart") {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                });
-                                if (index > -1) {
-                                    UserM.findById(duelplayer.opponentid, {
-                                        $arrayElemAt: ["inventory", index]
-                                    }, function (err, user) {
-
-                                        user.save();
-                                    });
+                        if (items.some(function (elem) {
+                                if (elem.Name == "Mana") {
+                                    return true;
+                                } else {
+                                    return false;
                                 }
-                                duelplayer.playerhealth = 100;
-                            } else {
-                                alive == false;
-                                message.channel.send({
-                                    embed: {
-                                        color: 3447003,
-                                        title: item,
-                                        description: `💀 ${duelplayer.player} died! 💀`
-                                    }
-                                });
-                                message.channel.send({
-                                    embed: {
-                                        color: 3447003,
-                                        title: item,
-                                        description: `✨ ${duelplayer.opponent} IS VICTORIOUS! ✨`
-                                    }
-                                });
-                                clearTimeout(battleTimeout);
+                            })) {
+                            // Remove 1 Mana
+                            var index = items.findIndex((elem) => {
+                                if (elem.Name == "Mana") {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                            if (index > -1) {
                                 UserM.findById(duelplayer.opponentid, {
                                     $arrayElemAt: ["inventory", index]
                                 }, function (err, user) {
-                                    user.xp += 5000;
-                                    user.zcoins += 2500;
+
                                     user.save();
                                 });
-                                duelplayer = {
-                                    opponent: [],
-                                    player: [],
-                                    battleStarted: false,
-                                    opponentid: "",
-                                    playerid: "",
-                                    playerhealth: 100,
-                                    opponenthealth: 100,
-                                    player1: false,
-                                    player2: false
-                                };
                             }
-                        }
-                    } else {*/
+                            let damage = Math.floor(Math.random() * 80) + 25;
+                            duelplayer.playerhealth -= damage;
+                            message.channel.send({
+                                embed: {
+                                    color: 3447003,
+                                    title: item,
+                                    description: `🔥🌀 ${
+                      duelplayer.opponent
+                    }'s attack hit for ${damage} damage!`,
+                                    fields: [{
+                                            name: `${duelplayer.opponent}'s health:`,
+                                            value: `${duelplayer.opponenthealth}`
+                                        },
+                                        {
+                                            name: `${duelplayer.player}'s health:`,
+                                            value: `${duelplayer.playerhealth}`
+                                        }
+                                    ]
+                                }
+                            });
+                            UserM.findById(duelplayer.opponentid, {
+                                $arrayElemAt: ["inventory", index]
+                            }, function (err, user) {
+                                user.xp += 800;
+                                user.save();
+                            });
+                            duelplayer.battleStarted = true;
+
+                            if (duelplayer.playerhealth <= 0) {
+                                if (items.some(function (elem) {
+                                        if (elem.Name == "Heart") {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    })) {
+                                    // Remove 1 Heart
+                                    var index = items.findIndex((elem) => {
+                                        if (elem.Name == "Heart") {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    });
+                                    if (index > -1) {
+                                        UserM.findById(duelplayer.opponentid, {
+                                            $arrayElemAt: ["inventory", index]
+                                        }, function (err, user) {
+
+                                            user.save();
+                                        });
+                                    }
+                                    duelplayer.playerhealth = 100;
+                                } else {
+                                    alive == false;
+                                    message.channel.send({
+                                        embed: {
+                                            color: 3447003,
+                                            title: item,
+                                            description: `💀 ${duelplayer.player} died! 💀`
+                                        }
+                                    });
+                                    message.channel.send({
+                                        embed: {
+                                            color: 3447003,
+                                            title: item,
+                                            description: `✨ ${duelplayer.opponent} IS VICTORIOUS! ✨`
+                                        }
+                                    });
+                                    clearTimeout(battleTimeout);
+                                    UserM.findById(duelplayer.opponentid, {
+                                        $arrayElemAt: ["inventory", index]
+                                    }, function (err, user) {
+                                        user.xp += 5000;
+                                        user.zcoins += 2500;
+                                        user.save();
+                                    });
+                                    duelplayer = {
+                                        opponent: [],
+                                        player: [],
+                                        battleStarted: false,
+                                        opponentid: "",
+                                        playerid: "",
+                                        playerhealth: 100,
+                                        opponenthealth: 100,
+                                        player1: false,
+                                        player2: false
+                                    };
+                                }
+                            }
+                        } else {*/
                     let damage = Math.floor(Math.random() * 25);
                     duelplayer.playerhealth -= damage;
                     message.channel.send({
