@@ -158,6 +158,10 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
           {
             name: helpprefix + "support",
             value: "Join our support server."
+          },
+          {
+            name: helpprefix + "xkcd <number / random>",
+            value: "Shows you the current XKCD comic, or a random/specific one if specified"
           }
         ],
         timestamp: new Date(),
