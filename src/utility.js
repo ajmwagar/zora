@@ -102,6 +102,59 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   } else if (command === "support") {
     message.author.send("Support server invite: https://discord.gg/nDwfeKt")
     message.reply("please check your direct messages.")
+  } else if (command === "xkcd") {
+
+    var xkcd = axios.create({
+      // Get data from weather API
+      baseURL: "https://xkcd.com/info.0.json",
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (args[0] === undefined) {
+      number = args[0];
+    } else {
+      number = args[0].toLowerCase().trim();
+    }
+
+    if (number === 'random') {
+      xkcd = axios.create({
+        // Get data from weather API
+        baseURL: `https://xkcd.com/${Math.floor(Math.random() * 2001)}/info.0.json`,
+        headers: {
+          Accept: "application/json"
+        }
+      });
+    } else if (number != undefined) {
+      xkcd = axios.create({
+        // Get data from weather API
+        baseURL: `https://xkcd.com/${number}/info.0.json`,
+        headers: {
+          Accept: "application/json"
+        }
+      });
+    }
+
+    const m = await message.channel.send("Getting XKCD comic...");
+
+    xkcd.get("").then(res => {
+      const embed = new Discord.RichEmbed()
+        .setTitle(res.data.safe_title)
+        .setAuthor(client.user.username + " - XKCD", client.user.avatarURL)
+        .setColor(0x00AE86)
+        .setDescription(`Day: ${res.data.day}`)
+        .setFooter(" - XKCD -", client.user.avatarURL)
+        .setImage(res.data.img)
+
+        .setTimestamp()
+        .setURL(res.data.img)
+
+      m.edit({
+        embed
+      });
+    });
+
 
   }
 }

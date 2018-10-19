@@ -636,7 +636,7 @@ client.on("message", async message => {
             // Stats
             ctx.font = '28px Impact'
             ctx.fillStyle = '#ff4e00';
-            ctx.fillText(`${user.level}`, 5, 70);
+            ctx.fillText(`${user.level}`, 20, 70);
 
             ctx.font = '12px Impact'
             ctx.fillStyle = '#262626';
