@@ -180,7 +180,7 @@ var discordAuth = new ClientOAuth2({
     accessTokenUri: config.ws.tokenurl,
     authorizationUri: config.ws.authurl,
     redirectUri: 'https://dta.dekutree.org/api/discord/callback',
-    scopes: ['identify', 'guilds', 'messages.read']
+    scopes: ['identify', 'guilds', 'messages.read', 'bot']
 })
 
 app.use(express.static(path.join(__dirname, 'static')))
