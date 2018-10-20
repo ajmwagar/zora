@@ -14,6 +14,7 @@
   "author": "Avery Wagar, Nathan Laha",
   "license": "MIT",
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.16",
     "@google-cloud/translate": "^2.1.2",
     "@google-cloud/vision": "^0.22.1",
     "asciiart-logo": "^0.1.7",
@@ -35,6 +36,7 @@
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
     "express-vue": "^5.7.1",
+    "ffmpeg": "0.0.4",
     "get-json": "^1.0.0",
     "https": "^1.0.0",
     "icanhazdadjoke-client": "0.0.2",
@@ -64,6 +66,7 @@
     "raw.js": "^0.6.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
+    "simple-youtube-api": "^5.0.2",
     "socket.io": "^2.1.1",
     "stream-chain": "^2.0.3",
     "stream-json": "^1.1.1",
