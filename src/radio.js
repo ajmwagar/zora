@@ -29,9 +29,9 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
       const playlist = await youtube.getPlaylist(url);
       const videos = await playlist.getVideos();
+      const m = await message.channel.send(`Adding playlist, please wait...`);
       for (const video of Object.values(videos)) {
         const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-        const m = await message.channel.send('Adding playlist, please wait...')
         await handleVideo(video2, message, voiceChannel, true, client, cserver); // eslint-disable-line no-await-in-loop
       }
       return m.edit(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
