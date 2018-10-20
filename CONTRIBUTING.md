@@ -1,1 +1,1 @@
-Please read our [Wiki](https://github.com/ajmwagar/zora/wiki) and [Code of Conduct](https://github.com/ajmwagar/zora/blob/master/CODE_OF_CONDUCT.md). Otherwise, that's for taking time to make ZoraBOT a reality!
+Please read our [Wiki](https://github.com/ajmwagar/zora/wiki) and [Code of Conduct](https://github.com/ajmwagar/zora/blob/master/CODE_OF_CONDUCT.md). Otherwise, thanks for taking time to make ZoraBOT a reality!
