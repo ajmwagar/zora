@@ -1,0 +1,27 @@
+{
+  "name": "ZoraBOT Chrome Extension",
+  "version": "1.0",
+  "description": "Official ZoraBOT Chrome extension, easily add songs to your Zora music bot",
+  "permissions": ["activeTab", "declarativeContent", "storage", "tabs"],
+  "options_page": "options.html",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/NewIcon.png",
+      "32": "images/NewIcon.png",
+      "48": "images/NewIcon.png",
+      "128": "images/NewIcon.png"
+    }
+  },
+  "icons": {
+    "16": "images/NewIcon.png",
+    "32": "images/NewIcon.png",
+    "48": "images/NewIcon.png",
+    "128": "images/NewIcon.png"
+  },
+  "manifest_version": 2
+}
