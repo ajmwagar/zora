@@ -125,7 +125,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       .setFooter(`Zora HD Music System`, client.user.avatarURL)
       .setTimestamp()
       .addBlankField(true)
-      .addField(`**💿 Now playing 💿**`, `[${serverQueue.songs[0].title}](${serverQueue.songs[0].url})`)
+      .addField(`**💿 Now playing 💿**`, `\n[${serverQueue.songs[0].title}](${serverQueue.songs[0].url})\nRequested By: \`${serverQueue.songs[0].requestedby}\`\nLength: ${serverQueue.songs[0].duration}`)
       .addField(`**⬇️ Queue ⬇️**`, `Only the next 10 songs are shown...`)
     serverQueue.songs.map(function (song) {
       if (index < 10) {

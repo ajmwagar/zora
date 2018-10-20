@@ -288,20 +288,12 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
         title: "Music Commands for " + client.user.username,
         description: "My prefix is " + helpprefix,
         fields: [{
-            name: helpprefix + "join",
-            value: "Join Voice channel of message sender"
-          },
-          {
-            name: helpprefix + "add",
-            value: "Add a valid youtube link to the queue"
-          },
-          {
             name: helpprefix + "queue",
-            value: "Shows the current queue, up to 15 songs shown."
+            value: "Shows the current queue, up to 10 songs shown."
           },
           {
-            name: helpprefix + "play",
-            value: "Play the music queue if already joined to a voice channel"
+            name: helpprefix + "play <Song URL / Youtube Search>",
+            value: "Plays music from youtube / adds music to the queue"
           },
           {
             name: helpprefix + "pause",
@@ -316,8 +308,16 @@ async function bot(client, message, command, args, defaultConfig, defaultprofile
             value: "skips the playing song"
           },
           {
-            name: helpprefix + "time",
-            value: "Shows the playtime of the song."
+            name: helpprefix + "np",
+            value: "Shows the currently playing song and information about it"
+          },
+          {
+            name: helpprefix + "volume <1-5>",
+            value: "sets/shows the current volume level"
+          },
+          {
+            name: helpprefix + "stop",
+            value: "Stops the music and clears the queue"
           }
         ],
         timestamp: new Date(),
