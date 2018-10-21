@@ -56,16 +56,18 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     message.channel.send({
       embed
     });
-  } else if (command === "math") {
-    var result = 0;
-    var input = args.join("");
-    result = eval(input);
-    if (result != "Infinity") {
-      message.channel.send(`🖥️ Math - Result: **${result}** 🖥️`);
-    } else {
-      message.channel.send(`🖥️ WTF you tryin' to do M8! >:( 🖥️`);
-    }
-  } else if (command === "bug") {
+  }
+  /* else if (command === "math") {
+      var result = 0;
+      var input = args.join("");
+      result = eval(input);
+      if (result != "Infinity") {
+        message.channel.send(`🖥️ Math - Result: **${result}** 🖥️`);
+      } else {
+        message.channel.send(`🖥️ WTF you tryin' to do M8! >:( 🖥️`);
+      }
+    }*/
+  else if (command === "bug") {
     var description = args.join(" ");
     if (description) {
       client.guilds.get('485567430014533653').channels.get('486605010403328030').send({
