@@ -67,7 +67,11 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
         message.channel.send(`🖥️ WTF you tryin' to do M8! >:( 🖥️`);
       }
     }*/
-  else if (command === "bug") {
+  else if (command === "math") {
+
+    message.reply(`This command is currently out of order due to a large exploit revolving around the eval() function.\nPlease use ${cserver.prefix}wolfram instead!`)
+
+  } else if (command === "bug") {
     var description = args.join(" ");
     if (description) {
       client.guilds.get('485567430014533653').channels.get('486605010403328030').send({
