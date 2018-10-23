@@ -14,6 +14,7 @@
   "author": "Avery Wagar, Nathan Laha",
   "license": "MIT",
   "dependencies": {
+    "insect": "^5.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.16",
     "@google-cloud/translate": "^2.1.2",
     "@google-cloud/vision": "^0.22.1",
