@@ -1,10 +1,12 @@
-const Discord = require("discord.js");
-const axios = require("axios");
+const os = require('os');
 const fs = require("fs");
 const util = require('util');
-const os = require('os');
-
+const axios = require("axios");
+const Discord = require("discord.js");
 const config = require("../config.json");
+const insect = require('insect/output/Insect');
+
+const calcEnv = insect.initialEnvironment;
 
 async function bot(client, message, command, args, cuser, cserver, UserM, ServerM) {
   if (command === "dice") {
@@ -57,20 +59,11 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       embed
     });
   }
-  /* else if (command === "math") {
-      var result = 0;
-      var input = args.join("");
-      result = eval(input);
-      if (result != "Infinity") {
-        message.channel.send(`🖥️ Math - Result: **${result}** 🖥️`);
-      } else {
-        message.channel.send(`🖥️ WTF you tryin' to do M8! >:( 🖥️`);
-      }
-    }*/
   else if (command === "math") {
+    const { msg, msgType: type } = insect.repl(insect.fmtPlain)(calcEnv)(args.join(' '));
 
-    message.reply(`This command is currently out of order due to a large exploit revolving around the eval() function.\nPlease use ${cserver.prefix}wolfram instead!`)
-
+    if (type === 'quit' || type === 'clear') return;
+  if (type === 'info' || type === 'value' || type === 'error') return message.channel.send(msg.indexOf('\n') !== -1 ? '```matlab\n' + msg + '```' : msg);
   } else if (command === "bug") {
     var description = args.join(" ");
     if (description) {
