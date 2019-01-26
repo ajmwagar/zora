@@ -108,6 +108,8 @@ node index.js
 pm2 start index.js -n <botname>
 ```
 
+Note that translate won't work unless a valid google service account is set up!
+
 ## Acknowledgements: 
 This bot would not be possible without:
 - Nathan Laha (@DekuTree#0460) https://nlaha.com/
