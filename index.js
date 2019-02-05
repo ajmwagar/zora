@@ -1,7 +1,3 @@
-/*
-    The following code goes into it's own file, and you run this file
-    instead of your main bot file.
-*/
 const logo = require('asciiart-logo');
 const chalk = require("chalk");
 console.log(chalk.keyword('orange')(
@@ -160,6 +156,7 @@ async function getServerConfig(id) {
     return outserver;
 }
 
+// Write a config object to the database
 async function setServerConfig(id, newconfig) {
     await ServerM.findById(id, function (err, server) {
         server.prefix = newconfig.prefix;
@@ -174,6 +171,7 @@ async function setServerConfig(id, newconfig) {
     return;
 }
 
+// Set up OAuth
 var discordAuth = new ClientOAuth2({
     clientId: config.ws.clientid,
     clientSecret: config.ws.clientsecret,
@@ -183,6 +181,7 @@ var discordAuth = new ClientOAuth2({
     scopes: ['identify', 'guilds']
 })
 
+// Serve static files
 app.use(express.static(path.join(__dirname, 'static')))
 
 // Register bodyParser as parser for Post requests body in JSON-format
@@ -191,7 +190,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-// SSL Certs
+// SSL Certs and HTTPS server
 // TODO move into config.json
 if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey.pem')) {
     const options = {
@@ -203,20 +202,25 @@ if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey
     var server = https.createServer(app).listen(443);
 }
 
+// HTTP server
 app.listen(80, () => {
     console.info(chalk.green('HTTP server set up at port 80'));
 });
 
+// Set up socket.io
 var io = require('socket.io')(server);
 console.log(chalk.green("HTTPS server set up at port 443"))
 
+// Serve static files
 app.use(express.static('public'))
 
+// This page points to the discord authorization page
 app.get('/api/discord/login', function (req, res) {
     var uri = discordAuth.code.getUri()
     res.redirect(uri)
 })
 
+// Callback for discord OAuth
 app.get('/api/discord/callback', function (req, res) {
     discordAuth.state =
         discordAuth.code.getToken(req.originalUrl)
@@ -236,7 +240,7 @@ app.get('/api/discord/callback', function (req, res) {
         })
 })
 
-
+// Called when someone successfully logs into the dashboard
 io.on('connection', function (socket) {
     console.log(chalk.cyan('Dashboard User Connected'));
     socket.on('disconnect', function () {
@@ -267,7 +271,9 @@ io.on('connection', function (socket) {
     });
     socket.on('getChannels', async function (token, serverid) {
 
-        // INFO: THIS IS COMPLETELY UNSECURE! Due to rate limiting restrictions, anyone can view the config of a server!
+        //! :WARNING: THIS IS COMPLETELY UNSECURE! Due to rate limiting restrictions, anyone can view the config of a server!
+
+        //! This function could be executed by anyone!
 
         let updatedvalues = {};
 

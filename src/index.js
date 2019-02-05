@@ -67,15 +67,11 @@ fs.openSync("./profiles.json", "r", (err, fd) => {
 });
 */
 
-// Here we load the config.json file that contains our token and our prefix values.
-// config.token contains the bot's token
-// config.serverconfigs[message.guild.id].prefix contains the message prefix.
-
 const axios = require("axios");
 const moment = require("moment");
 var Long = require("long");
 const chalk = require("chalk");
-const Path = require('path')
+const Path = require('path');
 
 // Internal modules
 const automod = require("./automod");
@@ -93,7 +89,7 @@ const profile = require("./profile");
 const wolfram = require("./wolfram");
 const modlog = require("./events/modlog");
 const loops = require("./mainloops");
-const chatbot = require('./chatbot/ai')
+const chatbot = require('./chatbot/ai');
 
 const {
   createCanvas,
