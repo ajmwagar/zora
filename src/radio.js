@@ -32,7 +32,8 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   }
 
   if (gcUser && gcUrl) {
-    GuildgcUser = await gcUser.lastMessage.guild.fetchUser(gcUser.id);
+    cguild = gcUser.lastMessage.guild;
+    GuildgcUser = await cguild.fetchMember(gcUser.id);
     var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
     const voiceChannel = GuildgcUser.voiceChannel;
     if (!voiceChannel) return;
