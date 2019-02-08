@@ -768,16 +768,12 @@ client.on("message", async message => {
 const express = require('express');
 const app = express();
 
-if (fs.existsSync(__dirname + '/sslcert/fullchain.pem') && fs.existsSync(__dirname + '/sslcert/privkey.pem')) {
-  const options = {
-    cert: fs.readFileSync(__dirname + '/sslcert/fullchain.pem'),
-    key: fs.readFileSync(__dirname + '/sslcert/privkey.pem')
-  };
-  console.log("Found ssl cert for a shard")
-  var server = https.createServer(options, app).listen(445);
-} else {
-  var server = https.createServer(app).listen(445);
+const options = {
+  cert: fs.readFileSync('../sslcert/fullchain.pem'),
+  key: fs.readFileSync('../sslcert/privkey.pem')
 }
+console.log("Found ssl cert for a shard")
+var server = https.createServer(options, app).listen(445);
 var io = require('socket.io')(server);
 console.log("Chrome Socket Server Started!")
 
