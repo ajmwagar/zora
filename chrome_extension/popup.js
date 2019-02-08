@@ -22,6 +22,7 @@ function getUrlVars(url) {
   return vars;
 }
 
+// check if the auth token exists in storage
 chrome.storage.sync.get(['authToken'], function (result) {
   if (result.authToken == undefined) {
     playsong.classList.add("hidden");
@@ -29,6 +30,7 @@ chrome.storage.sync.get(['authToken'], function (result) {
     logout.classList.add("hidden");
     loginmessage.classList.remove("hidden");
   } else {
+    // check if page is a youtube video
     getCurrentTabUrl(function (url) {
       if (url.slice(0, 29) != "https://www.youtube.com/watch") {
         playsong.classList.add("hidden");

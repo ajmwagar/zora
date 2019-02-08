@@ -11,10 +11,12 @@ const queue = new Map();
 
 async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl) {
 
+  // Get server config from id
   const getConfig = (id) => {
     return ServerM.findById(id).exec()
   }
 
+  // set up variables but ignore undefined
   var searchString = "";
   var url = "";
   try {
@@ -23,7 +25,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   } catch (err) {
 
   }
-
   var serverQueue;
   try {
     serverQueue = queue.get(message.guild.id);
@@ -31,6 +32,8 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     serverQueue = queue.get(gcUser.lastMessage.guild.id);
   }
 
+
+  // if the chrome extension variables are present, add the url
   if (gcUser && gcUrl) {
     cguild = gcUser.lastMessage.guild;
     GuildgcUser = await cguild.fetchMember(gcUser.id);
@@ -64,6 +67,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     }
   }
 
+  // normal music bot stuff
   if (command === 'play') {
     const voiceChannel = message.member.voiceChannel;
     if (!voiceChannel) return message.channel.send('🆘 I\'m sorry but you need to be in a voice channel to play music!');

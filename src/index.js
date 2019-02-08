@@ -807,6 +807,7 @@ io.on('connection', function (socket) {
       .then(async function () {
         // always executed
         gcUser = await client.fetchUser(currentid);
+        // call the radio.js file with chrome extension variables
         radio.bot(client, null, null, null, null, null, UserM, ServerM, gcUser, url);
 
       });
