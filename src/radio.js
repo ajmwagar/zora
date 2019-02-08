@@ -32,7 +32,6 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   }
 
   if (gcUser && gcUrl) {
-    console.log("Adding video from chrome extension")
     var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
     const voiceChannel = gcUser.voiceChannel;
     if (!voiceChannel) return;
@@ -48,8 +47,9 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       const playlist = await youtube.getPlaylist(url);
       const videos = await playlist.getVideos();
       for (const video of Object.values(videos)) {
-        const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-        await handleVideo(video2, gcUser.lastMessage, voiceChannel, true, client, cserver2); // eslint-disable-line no-await-in-loop
+        const video2 = await youtube.getVideoByID(video.id);
+        console.log("Adding video from chrome extension")
+        await handleVideo(video2, gcUser.lastMessage, voiceChannel, true, client, cserver2);
       }
       return;
     }
