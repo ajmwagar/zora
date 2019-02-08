@@ -10,3 +10,11 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     actions: [new chrome.declarativeContent.ShowPageAction()]
   }]);
 });
+
+chrome.runtime.onMessage.addListener(
+  function (request, sender, senderResponse) {
+    if (request.msg === "socket") {
+      console.log("receive from socket server: " + request);
+    }
+  }
+);

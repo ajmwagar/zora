@@ -43,6 +43,10 @@ socket.on('sendToken', function (data) {
   }, function () {
     console.log('Value is set to ' + value);
   });
+  chrome.runtime.sendMessage({
+    msg: "socket",
+    text: data
+  }, function (response) {});
 });
 
 function getCurrentTabUrl(callback) {
