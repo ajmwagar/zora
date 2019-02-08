@@ -181,6 +181,15 @@ var discordAuth = new ClientOAuth2({
     scopes: ['identify', 'guilds']
 })
 
+var discordAuthChrome = new ClientOAuth2({
+    clientId: config.ws.clientid,
+    clientSecret: config.ws.clientsecret,
+    accessTokenUri: config.ws.tokenurl,
+    authorizationUri: config.ws.authurl,
+    redirectUri: 'https://dta.dekutree.org/api/discord/callbackchrome',
+    scopes: ['identify', 'guilds']
+})
+
 // Serve static files
 app.use(express.static(path.join(__dirname, 'static')))
 
@@ -220,6 +229,12 @@ app.get('/api/discord/login', function (req, res) {
     res.redirect(uri)
 })
 
+// This is used to get the token for the chrome extension
+app.get('/api/discord/loginchrome', function (req, res) {
+    var uri = discordAuth.code.getUri()
+    res.redirect(uri)
+})
+
 // Callback for discord OAuth
 app.get('/api/discord/callback', function (req, res) {
     discordAuth.state =
@@ -246,6 +261,25 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log(chalk.cyan('Dashboard User Disconnected'));
     });
+    // Callback for chrome extension
+    app.get('/api/discord/callbackchrome', function (req, res) {
+        discordAuth.state =
+            discordAuth.code.getToken(req.originalUrl)
+            .then(function (user) {
+
+                user.expiresIn(124241);
+
+                // Sign API requests on behalf of the current user.
+                user.sign({
+                    method: 'get',
+                    url: 'https://dta.dekutree.org'
+                })
+
+                console.log('OAUTH2 Redirected!')
+                return socket.emit('sendToken', user.accessToken);
+
+            })
+    })
     socket.on('getServers', function (token) {
         axios.get('https://discordapp.com/api/users/@me/guilds', {
                 headers: {

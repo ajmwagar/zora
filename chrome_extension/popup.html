@@ -31,12 +31,48 @@
       box-shadow: 0px 0px 0px #c55b2a;
       transition: 0.1s;
     }
+
+    .sp-btn-login {
+      background-color: #ae8ee9;
+      color: #d3d3d3;
+      font-size: 15px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 25px;
+      padding-right: 25px;
+      border: none;
+      font-family: 'Archivo Narrow', sans-serif;
+      transition: 0.2s;
+      border-radius: 2px;
+      box-shadow: 0px 10px 0px #722ac5;
+      margin: 12px;
+    }
+
+    .sp-btn-login:hover {
+      background-color: #ae8ee9;
+      color: #d3d3d3;
+      transition: 0.2s;
+    }
+
+    .sp-btn-login:active {
+      background-color: #ffffff;
+      transform: translateY(10px);
+      box-shadow: 0px 0px 0px #722ac5;
+      transition: 0.1s;
+    }
+
+    .hidden {
+      visibility: hidden;
+      display: none;
+    }
   </style>
 </head>
 
 <body>
+  <p id="loginmessage">Please Log in with your discord account!</p>
   <button class="sp-btn" id="playsong">Play on ZoraBOT</button>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <button class="sp-btn-login" id="login">Authorize</button>
+  <script src="socket.io.js"></script>
   <script src="popup.js"></script>
 </body>
 
