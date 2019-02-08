@@ -42,16 +42,23 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     if (!permissions.has('SPEAK')) {
       return;
     }
+    console.log("Adding video from chrome extension")
 
     if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
       const playlist = await youtube.getPlaylist(url);
       const videos = await playlist.getVideos();
       for (const video of Object.values(videos)) {
         const video2 = await youtube.getVideoByID(video.id);
-        console.log("Adding video from chrome extension")
         await handleVideo(video2, gcUser.lastMessage, voiceChannel, true, client, cserver2);
       }
       return;
+    } else {
+      try {
+        var video = await youtube.getVideo(url);
+      } catch (err) {
+
+      }
+      await handleVideo(video, gcUser.lastMessage, voiceChannel, true, client, cserver2);
     }
   }
 
