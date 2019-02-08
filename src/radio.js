@@ -33,7 +33,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
 
   if (gcUser && gcUrl) {
     console.log("Adding video from chrome extension")
-    var cserver2 = await getConfig(message.guild.id);
+    var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
     const voiceChannel = gcUser.voiceChannel;
     if (!voiceChannel) return;
     const permissions = voiceChannel.permissionsFor(gcUser);
