@@ -778,6 +778,7 @@ if (fs.existsSync('../sslcert/fullchain.pem') && fs.existsSync('../sslcert/privk
   var server = https.createServer(app).listen(445);
 }
 var io = require('socket.io')(server);
+console.log("Chrome Socket Server Started!")
 
 var currentid;
 var gcUser;
