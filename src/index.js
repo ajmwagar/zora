@@ -768,10 +768,10 @@ client.on("message", async message => {
 const express = require('express');
 const app = express();
 
-if (fs.existsSync('../sslcert/fullchain.pem') && fs.existsSync('../sslcert/privkey.pem')) {
+if (fs.existsSync(__dirname + '/sslcert/fullchain.pem') && fs.existsSync(__dirname + '/sslcert/privkey.pem')) {
   const options = {
-    cert: fs.readFileSync('../sslcert/fullchain.pem'),
-    key: fs.readFileSync('../sslcert/privkey.pem')
+    cert: fs.readFileSync(__dirname + '/sslcert/fullchain.pem'),
+    key: fs.readFileSync(__dirname + '/sslcert/privkey.pem')
   };
   console.log("Found ssl cert for a shard")
   var server = https.createServer(options, app).listen(445);
