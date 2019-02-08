@@ -11,8 +11,8 @@ const queue = new Map();
 
 async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl) {
 
-  const searchString = "";
-  const url = "";
+  var searchString = "";
+  var url = "";
   try {
     searchString = args.join(' ');
     url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
