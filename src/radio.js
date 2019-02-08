@@ -44,7 +44,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
     }
     console.log("Adding video from chrome extension")
 
-    if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+    if (gcUrl.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
       const playlist = await youtube.getPlaylist(url);
       const videos = await playlist.getVideos();
       for (const video of Object.values(videos)) {
