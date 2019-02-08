@@ -56,7 +56,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       return;
     } else {
       try {
-        var video = await youtube.getVideo(url);
+        var video = await youtube.getVideo(gcUrl);
       } catch (err) {
 
       }
