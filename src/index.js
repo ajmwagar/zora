@@ -765,10 +765,13 @@ client.on("message", async message => {
  * * We are going to set up a second https/socket.io
  * * server so that the chrome extension can control the music bot
  */
-if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey.pem')) {
+const express = require('express');
+const app = express();
+
+if (fs.existsSync('../sslcert/fullchain.pem') && fs.existsSync('../sslcert/privkey.pem')) {
   const options = {
-    cert: fs.readFileSync('./sslcert/fullchain.pem'),
-    key: fs.readFileSync('./sslcert/privkey.pem')
+    cert: fs.readFileSync('../sslcert/fullchain.pem'),
+    key: fs.readFileSync('../sslcert/privkey.pem')
   };
   var server = https.createServer(options, app).listen(445);
 } else {
