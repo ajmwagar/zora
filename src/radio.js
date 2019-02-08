@@ -11,8 +11,12 @@ const queue = new Map();
 
 async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl) {
 
-  const searchString = args.join(' ');
-  const url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
+  try {
+    const searchString = args.join(' ');
+    const url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
+  } catch (err) {
+
+  }
   var serverQueue;
   try {
     serverQueue = queue.get(message.guild.id);
