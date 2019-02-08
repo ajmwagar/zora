@@ -13,7 +13,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
 
   const searchString = args.join(' ');
   const url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
-  const serverQueue;
+  var serverQueue;
   try {
     serverQueue = queue.get(message.guild.id);
   } catch (err) {
