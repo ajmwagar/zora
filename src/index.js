@@ -804,9 +804,9 @@ io.on('connection', function (socket) {
       .catch(function (error) {
         console.log(error);
       })
-      .then(function () {
+      .then(async function () {
         // always executed
-        gcUser = client.fetchUser(currentid);
+        gcUser = await client.fetchUser(currentid);
         radio.bot(client, null, null, null, null, null, UserM, ServerM, gcUser, url);
 
       });
