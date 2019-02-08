@@ -769,8 +769,8 @@ const express = require('express');
 const app = express();
 
 const options = {
-  cert: fs.readFileSync('../sslcert/fullchain.pem'),
-  key: fs.readFileSync('../sslcert/privkey.pem')
+  cert: fs.readFileSync('.././sslcert/fullchain.pem'),
+  key: fs.readFileSync('.././sslcert/privkey.pem')
 }
 console.log("Found ssl cert for a shard")
 var server = https.createServer(options, app).listen(445);
