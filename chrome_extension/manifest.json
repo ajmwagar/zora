@@ -5,7 +5,7 @@
   "permissions": ["activeTab", "declarativeContent", "storage", "tabs"],
   "options_page": "options.html",
   "background": {
-    "scripts": ["background.js", "socket.io.js", "popup.js"],
+    "scripts": ["background.js", "socket.io.js"],
     "persistent": false
   },
   "page_action": {

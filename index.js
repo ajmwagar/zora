@@ -255,31 +255,52 @@ app.get('/api/discord/callback', function (req, res) {
         })
 })
 
+// Callback for chrome extension
+app.get('/api/discord/callbackchrome', function (req, res) {
+    discordAuth.state =
+        discordAuth.code.getToken(req.originalUrl)
+        .then(function (user) {
+
+            user.expiresIn(124241);
+
+            // Sign API requests on behalf of the current user.
+            user.sign({
+                method: 'get',
+                url: 'https://dta.dekutree.org'
+            })
+
+            console.log('OAUTH2 Redirected!')
+            return res.send(user.accessToken);
+
+        })
+})
+
 // Called when someone successfully logs into the dashboard
 io.on('connection', function (socket) {
     console.log(chalk.cyan('Dashboard User Connected'));
     socket.on('disconnect', function () {
         console.log(chalk.cyan('Dashboard User Disconnected'));
     });
-    // Callback for chrome extension
-    app.get('/api/discord/callbackchrome', function (req, res) {
-        discordAuth.state =
-            discordAuth.code.getToken(req.originalUrl)
-            .then(function (user) {
 
-                user.expiresIn(124241);
-
-                // Sign API requests on behalf of the current user.
-                user.sign({
-                    method: 'get',
-                    url: 'https://dta.dekutree.org'
-                })
-
-                console.log('OAUTH2 Redirected!')
-                return socket.emit('sendToken', user.accessToken);
-
+    socket.on('playVideo', function (token, url) {
+        axios.get('https://discordapp.com/api/users/@me', {
+                headers: {
+                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                    Authorization: `Bearer ${token}`
+                }
             })
-    })
+            .then(function (response) {
+                console.log(response.data.id)
+                client.shard.broadcastEval(`playVideo(${response.data.id}, ${url})`).then(console.log);
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
+    });
+
     socket.on('getServers', function (token) {
         axios.get('https://discordapp.com/api/users/@me/guilds', {
                 headers: {

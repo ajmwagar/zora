@@ -834,6 +834,11 @@ const getDefaultChannel = guild => {
     .first();
 };
 
+function playVideo(id, url) {
+  radio.bot(client, null, null, null, user, cserver, UserM, ServerM, url, id);
+}
+
+
 // Login
 //
 client.login(config.token);

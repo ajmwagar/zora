@@ -7,8 +7,9 @@
 let playsong = document.getElementById('playsong');
 let login = document.getElementById('login');
 let loginmessage = document.getElementById('loginmessage');
-var socket = io.connect('https://dta.dekutree.org:443');
 var xhr = new XMLHttpRequest();
+var socket = io.connect("https://dta.dekutree.org:443");
+var token = "";
 
 // This function can extract URL Parameters from a string
 function getUrlVars(url) {
@@ -19,34 +20,26 @@ function getUrlVars(url) {
   return vars;
 }
 
+getCurrentTabUrl(function (url) {
+  if (url.slice(0, 29) != "https://www.youtube.com/watch") {
+    playsong.classList.add("hidden");
+    loginmessage.textContent = "Please open a YouTube video before activating";
+  } else {
+    playsong.classList.remove("hidden");
+  }
+})
+
 chrome.storage.sync.get(['authToken'], function (result) {
-  if (result.key == undefined) {
+  if (result.authToken == undefined) {
     playsong.classList.add("hidden");
     login.classList.remove("hidden");
     loginmessage.classList.remove("hidden");
   } else {
     playsong.classList.remove("hidden");
     login.classList.add("hidden");
-    loginmessage.textContent = result.key;
+    loginmessage.textContent = "Your personal auth token is: " + result.authToken;
+    token = result.authToken;
   }
-});
-
-getCurrentTabUrl(function (url) {
-  if (url != "https://www.youtube.com") {
-    playsong.classList.add("hidden");
-  }
-})
-
-socket.on('sendToken', function (data) {
-  chrome.storage.sync.set({
-    authToken: data
-  }, function () {
-    console.log('Value is set to ' + value);
-  });
-  chrome.runtime.sendMessage({
-    msg: "socket",
-    text: data
-  }, function (response) {});
 });
 
 function getCurrentTabUrl(callback) {
@@ -73,8 +66,6 @@ login.onclick = function (element) {
 playsong.onclick = function (element) {
   getCurrentTabUrl(function (url) {
     console.log(url)
-    // TODO somehow securely add this URL to the queue. We don't want to be able to add it to servers who we aren't currently listening in. 
-    // TODO But we also don't want to have to authorize with oauth2 every time a song needs to be added
-
+    socket.emit('playVideo', token, url);
   });
 };

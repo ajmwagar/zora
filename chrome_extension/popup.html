@@ -65,11 +65,16 @@
       visibility: hidden;
       display: none;
     }
+
+    .message {
+      font-family: 'Archivo Narrow', sans-serif;
+      width: 400px;
+    }
   </style>
 </head>
 
 <body>
-  <p id="loginmessage">Please Log in with your discord account!</p>
+  <p class="message" id="loginmessage">Please Log in with your discord account!</p>
   <button class="sp-btn" id="playsong">Play on ZoraBOT</button>
   <button class="sp-btn-login" id="login">Authorize</button>
   <script src="socket.io.js"></script>
