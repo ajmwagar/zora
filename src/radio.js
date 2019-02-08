@@ -25,6 +25,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   } catch (err) {
 
   }
+  console.log(gcUser.client.voiceConnections);
   var serverQueue;
   try {
     serverQueue = queue.get(message.guild.id);
