@@ -33,8 +33,15 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
 
   if (gcUser && gcUrl) {
     var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
-    const voiceChannel = gcUser.voiceChannel;
+    const voiceChannel = gcUser.lastMessage.guild.me.voice.channel;
     if (!voiceChannel) return;
+    const permissions = voiceChannel.permissionsFor(gcUser);
+    if (!permissions.has('CONNECT')) {
+      return;
+    }
+    if (!permissions.has('SPEAK')) {
+      return;
+    }
     console.log("Adding video from chrome extension")
 
     if (gcUrl.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
