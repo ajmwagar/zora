@@ -141,6 +141,7 @@ var defaultprofile = new Schema({
         default: false
     },
     inventory: [],
+    chromevideos: [],
     _id: Schema.Types.Decimal128
 });
 
@@ -170,6 +171,8 @@ async function setServerConfig(id, newconfig) {
     });
     return;
 }
+
+
 
 // Set up OAuth
 var discordAuth = new ClientOAuth2({
@@ -280,25 +283,6 @@ io.on('connection', function (socket) {
     console.log(chalk.cyan('Dashboard User Connected'));
     socket.on('disconnect', function () {
         console.log(chalk.cyan('Dashboard User Disconnected'));
-    });
-
-    socket.on('playVideo', function (token, url) {
-        axios.get('https://discordapp.com/api/users/@me', {
-                headers: {
-                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            .then(function (response) {
-                console.log(response.data.id)
-                Manager.shards[0].broadcastEval(`playVideo(${response.data.id}, ${url})`).then(console.log);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .then(function () {
-                // always executed
-            });
     });
 
     socket.on('getServers', function (token) {

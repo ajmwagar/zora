@@ -206,6 +206,7 @@ var defaultprofile = new Schema({
     default: false
   },
   inventory: [],
+  chromevideos: [],
   _id: Schema.Types.Decimal128
 });
 
@@ -758,6 +759,54 @@ client.on("message", async message => {
   }
 });
 
+/*
+ * * Ok, this is the complicated part of the file
+ * * We are going to set up a second https/socket.io
+ * * server so that the chrome extension can control the music bot
+ */
+if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey.pem')) {
+  const options = {
+    cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    key: fs.readFileSync('./sslcert/privkey.pem')
+  };
+  var server = https.createServer(options, app).listen(445);
+} else {
+  var server = https.createServer(app).listen(445);
+}
+var io = require('socket.io')(server);
+
+var currentid;
+var gcUser;
+
+io.on('connection', function (socket) {
+  console.log(chalk.cyan('Dashboard User Connected'));
+  socket.on('disconnect', function () {
+    console.log(chalk.cyan('Dashboard User Disconnected'));
+  });
+
+  socket.on('playVideo', function (token, url) {
+    axios.get('https://discordapp.com/api/users/@me', {
+        headers: {
+          'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(function (response) {
+        console.log(response.data.id)
+        currentid = response.data.id;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+        gcUser = client.fetchUser(currentid);
+        radio.bot(client, null, null, null, null, null, UserM, ServerM, gcUser, url);
+
+      });
+  });
+});
+
 const fire = async (text, guild) => {
 
   let ModlogEnabled = false;
@@ -833,11 +882,6 @@ const getDefaultChannel = guild => {
     )
     .first();
 };
-
-function playVideo(id, url) {
-  radio.bot(client, null, null, null, user, cserver, UserM, ServerM, url, id);
-}
-
 
 // Login
 //

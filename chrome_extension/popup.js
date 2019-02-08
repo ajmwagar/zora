@@ -8,7 +8,7 @@ let playsong = document.getElementById('playsong');
 let login = document.getElementById('login');
 let loginmessage = document.getElementById('loginmessage');
 var xhr = new XMLHttpRequest();
-var socket = io.connect("https://dta.dekutree.org:443");
+var socket = io.connect("https://dta.dekutree.org:445");
 var token = "";
 
 // This function can extract URL Parameters from a string

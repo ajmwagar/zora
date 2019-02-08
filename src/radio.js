@@ -9,17 +9,21 @@ const youtube = new YouTube(config.youtubeKey);
 
 const queue = new Map();
 
-async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, Curl, Cid) {
+async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl) {
 
   const searchString = args.join(' ');
   const url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
-  const serverQueue = queue.get(message.guild.id);
+  const serverQueue;
+  try {
+    serverQueue = queue.get(message.guild.id);
+  } catch (err) {
+    serverQueue = queue.get(gcUser.lastMessage.guild.id);
+  }
 
-  if (Cid && Curl) {
-    var GCuser = client.fetchUser(Cid);
-    const voiceChannel = GCuser.voiceChannel;
+  if (gcUser && gcUrl) {
+    const voiceChannel = gcUser.voiceChannel;
     if (!voiceChannel) return;
-    const permissions = voiceChannel.permissionsFor(GCuser);
+    const permissions = voiceChannel.permissionsFor(gcUser);
     if (!permissions.has('CONNECT')) {
       return;
     }
@@ -32,7 +36,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       const videos = await playlist.getVideos();
       for (const video of Object.values(videos)) {
         const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-        await handleVideo(video2, GCuser.lastMessage, voiceChannel, true, client, cserver); // eslint-disable-line no-await-in-loop
+        await handleVideo(video2, gcUser.lastMessage, voiceChannel, true, client, cserver); // eslint-disable-line no-await-in-loop
       }
       return;
     }
