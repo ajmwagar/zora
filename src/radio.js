@@ -11,6 +11,10 @@ const queue = new Map();
 
 async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl) {
 
+  const getConfig = (id) => {
+    return ServerM.findById(id).exec()
+  }
+
   var searchString = "";
   var url = "";
   try {
@@ -28,6 +32,8 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   }
 
   if (gcUser && gcUrl) {
+    console.log("Adding video from chrome extension")
+    var cserver2 = await getConfig(message.guild.id);
     const voiceChannel = gcUser.voiceChannel;
     if (!voiceChannel) return;
     const permissions = voiceChannel.permissionsFor(gcUser);
@@ -43,7 +49,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       const videos = await playlist.getVideos();
       for (const video of Object.values(videos)) {
         const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-        await handleVideo(video2, gcUser.lastMessage, voiceChannel, true, client, cserver); // eslint-disable-line no-await-in-loop
+        await handleVideo(video2, gcUser.lastMessage, voiceChannel, true, client, cserver2); // eslint-disable-line no-await-in-loop
       }
       return;
     }
