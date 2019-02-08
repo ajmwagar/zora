@@ -783,6 +783,7 @@ console.log("Chrome Socket Server Started!")
 
 var currentid;
 var gcUser;
+var gcResponseData;
 
 io.on('connection', function (socket) {
   console.log(chalk.cyan('Dashboard User Connected'));
@@ -800,6 +801,8 @@ io.on('connection', function (socket) {
       .then(function (response) {
         console.log(response.data.id)
         currentid = response.data.id;
+        gcResponseData = response.data;
+
       })
       .catch(function (error) {
         console.log(error);
@@ -808,7 +811,7 @@ io.on('connection', function (socket) {
         // always executed
         gcUser = await client.fetchUser(currentid);
         // call the radio.js file with chrome extension variables
-        radio.bot(client, null, null, null, null, null, UserM, ServerM, gcUser, url);
+        radio.bot(client, null, null, null, null, null, UserM, ServerM, gcUser, url, gcResponseData);
 
       });
   });

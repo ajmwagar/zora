@@ -9,7 +9,7 @@ const youtube = new YouTube(config.youtubeKey);
 
 const queue = new Map();
 
-async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl) {
+async function bot(client, message, command, args, cuser, cserver, UserM, ServerM, gcUser, gcUrl, gcResponseData) {
 
   // Get server config from id
   const getConfig = (id) => {
@@ -29,16 +29,16 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   try {
     serverQueue = queue.get(message.guild.id);
   } catch (err) {
-    serverQueue = queue.get(gcUser.lastMessage.guild.id);
+    serverQueue = queue.get(gcUser.client.voiceConnections.first.channel.guild.id);
   }
 
 
   // if the chrome extension variables are present, add the url
   if (gcUser && gcUrl) {
-    cguild = gcUser.lastMessage.guild;
+    cguild = gcUser.client.voiceConnections.first.channel.guild;
     GuildgcUser = await cguild.fetchMember(gcUser.id);
-    var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
-    const voiceChannel = GuildgcUser.voiceChannel;
+    var cserver2 = await getConfig(gcUser.client.voiceConnections.first.channel.guild.id);
+    const voiceChannel = gcUser.client.voiceConnections.first.channel;
     if (!voiceChannel) return;
     const permissions = voiceChannel.permissionsFor(gcUser);
     if (!permissions.has('CONNECT')) {
@@ -158,7 +158,7 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
       .addBlankField(true)
       .addField(`**Video Description: **`, serverQueue.songs[0].description.substring(0, 150) + `\n**[... READ MORE](${serverQueue.songs[0].url})**`)
     if (serverQueue.songs[1] === undefined) {
-      embed.setDescription(`**Requested by:** \`${serverQueue.songs[0].requestedby}\`\n**Length:** ${serverQueue.songs[0].duration}\n\`Use the play command to add some songs!\``)
+      embed.setDescription(`**Requested by:** \`${serverQueue.songs[0].requestedby}\` ${gcResponseData ? " using ZoraBOT for Chrome - ID: " + gcResponseData.id : ""} \n**Length:** ${serverQueue.songs[0].duration}\n\`Use the play command to add some songs!\``)
     } else {
       embed.setDescription(`**Requested by:** ${serverQueue.songs[0].requestedby}\n**Length:** ${serverQueue.songs[0].duration}\n**Up Next:** \`${serverQueue.songs[1].title}\``)
     }

@@ -1,3 +1,5 @@
 node_modules
 config.json
 visionAPIcreds.json
+chrome_extension.pem
+chrome_extension.crx
