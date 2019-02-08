@@ -25,21 +25,20 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   } catch (err) {
 
   }
-  console.log(gcUser.client.voiceConnections.first);
   var serverQueue;
   try {
     serverQueue = queue.get(message.guild.id);
   } catch (err) {
-    serverQueue = queue.get(gcUser.client.voiceConnections.first.channel.guild.id);
+    serverQueue = queue.get(gcUser.lastMessage.guild.id);
   }
 
 
   // if the chrome extension variables are present, add the url
   if (gcUser && gcUrl) {
-    cguild = gcUser.client.voiceConnections.first.channel.guild;
+    cguild = gcUser.lastMessage.guild;
     GuildgcUser = await cguild.fetchMember(gcUser.id);
-    var cserver2 = await getConfig(gcUser.client.voiceConnections.first.channel.guild.id);
-    const voiceChannel = gcUser.client.voiceConnections.first.channel;
+    var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
+    const voiceChannel = GuildgcUser.voiceChannel;
     if (!voiceChannel) return;
     const permissions = voiceChannel.permissionsFor(gcUser);
     if (!permissions.has('CONNECT')) {
