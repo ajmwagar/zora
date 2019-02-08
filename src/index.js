@@ -4,6 +4,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const vision = require('@google-cloud/vision');
+const https = require('https');
 const isImageUrl = require('is-image-url');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
