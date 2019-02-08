@@ -32,8 +32,9 @@ async function bot(client, message, command, args, cuser, cserver, UserM, Server
   }
 
   if (gcUser && gcUrl) {
+    GuildgcUser = await gcUser.lastMessage.guild.fetchUser(gcUser.id);
     var cserver2 = await getConfig(gcUser.lastMessage.guild.id);
-    const voiceChannel = gcUser.lastMessage.guild.me.voice.channel;
+    const voiceChannel = GuildgcUser.voiceChannel;
     if (!voiceChannel) return;
     const permissions = voiceChannel.permissionsFor(gcUser);
     if (!permissions.has('CONNECT')) {
