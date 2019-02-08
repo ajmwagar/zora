@@ -61,6 +61,36 @@
       transition: 0.1s;
     }
 
+    .sp-btn-logout {
+      background-color: #929292;
+      color: #313131;
+      font-size: 15px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 25px;
+      padding-right: 25px;
+      border: none;
+      font-family: 'Archivo Narrow', sans-serif;
+      transition: 0.2s;
+      border-radius: 2px;
+      box-shadow: 0px 10px 0px #858585;
+      margin: 12px;
+    }
+
+    .sp-btn-logout:hover {
+      background-color: #cacaca;
+      color: #303030;
+      transition: 0.2s;
+    }
+
+    .sp-btn-logout:active {
+      background-color: #2b2b2b;
+      color: #efefef;
+      transform: translateY(10px);
+      box-shadow: 0px 0px 0px #a5a5a5;
+      transition: 0.1s;
+    }
+
     .hidden {
       visibility: hidden;
       display: none;
@@ -77,6 +107,7 @@
   <p class="message" id="loginmessage">Please Log in with your discord account!</p>
   <button class="sp-btn" id="playsong">Play on ZoraBOT</button>
   <button class="sp-btn-login" id="login">Authorize</button>
+  <button class="sp-btn-logout" id="logout">Logout</button>
   <script src="socket.io.js"></script>
   <script src="popup.js"></script>
 </body>
