@@ -291,7 +291,7 @@ io.on('connection', function (socket) {
             })
             .then(function (response) {
                 console.log(response.data.id)
-                client.shard.broadcastEval(`playVideo(${response.data.id}, ${url})`).then(console.log);
+                Manager.shard.broadcastEval(`playVideo(${response.data.id}, ${url})`).then(console.log);
             })
             .catch(function (error) {
                 console.log(error);
