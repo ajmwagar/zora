@@ -181,10 +181,10 @@ async function bot(
                     });
                 });
             }
-            // Adds the user to the set so that they can't talk for a minute
+            // Adds the user to the set so that they can't redeem daily for 24 hours
             talkedRecently.add(message.author.id);
             setTimeout(() => {
-                // Removes the user from the set after a minute
+                // Removes the user from the set after 24 hours
                 talkedRecently.delete(message.author.id);
             }, 86400000);
         }
