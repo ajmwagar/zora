@@ -4,6 +4,7 @@
 ![Deps](https://david-dm.org/ajmwagar/zora.svg)
 [![HitCount](http://hits.dwyl.io/ajmwagar/zora.svg)](http://hits.dwyl.io/ajmwagar/zora)
 [![Discord](https://img.shields.io/badge/discord-server-%239d89d6.svg)](https://discord.gg/rRt5AHQ)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fajmwagar%2Fzora.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fajmwagar%2Fzora?ref=badge_shield)
 
 
 ## A modular discord bot that is fully customizable!
@@ -114,3 +115,7 @@ Note that translate won't work unless a valid google service account is set up!
 This bot would not be possible without:
 - Nathan Laha (@DekuTree#0460) https://nlaha.com/
 - Avery Wagar (@ajmwagar) http://www.averywagar.com/
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fajmwagar%2Fzora.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fajmwagar%2Fzora?ref=badge_large)
