@@ -8,7 +8,7 @@ let playsong = document.getElementById('playsong');
 let login = document.getElementById('login');
 let logout = document.getElementById('logout');
 let loginmessage = document.getElementById('loginmessage');
-var socket = io.connect("https://dta.dekutree.org:445", {
+var socket = io.connect("https://dta.dekutree.org:450", {
   secure: true
 });
 var token = "";
@@ -42,12 +42,12 @@ chrome.storage.sync.get(['authToken'], function (result) {
         logout.classList.remove("hidden");
         login.classList.add("hidden");
         fetch('https://discordapp.com/api/users/@me', {
-            method: 'get',
-            headers: new Headers({
-              'Authorization': `Bearer ${result.authToken}`,
-              'user-agent': 'DiscordBot (https://github.com/ajmwagar/zora, 0.1)'
-            })
+          method: 'get',
+          headers: new Headers({
+            'Authorization': `Bearer ${result.authToken}`,
+            'user-agent': 'DiscordBot (https://github.com/ajmwagar/zora, 0.1)'
           })
+        })
           .then(
             function (response) {
               if (response.status !== 200) {
@@ -85,13 +85,13 @@ function getCurrentTabUrl(callback) {
 // login with discord OAuth
 login.onclick = function (element) {
   chrome.tabs.create({
-    url: "https://dta.dekutree.org/api/discord/loginchrome"
+    url: "https://dta.dekutree.org:448/api/discord/loginchrome"
   });
 }
 
 // log out of discord
 logout.onclick = function (element) {
-  chrome.storage.sync.remove(['authToken'], function (result) {});
+  chrome.storage.sync.remove(['authToken'], function (result) { });
   window.location.href = "popup.html";
 }
 

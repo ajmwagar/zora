@@ -8,11 +8,11 @@ console.log(chalk.keyword('orange')(
         padding: 5,
         margin: 2
     })
-    .emptyLine()
-    .right('version 0.1.0 beta')
-    .emptyLine()
-    .wrap('ZoraBOT was created by Avery Wagar and Nathan Laha')
-    .render()
+        .emptyLine()
+        .right('version 0.1.0 beta')
+        .emptyLine()
+        .wrap('ZoraBOT was created by Avery Wagar and Nathan Laha')
+        .render()
 ));
 const Discord = require('discord.js');
 const Manager = new Discord.ShardingManager('./src/index.js');
@@ -209,9 +209,9 @@ if (fs.existsSync('./sslcert/fullchain.pem') && fs.existsSync('./sslcert/privkey
         cert: fs.readFileSync('./sslcert/fullchain.pem'),
         key: fs.readFileSync('./sslcert/privkey.pem')
     };
-    var server = https.createServer(options, app).listen(445);
+    var server = https.createServer(options, app).listen(448);
 } else {
-    var server = https.createServer(app).listen(445);
+    var server = https.createServer(app).listen(448);
 }
 
 // HTTP server
@@ -242,40 +242,40 @@ app.get('/api/discord/loginchrome', function (req, res) {
 app.get('/api/discord/callback', function (req, res) {
     discordAuth.state =
         discordAuth.code.getToken(req.originalUrl)
-        .then(function (user) {
+            .then(function (user) {
 
-            user.expiresIn(124241);
+                user.expiresIn(124241);
 
-            // Sign API requests on behalf of the current user.
-            user.sign({
-                method: 'get',
-                url: 'https://dta.dekutree.org'
+                // Sign API requests on behalf of the current user.
+                user.sign({
+                    method: 'get',
+                    url: 'https://dta.dekutree.org'
+                })
+
+                console.log('OAUTH2 Redirected!')
+                return res.redirect(`https://zora.netlify.com/#/dashboard?token=${user.accessToken}`)
+
             })
-
-            console.log('OAUTH2 Redirected!')
-            return res.redirect(`https://zora.netlify.com/#/dashboard?token=${user.accessToken}`)
-
-        })
 })
 
 // Callback for chrome extension
 app.get('/api/discord/callbackchrome', function (req, res) {
     discordAuth.state =
         discordAuth.code.getToken(req.originalUrl)
-        .then(function (user) {
+            .then(function (user) {
 
-            user.expiresIn(124241);
+                user.expiresIn(124241);
 
-            // Sign API requests on behalf of the current user.
-            user.sign({
-                method: 'get',
-                url: 'https://dta.dekutree.org'
+                // Sign API requests on behalf of the current user.
+                user.sign({
+                    method: 'get',
+                    url: 'https://dta.dekutree.org'
+                })
+
+                console.log('OAUTH2 Redirected!')
+                return res.send(user.accessToken);
+
             })
-
-            console.log('OAUTH2 Redirected!')
-            return res.send(user.accessToken);
-
-        })
 })
 
 // Called when someone successfully logs into the dashboard
@@ -287,11 +287,11 @@ io.on('connection', function (socket) {
 
     socket.on('getServers', function (token) {
         axios.get('https://discordapp.com/api/users/@me/guilds', {
-                headers: {
-                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            headers: {
+                'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(function (response) {
                 let ownedservers = [];
                 response.data.forEach(function (server) {
@@ -299,7 +299,7 @@ io.on('connection', function (socket) {
                         ownedservers.push(server);
                     }
                 });
-                socket.emit('updateServers', ownedservers, function (answer) {});
+                socket.emit('updateServers', ownedservers, function (answer) { });
             })
             .catch(function (error) {
                 console.log(error);
@@ -341,11 +341,11 @@ io.on('connection', function (socket) {
          * has access to the server you are modifying
          */
         axios.get('https://discordapp.com/api/users/@me/guilds', {
-                headers: {
-                    'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            headers: {
+                'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(async function (response) {
                 let ownedservers = [];
                 let ownsserver = false;

@@ -234,7 +234,7 @@ client.on("ready", async function () {
       var defaultuser = new UserM();
       defaultuser._id = user.id;
       defaultuser.username = user.username;
-      defaultuser.save(function (err) {});
+      defaultuser.save(function (err) { });
       /*console.log(
         chalk.yellow(
           chalk.blue(`[USER] `) +
@@ -250,7 +250,7 @@ client.on("ready", async function () {
     var defaultserver = new ServerM();
     defaultserver._id = guild.id;
     defaultserver.name = guild.name;
-    defaultserver.save(function (err) {});
+    defaultserver.save(function (err) { });
     console.log(
       chalk.yellow(
         chalk.red(`[SERVER] `) +
@@ -288,7 +288,7 @@ client.on("guildCreate", guild => {
   // This event triggers when the bot joins a guild.
   console.log(
     `New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${
-      guild.memberCount
+    guild.memberCount
     } members!`
   );
 
@@ -297,7 +297,7 @@ client.on("guildCreate", guild => {
   var defaultserver = new defaultServer();
   defaultserver._id = guild.id;
   defaultserver.name = guild.name
-  defaultserver.save(function (err) {});
+  defaultserver.save(function (err) { });
   console.log(
     chalk.yellow(
       chalk.red(`[SERVER] `) + `${guild.id} has been inserted into the database`
@@ -308,7 +308,7 @@ client.on("guildCreate", guild => {
       var defaultuser = new UserM();
       defaultuser._id = guildMember.user.id;
       defaultuser.username = guildMember.user.username;
-      defaultuser.save(function (err) {});
+      defaultuser.save(function (err) { });
       console.log(
         chalk.yellow(
           chalk.blue(`[USER] `) +
@@ -411,7 +411,7 @@ client.on("messageDelete", msg => {
   if (msg.channel.name && msg.channel.name.includes(modlog)) return;
   fire(
     `**#${msg.channel.name} | ${msg.author.tag}'s message was deleted:** \`${
-      msg.content
+    msg.content
     }\``,
     msg.guild
   );
@@ -422,9 +422,9 @@ client.on("messageUpdate", (msg, newMsg) => {
   if (msg.author.bot) return;
   fire(
     `**#${msg.channel.name} | ${
-      msg.author.tag
+    msg.author.tag
     } edited their message:**\n**before:** \`${msg.content}\`\n**+after:** \`${
-      newMsg.content
+    newMsg.content
     }\``,
     msg.guild
   );
@@ -445,7 +445,7 @@ client.on("guildMemberUpdate", (old, nw) => {
   } else if (old.nickname !== nw.nickname) {
     txt = `**${nw.user.tag} | Changed their nickname to -> \`${
       nw.nickname
-    }\`**`;
+      }\`**`;
   } else return;
   fire(txt, nw.guild);
 });
@@ -491,7 +491,7 @@ client.on("message", async message => {
     if (message.isMentioned(client.user)) {
       message.reply(`Thanks for pinging me! I'm happy to help out, just type **${cserver.prefix}help** for information on how to use me! Visit my dashboard for even more options, type **${cserver.prefix}dashboard**`);
     }
-
+    /*
     function attachIsImage(msgAttach) {
       var url = msgAttach.url;
       //True if this url is a png image.
@@ -597,7 +597,7 @@ client.on("message", async message => {
         }
       }
     }
-
+    */
     // Spy code :D
     console.log(chalk.white(`[Message] ${message.author.id} |m| `) + chalk.grey(message))
 
@@ -616,7 +616,7 @@ client.on("message", async message => {
       });
       // fs.writeFileSync("./profiles.json", JSON.stringify(profiles));
       UserM.findById(message.author.id, function (err, user) {
-        if (user.xp < Math.round(Math.pow(100, user.level / 10 + 1))) {} else {
+        if (user.xp < Math.round(Math.pow(100, user.level / 10 + 1))) { } else {
           user.xp = 0;
           user.level += 1;
           user.save();
@@ -774,9 +774,9 @@ if (fs.existsSync(__dirname + '/../sslcert/fullchain.pem') && fs.existsSync(__di
     key: fs.readFileSync(__dirname + '/../sslcert/privkey.pem')
   };
   console.log("Found ssl cert for a shard")
-  var server = https.createServer(options, app).listen(445);
+  var server = https.createServer(options, app).listen(450);
 } else {
-  var server = https.createServer(app).listen(445);
+  var server = https.createServer(app).listen(450);
 }
 var io = require('socket.io')(server);
 console.log("Chrome Socket Server Started!")
@@ -793,11 +793,11 @@ io.on('connection', function (socket) {
 
   socket.on('playVideo', function (token, url) {
     axios.get('https://discordapp.com/api/users/@me', {
-        headers: {
-          'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
-          Authorization: `Bearer ${token}`
-        }
-      })
+      headers: {
+        'user-agent': "DiscordBot (https://github.com/ajmwagar/zora, 0.1)",
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(function (response) {
         console.log(response.data.id)
         currentid = response.data.id;
@@ -880,15 +880,15 @@ const getDefaultChannel = guild => {
   return guild.channels
     .filter(
       c =>
-      c.type === "text" &&
-      c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
+        c.type === "text" &&
+        c.permissionsFor(guild.client.user).has("SEND_MESSAGES")
     )
     .sort(
       (a, b) =>
-      a.position - b.position ||
-      Long.fromString(a.id)
-      .sub(Long.fromString(b.id))
-      .toNumber()
+        a.position - b.position ||
+        Long.fromString(a.id)
+          .sub(Long.fromString(b.id))
+          .toNumber()
     )
     .first();
 };
