@@ -1,8 +1,6 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
 const YouTube = require('simple-youtube-api');
-const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-console.log(ffmpeg.path, ffmpeg.version);
 const ytdl = require('ytdl-core');
 
 const youtube = new YouTube(config.youtubeKey);
